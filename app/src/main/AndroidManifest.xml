@@ -17,6 +17,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.msadraii.multidex.EditLabelActivity"
+            android:label="@string/title_activity_edit_label"
+            android:parentActivityName="com.msadraii.multidex.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.msadraii.multidex.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
