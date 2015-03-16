@@ -1,6 +1,9 @@
-package com.msadraii.multidex;
+package com.msadraii.multidex.data;
 
 import android.content.Context;
+
+import com.msadraii.multidex.Entry;
+import com.msadraii.multidex.EntryDao;
 
 import java.util.ArrayList;
 import java.util.Date;

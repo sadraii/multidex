@@ -1,6 +1,9 @@
-package com.msadraii.multidex;
+package com.msadraii.multidex.data;
 
 import android.content.Context;
+
+import com.msadraii.multidex.Label;
+import com.msadraii.multidex.LabelDao;
 
 import java.util.ArrayList;
 

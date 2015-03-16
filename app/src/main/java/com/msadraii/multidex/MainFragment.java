@@ -1,5 +1,6 @@
 package com.msadraii.multidex;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -17,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mostafasadraii.multidex.R;
+import com.msadraii.multidex.data.EntryRepository;
+import com.msadraii.multidex.data.LabelRepository;
 
 import java.util.ArrayList;
 
@@ -26,6 +29,9 @@ import java.util.ArrayList;
  */
 public class MainFragment extends Fragment {
 
+    public static final String MAIN_CONTEXT_EXTRA = "main_context_extra";
+    private Context appContext;
+
     public MainFragment() {
     }
 
@@ -33,6 +39,7 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        appContext = getActivity().getApplicationContext();
     }
 
     @Override
@@ -55,8 +62,14 @@ public class MainFragment extends Fragment {
 //        Label label = new Label();
 //        LabelRepository.insertOrReplace(getActivity(), label);
 
+
+
+
+
+
+
         ArrayList<Label> arrayList;
-        arrayList = (ArrayList)LabelRepository.getAllLabels(getActivity());
+        arrayList = (ArrayList) LabelRepository.getAllLabels(appContext);
         for (Label l : arrayList) {
             textView.append("\n" + l.getTask());
             Button b = new Button(getActivity());
@@ -71,6 +84,10 @@ public class MainFragment extends Fragment {
             textView.append(Integer.toHexString(c.getColor()));
             ll.addView(b);
         }
+
+
+
+
 
 //        arrayList = (ArrayList)LabelRepository.getAllLabels(getActivity());
 //        for (Label l : arrayList) {
@@ -121,41 +138,40 @@ public class MainFragment extends Fragment {
             return true;
         }
         return true;
-//        return super.onOptionsItemSelected(item);
     }
 
     private void recreateTables() {
-        LabelRepository.dropTable(getActivity());
-        EntryRepository.dropTable(getActivity());
-        LabelRepository.createTable(getActivity());
-        EntryRepository.createTable(getActivity());
+        LabelRepository.dropTable(appContext);
+        EntryRepository.dropTable(appContext);
+        LabelRepository.createTable(appContext);
+        EntryRepository.createTable(appContext);
     }
 
     private void clearTables() {
-        LabelRepository.clearLabels(getActivity());
-        EntryRepository.clearEntries(getActivity());
+        LabelRepository.clearLabels(appContext);
+        EntryRepository.clearEntries(appContext);
     }
 
     private void addTestLabels() {
         Label label = new Label();
         label.setArgb("#ff292884");
         label.setTask("Blue");
-        LabelRepository.insertOrReplace(getActivity(), label);
+        LabelRepository.insertOrReplace(appContext, label);
 
         Label label2 = new Label();
         label2.setArgb("#ff17ae07");
         label2.setTask("Yellow");
-        LabelRepository.insertOrReplace(getActivity(), label2);
+        LabelRepository.insertOrReplace(appContext, label2);
 
         Label label3 = new Label();
         label3.setArgb("#ff0b8440");
         label3.setTask("Green");
-        LabelRepository.insertOrReplace(getActivity(), label3);
+        LabelRepository.insertOrReplace(appContext, label3);
 
         Label label4 = new Label();
         label4.setArgb("#ff840805");
         label4.setTask("Red");
-        LabelRepository.insertOrReplace(getActivity(), label4);
+        LabelRepository.insertOrReplace(appContext, label4);
 
 
     }

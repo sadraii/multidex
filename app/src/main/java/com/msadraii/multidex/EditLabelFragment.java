@@ -36,7 +36,7 @@ public class EditLabelFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-        mAdapter = new LabelAdapter(new String[] {"one","two","three","four"});
+        mAdapter = new LabelAdapter(getActivity().getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;

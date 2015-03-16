@@ -1,7 +1,10 @@
-package com.msadraii.multidex;
+package com.msadraii.multidex.data;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.msadraii.multidex.DaoMaster;
+import com.msadraii.multidex.DaoSession;
 
 /**
  * Created by Mostafa on 3/15/2015.
