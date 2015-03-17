@@ -10,23 +10,18 @@ public class MyDaoGenerator {
     public static void main(String args[]) throws Exception {
         Schema schema = new Schema(1, "com.msadraii.multidex");
 
-        Entity label = schema.addEntity("Label");
-        label.addIdProperty().autoincrement().unique();
-        label.addStringProperty("argb");
-        label.addStringProperty("task");
+        Entity colorCode = schema.addEntity("ColorCode");
+        colorCode.addIdProperty().autoincrement().unique();
+        colorCode.addStringProperty("argb");
+        colorCode.addStringProperty("task");
 
         Entity entry = schema.addEntity("Entry");
         entry.addIdProperty().autoincrement().unique();
         entry.addDateProperty("date");
         entry.addStringProperty("segments");
-        Property labelIdProperty = entry.addLongProperty("labelId").getProperty();
-        entry.addToOne(label, labelIdProperty);
+        Property colorCodeIdProperty = entry.addLongProperty("colorCodeId").getProperty();
+        entry.addToOne(colorCode, colorCodeIdProperty);
 
         new DaoGenerator().generateAll(schema, args[0]);
-
-//        Entity day = schema.addEntity("Day");
-//        day.addIdProperty().autoincrement().unique();
-//        day.addDateProperty("Date");
-//        day.addBooleanProperty("AMPM");
     }
 }

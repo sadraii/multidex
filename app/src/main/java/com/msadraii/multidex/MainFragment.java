@@ -17,19 +17,16 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.mostafasadraii.multidex.R;
+import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
-import com.msadraii.multidex.data.LabelRepository;
 
 import java.util.ArrayList;
-
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainFragment extends Fragment {
 
-    public static final String MAIN_CONTEXT_EXTRA = "main_context_extra";
     private Context appContext;
 
     public MainFragment() {
@@ -53,24 +50,9 @@ public class MainFragment extends Fragment {
 //        recreateTables();
 //        addTestLabels();
 
-
-
-
-
-
-
-//        Label label = new Label();
-//        LabelRepository.insertOrReplace(getActivity(), label);
-
-
-
-
-
-
-
-        ArrayList<Label> arrayList;
-        arrayList = (ArrayList) LabelRepository.getAllLabels(appContext);
-        for (Label l : arrayList) {
+        ArrayList<ColorCode> arrayList;
+        arrayList = (ArrayList) ColorCodeRepository.getAllColorCodes(appContext);
+        for (ColorCode l : arrayList) {
             textView.append("\n" + l.getTask());
             Button b = new Button(getActivity());
             b.setText(l.getTask());
@@ -89,34 +71,34 @@ public class MainFragment extends Fragment {
 
 
 
-//        arrayList = (ArrayList)LabelRepository.getAllLabels(getActivity());
+//        arrayList = (ArrayList)ColorCodeRepository.getAllColorCodes(getActivity());
 //        for (Label l : arrayList) {
 //            textView.append("\nadded 1\n" + Long.toString(l.getId()));
 //        }
 //
 //        label = new Label();
-//        LabelRepository.insertOrReplace(getActivity(), label);
+//        ColorCodeRepository.insertOrReplace(getActivity(), label);
 //        label = new Label();
-//        LabelRepository.insertOrReplace(getActivity(), label);
+//        ColorCodeRepository.insertOrReplace(getActivity(), label);
 //
-//        arrayList = (ArrayList)LabelRepository.getAllLabels(getActivity());
+//        arrayList = (ArrayList)ColorCodeRepository.getAllColorCodes(getActivity());
 //        for (Label l : arrayList) {
 //            textView.append("\nadded 2\n" + Long.toString(l.getId()));
 //        }
 //
-//        LabelRepository.deleteLabelWithId(getActivity(), 1);
+//        ColorCodeRepository.deleteColorCodeWithId(getActivity(), 1);
 //
-//        arrayList = (ArrayList)LabelRepository.getAllLabels(getActivity());
+//        arrayList = (ArrayList)ColorCodeRepository.getAllColorCodes(getActivity());
 //        for (Label l : arrayList) {
 //            textView.append("\ndeleted 1\n" + Long.toString(l.getId()));
 //        }
 //
 //        label = new Label();
-//        LabelRepository.insertOrReplace(getActivity(), label);
+//        ColorCodeRepository.insertOrReplace(getActivity(), label);
 //        label = new Label();
-//        LabelRepository.insertOrReplace(getActivity(), label);
+//        ColorCodeRepository.insertOrReplace(getActivity(), label);
 //
-//        arrayList = (ArrayList)LabelRepository.getAllLabels(getActivity());
+//        arrayList = (ArrayList)ColorCodeRepository.getAllColorCodes(getActivity());
 //        for (Label l : arrayList) {
 //            textView.append("\nadded 2\n" + Long.toString(l.getId()));
 //        }
@@ -141,37 +123,37 @@ public class MainFragment extends Fragment {
     }
 
     private void recreateTables() {
-        LabelRepository.dropTable(appContext);
+        ColorCodeRepository.dropTable(appContext);
         EntryRepository.dropTable(appContext);
-        LabelRepository.createTable(appContext);
+        ColorCodeRepository.createTable(appContext);
         EntryRepository.createTable(appContext);
     }
 
     private void clearTables() {
-        LabelRepository.clearLabels(appContext);
+        ColorCodeRepository.clearColorCodes(appContext);
         EntryRepository.clearEntries(appContext);
     }
 
     private void addTestLabels() {
-        Label label = new Label();
+        ColorCode label = new ColorCode();
         label.setArgb("#ff292884");
         label.setTask("Blue");
-        LabelRepository.insertOrReplace(appContext, label);
+        ColorCodeRepository.insertOrReplace(appContext, label);
 
-        Label label2 = new Label();
-        label2.setArgb("#ff17ae07");
-        label2.setTask("Yellow");
-        LabelRepository.insertOrReplace(appContext, label2);
+        label = new ColorCode();
+        label.setArgb("#ff17ae07");
+        label.setTask("Yellow");
+        ColorCodeRepository.insertOrReplace(appContext, label);
 
-        Label label3 = new Label();
-        label3.setArgb("#ff0b8440");
-        label3.setTask("Green");
-        LabelRepository.insertOrReplace(appContext, label3);
+        label = new ColorCode();
+        label.setArgb("#ff0b8440");
+        label.setTask("Green");
+        ColorCodeRepository.insertOrReplace(appContext, label);
 
-        Label label4 = new Label();
-        label4.setArgb("#ff840805");
-        label4.setTask("Red");
-        LabelRepository.insertOrReplace(appContext, label4);
+        label = new ColorCode();
+        label.setArgb("#ff840805");
+        label.setTask("Red");
+        ColorCodeRepository.insertOrReplace(appContext, label);
 
 
     }

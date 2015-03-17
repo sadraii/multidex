@@ -5,22 +5,19 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.mostafasadraii.multidex.R;
-
-
 public class EditLabelActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_labels);
+        setContentView(R.layout.activity_edit_color_codes);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_labels, menu);
+        getMenuInflater().inflate(R.menu.menu_edit_color_codes, menu);
         return true;
     }
 

@@ -10,25 +10,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mostafasadraii.multidex.R;
-import com.msadraii.multidex.data.LabelRepository;
-
+import com.msadraii.multidex.data.ColorCodeRepository;
 
 /**
  * Created by Mostafa on 3/15/2015.
  */
-public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.ViewHolder> {
+public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.ViewHolder> {
 
     private Context mContext;
 
-    public LabelAdapter(Context context) {
+    public ColorCodeAdapter(Context context) {
         mContext = context;
     }
 
     @Override
-    public LabelAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ColorCodeAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.label_list_item, parent, false);
+                .inflate(R.layout.list_item_color_codes, parent, false);
 
         return new ViewHolder(v);
     }
@@ -36,23 +34,20 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.ViewHolder> 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // GreenDAO addItProperty() starts at 1 instead of 0
-        Label label = LabelRepository.getLabelForId(mContext, position + 1);
+        // GreenDAO addItProperty() starts at 1 instead of 0, so need to add 1 to position
+        ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mContext, position + 1);
 
         ((GradientDrawable) holder.mImageView.getBackground())
-                .setColor(Color.parseColor(label.getArgb()));
-        holder.mTextView.setText(label.getTask());
+                .setColor(Color.parseColor(colorCode.getArgb()));
+        holder.mTextView.setText(colorCode.getTask());
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
+    // Invoked by the layout manager
     @Override
     public int getItemCount() {
-        return LabelRepository.getAllLabels(mContext).size();
+        return ColorCodeRepository.getAllColorCodes(mContext).size();
     }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final ImageView mImageView;
         public final TextView mTextView;

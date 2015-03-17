@@ -1,4 +1,4 @@
-package com.mostafasadraii.multidex;
+package com.msadraii.multidex.test;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mostafasadraii.multidex" >
+    package="com.msadraii.multidex" >
 
     <application
         android:name="com.msadraii.multidex.data.GreenDaoApplication"
@@ -19,7 +19,7 @@
         </activity>
         <activity
             android:name="com.msadraii.multidex.EditLabelActivity"
-            android:label="@string/title_activity_edit_label"
+            android:label="@string/title_activity_edit_color_codes"
             android:parentActivityName="com.msadraii.multidex.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

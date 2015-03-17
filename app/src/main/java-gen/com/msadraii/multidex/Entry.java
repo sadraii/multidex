@@ -12,7 +12,7 @@ public class Entry {
     private Long id;
     private java.util.Date date;
     private String segments;
-    private Long labelId;
+    private Long colorCodeId;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -20,8 +20,8 @@ public class Entry {
     /** Used for active entity operations. */
     private transient EntryDao myDao;
 
-    private Label label;
-    private Long label__resolvedKey;
+    private ColorCode colorCode;
+    private Long colorCode__resolvedKey;
 
 
     public Entry() {
@@ -31,11 +31,11 @@ public class Entry {
         this.id = id;
     }
 
-    public Entry(Long id, java.util.Date date, String segments, Long labelId) {
+    public Entry(Long id, java.util.Date date, String segments, Long colorCodeId) {
         this.id = id;
         this.date = date;
         this.segments = segments;
-        this.labelId = labelId;
+        this.colorCodeId = colorCodeId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -68,36 +68,36 @@ public class Entry {
         this.segments = segments;
     }
 
-    public Long getLabelId() {
-        return labelId;
+    public Long getColorCodeId() {
+        return colorCodeId;
     }
 
-    public void setLabelId(Long labelId) {
-        this.labelId = labelId;
+    public void setColorCodeId(Long colorCodeId) {
+        this.colorCodeId = colorCodeId;
     }
 
     /** To-one relationship, resolved on first access. */
-    public Label getLabel() {
-        Long __key = this.labelId;
-        if (label__resolvedKey == null || !label__resolvedKey.equals(__key)) {
+    public ColorCode getColorCode() {
+        Long __key = this.colorCodeId;
+        if (colorCode__resolvedKey == null || !colorCode__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            LabelDao targetDao = daoSession.getLabelDao();
-            Label labelNew = targetDao.load(__key);
+            ColorCodeDao targetDao = daoSession.getColorCodeDao();
+            ColorCode colorCodeNew = targetDao.load(__key);
             synchronized (this) {
-                label = labelNew;
-            	label__resolvedKey = __key;
+                colorCode = colorCodeNew;
+            	colorCode__resolvedKey = __key;
             }
         }
-        return label;
+        return colorCode;
     }
 
-    public void setLabel(Label label) {
+    public void setColorCode(ColorCode colorCode) {
         synchronized (this) {
-            this.label = label;
-            labelId = label == null ? null : label.getId();
-            label__resolvedKey = labelId;
+            this.colorCode = colorCode;
+            colorCodeId = colorCode == null ? null : colorCode.getId();
+            colorCode__resolvedKey = colorCodeId;
         }
     }
 

@@ -6,10 +6,9 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.mostafasadraii.multidex.R;
-
 /**
  * Created by Mostafa on 3/15/2015.
+ * Defines the list divider for the RecyclerView.
  */
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
