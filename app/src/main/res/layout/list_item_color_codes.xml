@@ -10,11 +10,12 @@
     android:minHeight="?android:listPreferredItemHeight">
 
     <FrameLayout
+        android:id="@+id/list_item_color_frame_layout"
         android:layout_width="60dp"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/list_item_color_view"
+            android:id="@+id/list_item_color_image_ivew"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -22,11 +23,14 @@
 
     </FrameLayout>
 
-    <TextView
+    <EditText
         android:id="@+id/list_item_description"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-condensed"
-        android:textAppearance="?android:textAppearanceLarge"/>
+        fontFamily="sans-serif-condensed"
+        textAppearance="?android:textAppearanceLarge"
+        android:inputType="textNoSuggestions"
+        style="?android:listSeparatorTextViewStyle"/>
 
 </LinearLayout>

@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.msadraii.multidex.data.ColorCodeRepository;
 
@@ -39,7 +41,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
         ((GradientDrawable) holder.mImageView.getBackground())
                 .setColor(Color.parseColor(colorCode.getArgb()));
-        holder.mTextView.setText(colorCode.getTask());
+        holder.mEditText.setText(colorCode.getTask());
     }
 
     // Invoked by the layout manager
@@ -49,13 +51,39 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        public final FrameLayout mFrameLayout;
         public final ImageView mImageView;
-        public final TextView mTextView;
+        public final EditText mEditText;
 
         public ViewHolder(View v) {
             super(v);
-            mImageView = (ImageView) v.findViewById(R.id.list_item_color_view);
-            mTextView = (TextView) v.findViewById(R.id.list_item_description);
+            mFrameLayout = (FrameLayout) v.findViewById(R.id.list_item_color_frame_layout);
+            mFrameLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("viewholder", "clicked on frame");
+                }
+            });
+
+            mImageView = (ImageView) v.findViewById(R.id.list_item_color_image_ivew);
+
+            mEditText = (EditText) v.findViewById(R.id.list_item_description);
+            mEditText.setFocusable(false);
+            mEditText.setClickable(true);
+            mEditText.setFocusableInTouchMode(false);
+//            mEditText.setEnabled(true);
+            mEditText.setCursorVisible(false);
+//            mEditText.setKeyListener(null);
+            mEditText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("viewholder", "clicked on text");
+                    v.setFocusable(true);
+                    v.setFocusableInTouchMode(true);
+                    ((EditText) v).setCursorVisible(true);
+//                    v.setEnabled(true);
+                }
+            });
         }
     }
 }
