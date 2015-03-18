@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
+ * Provides an abstraction layer between the database and controllers for manipulating Entry
+ * objects.
  * Created by Mostafa on 3/15/2015.
  */
 public class EntryRepository {

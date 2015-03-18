@@ -7,6 +7,7 @@ import com.msadraii.multidex.DaoMaster;
 import com.msadraii.multidex.DaoSession;
 
 /**
+ * Initializes and provides a global context for GreenDao.
  * Created by Mostafa on 3/15/2015.
  */
 public class GreenDaoApplication extends Application {
