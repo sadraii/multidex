@@ -1,7 +1,20 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           android:id="@+id/fragment"
-          android:name="com.msadraii.multidex.EditLabelFragment"
+          android:name="com.msadraii.multidex.EditColorCodeFragment"
           tools:layout="@layout/fragment_edit_color_codes"
           android:layout_width="match_parent"
           android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:id="@+id/sample_content_fragment"
+        android:layout_weight="2"
+        android:layout_width="match_parent"
+        android:layout_height="0px" />
+
+</LinearLayout>

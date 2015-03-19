@@ -42,7 +42,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         // GreenDAO addItProperty() starts at 1 instead of 0, so need to add 1 to position
         final ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mContext, position + 1);
         // TODO if final, use CCR.getcolorcodeforid each time
@@ -80,7 +80,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                                 });
                     }
                 });
-                colorPicker.show(((EditLabelActivity) mActivityContext).getFragmentManager(), "col");
+                colorPicker.show(((EditColorCodeActivity) mActivityContext).getFragmentManager(), "col");
             }
         });
 
@@ -89,7 +89,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                 .setColor(Color.parseColor(colorCode.getArgb()));
         holder.mEditText.setText(colorCode.getTask());
         holder.mEditText.setHorizontallyScrolling(true);
-        holder.mEditText.setFocusable(false);
+        holder.mEditText.setFocusable(true);
         holder.mEditText.setClickable(true);
         holder.mEditText.setFocusableInTouchMode(false);
 //            holder.mEditText.setEnabled(true);
@@ -103,6 +103,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                 v.setFocusableInTouchMode(true);
                 ((EditText) v).setCursorVisible(true);
 //                    v.setEnabled(true);
+//                ((EditColorCodeFragment) mContext).getLayoutManager().scrollToPosition(position);
             }
         });
     }

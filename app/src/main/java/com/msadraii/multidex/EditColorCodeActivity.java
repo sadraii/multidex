@@ -1,12 +1,13 @@
 package com.msadraii.multidex;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class EditLabelActivity extends ActionBarActivity {
+public class EditColorCodeActivity extends ActionBarActivity {
 
     private static float elevation;
     private static ActionBar actionBar;
@@ -15,6 +16,13 @@ public class EditLabelActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_color_codes);
+
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FloatingActionButtonBasicFragment fragment = new FloatingActionButtonBasicFragment();
+            transaction.replace(R.id.sample_content_fragment, fragment);
+            transaction.commit();
+        }
 
         actionBar = getSupportActionBar();
         elevation = actionBar.getElevation();

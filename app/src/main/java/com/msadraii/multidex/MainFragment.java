@@ -122,7 +122,7 @@ public class MainFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_edit_label) {
-            startActivity(new Intent(getActivity(), EditLabelActivity.class));
+            startActivity(new Intent(getActivity(), EditColorCodeActivity.class));
             return true;
         }
         return true;

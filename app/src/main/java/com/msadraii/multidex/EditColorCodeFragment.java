@@ -11,13 +11,13 @@ import android.view.ViewGroup;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EditLabelFragment extends Fragment {
+public class EditColorCodeFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    public EditLabelFragment() {
+    public EditColorCodeFragment() {
     }
 
     @Override
@@ -38,9 +38,9 @@ public class EditLabelFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 if (mRecyclerView.getChildAt(0) != null && mRecyclerView.getChildAt(0).getTop() == 0) {
 //                    Log.d(LOG_TAG, "at item 0");
-                    EditLabelActivity.setActionBarShadow(false);
+                    EditColorCodeActivity.setActionBarShadow(false);
                 } else {
-                    EditLabelActivity.setActionBarShadow(true);
+                    EditColorCodeActivity.setActionBarShadow(true);
                 }
             }
         });
@@ -50,5 +50,9 @@ public class EditLabelFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
+    }
+
+    public RecyclerView.LayoutManager getLayoutManager() {
+        return mLayoutManager;
     }
 }
