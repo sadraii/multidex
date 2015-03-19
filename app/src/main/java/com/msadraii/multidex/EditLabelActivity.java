@@ -1,16 +1,23 @@
 package com.msadraii.multidex;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class EditLabelActivity extends ActionBarActivity {
 
+    private static float elevation;
+    private static ActionBar actionBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_color_codes);
+
+        actionBar = getSupportActionBar();
+        elevation = actionBar.getElevation();
     }
 
 
@@ -34,5 +41,15 @@ public class EditLabelActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void setActionBarShadow(boolean showShadow) {
+        if (actionBar != null) {
+            if (showShadow) {
+                actionBar.setElevation(elevation);
+            } else {
+                actionBar.setElevation(0f);
+            }
+        }
     }
 }

@@ -44,7 +44,8 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // GreenDAO addItProperty() starts at 1 instead of 0, so need to add 1 to position
-        ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mContext, position + 1);
+        final ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mContext, position + 1);
+        // TODO if final, use CCR.getcolorcodeforid each time
 
         holder.mFrameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,14 +53,17 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                 ColorPickerDialog colorPicker = ColorPickerDialog.newInstance(
                         R.string.color_picker_default_title,
                         Utils.ColorUtils.colorChoice(mContext),
-                        Color.parseColor("#ffaa66cc"),
+                        Color.parseColor(colorCode.getArgb()),
                         5,
                         ColorPickerDialog.SIZE_SMALL
                 );
                 colorPicker.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
                     @Override
-                    public void onColorSelected(int color) {
+                    public void onColorSelected(final int color) {
                         // TODO something with color
+                        colorCode.setArgb("#" + Integer.toHexString(color));
+                        ColorCodeRepository.insertOrReplace(mContext, colorCode);
+
                         holder.mImageView.animate()
                                 .rotationYBy(-90)
                                 .setDuration(COLOR_SPIN_DURATION)
@@ -68,7 +72,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                                     public void run() {
                                         // test color change
                                         ((GradientDrawable) holder.mImageView.getBackground())
-                                                .setColor(Color.parseColor("#ff847d43"));
+                                                .setColor(color);
                                         holder.mImageView.animate()
                                                 .rotationYBy(-90)
                                                 .setDuration(COLOR_SPIN_DURATION);

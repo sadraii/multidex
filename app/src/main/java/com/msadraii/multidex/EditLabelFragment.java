@@ -32,6 +32,19 @@ public class EditLabelFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (mRecyclerView.getChildAt(0) != null && mRecyclerView.getChildAt(0).getTop() == 0) {
+//                    Log.d(LOG_TAG, "at item 0");
+                    EditLabelActivity.setActionBarShadow(false);
+                } else {
+                    EditLabelActivity.setActionBarShadow(true);
+                }
+            }
+        });
+
 
         mAdapter = new ColorCodeAdapter(getActivity().getApplicationContext(), getActivity());
         mRecyclerView.setAdapter(mAdapter);

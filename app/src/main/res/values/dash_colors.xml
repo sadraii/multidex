@@ -12,10 +12,11 @@
         <item>#ff669900</item>
         <item>#ffff8800</item>
         <item>#ffcc0000</item>
-        <item>#ffffffff</item>
-        <item>#ffeeeeee</item>
+        <item>#ff292884</item>
+        <item>#ffdd3a94</item>
         <item>#ffcccccc</item>
         <item>#ff888888</item>
+        <item>#fff83139</item>
     </string-array>
 
     <string-array name="homescreen_color_choice_values" translatable="false">

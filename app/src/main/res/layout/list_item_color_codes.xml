@@ -31,6 +31,7 @@
         fontFamily="sans-serif-condensed"
         textAppearance="?android:textAppearanceLarge"
         android:inputType="textNoSuggestions"
-        style="?android:listSeparatorTextViewStyle"/>
+        style="?android:listSeparatorTextViewStyle"
+        android:background="#00000000"/>
 
 </LinearLayout>

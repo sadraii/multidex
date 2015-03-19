@@ -50,9 +50,9 @@ public class MainFragment extends Fragment {
         recreateTables();
         addTestLabels();
 
-        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 4);
-        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 10);
-        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext,11);
+//        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 4);
+//        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 10);
+//        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext,11);
 
 
 
@@ -142,88 +142,93 @@ public class MainFragment extends Fragment {
 
     private void addTestLabels() {
         ColorCode label = new ColorCode();
+        label.setArgb("#ff33b5e5");
+        label.setTask("1 Make breakfast");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ffaa66cc");
+        label.setTask("2 Jump rope");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ff99cc00");
+        label.setTask("3 Wash dishes");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ffffbb33");
+        label.setTask("4 Complain");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ffff4444");
+        label.setTask("5 Read a book");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ff0099cc");
+        label.setTask("6 Go hiking");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ff9933cc");
+        label.setTask("7 Homework LOL");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ff669900");
+        label.setTask("8 Watch TBBT");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ffff8800");
+        label.setTask("9 Sleep");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ffcc0000");
+        label.setTask("10 Fix this app!");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
         label.setArgb("#ff292884");
-        label.setTask("Blue1");
+        label.setTask("11 Be lazy");
         ColorCodeRepository.insertOrReplace(appContext, label);
 
         label = new ColorCode();
-        label.setArgb("#ff17ae07");
-        label.setTask("Yellow2");
+        label.setArgb("#ffdd3a94");
+        label.setTask("12 How long is this text box and does it really wrap around or not?");
         ColorCodeRepository.insertOrReplace(appContext, label);
 
         label = new ColorCode();
-        label.setArgb("#ff0b8440");
-        label.setTask("Green3");
+        label.setArgb("#ffcccccc");
+        label.setTask("13 Visit Hawaii");
         ColorCodeRepository.insertOrReplace(appContext, label);
 
         label = new ColorCode();
-        label.setArgb("#ff840805");
-        label.setTask("Red4");
+        label.setArgb("#ff888888");
+        label.setTask("14 Get more sleep");
         ColorCodeRepository.insertOrReplace(appContext, label);
 
         label = new ColorCode();
-        label.setArgb("#ffa3d1d0");
-        label.setTask("Red5");
+        label.setArgb("#ff33b5e5");
+        label.setTask("15 Mmmm lollipops");
         ColorCodeRepository.insertOrReplace(appContext, label);
 
         label = new ColorCode();
-        label.setArgb("#ffcc8b17");
-        label.setTask("Red6");
+        label.setArgb("#ffaa66cc");
+        label.setTask("16 Almost there");
         ColorCodeRepository.insertOrReplace(appContext, label);
 
         label = new ColorCode();
-        label.setArgb("#ffcbb0ef");
-        label.setTask("Red7");
+        label.setArgb("#fff83139");
+        label.setTask("17 Almost there");
         ColorCodeRepository.insertOrReplace(appContext, label);
 
         label = new ColorCode();
-        label.setArgb("#ffc6fe60");
-        label.setTask("Red8");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#ff0294a8");
-        label.setTask("Red9");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#ff5a6eaf");
-        label.setTask("Red10");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#fff06233");
-        label.setTask("Red11");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#ff462e80");
-        label.setTask("Red12");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#ff91f496");
-        label.setTask("Red13");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#fff082c3");
-        label.setTask("Red14");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#ffcede5b");
-        label.setTask("Red15");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#ffebde73");
-        label.setTask("Red16");
-        ColorCodeRepository.insertOrReplace(appContext, label);
-
-        label = new ColorCode();
-        label.setArgb("#FF927024");
-        label.setTask("Red17");
+        label.setArgb("#ff99cc00");
+        label.setTask("18 Need more items");
         ColorCodeRepository.insertOrReplace(appContext, label);
     }
 }
