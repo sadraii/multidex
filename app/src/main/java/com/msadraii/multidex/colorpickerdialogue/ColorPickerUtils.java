@@ -42,7 +42,7 @@ import com.msadraii.multidex.R;
  * @author Gabriele Mariotti (gabri.mariotti@gmail.com)
  *
  */
-public class Utils {
+public class ColorPickerUtils {
 
 	
 	/**
@@ -59,7 +59,7 @@ public class Utils {
 		 * @param context
 		 * @return
 		 */
-		public static int[] colorChoice(Context context){
+		public static int[] colorChoices(Context context){
 		
 			int[] mColorChoices=null;	
 			String[] color_array = context.getResources().getStringArray(R.array.default_color_choice_values);

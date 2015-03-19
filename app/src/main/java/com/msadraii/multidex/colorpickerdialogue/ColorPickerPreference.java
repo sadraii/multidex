@@ -104,7 +104,7 @@
 //        super.onClick();
 //
 //        ColorPickerDialog colorcalendar = (ColorPickerDialog) ColorPickerDialog.newInstance(R.string.color_picker_default_title,
-//				mColorChoices, getValue(), mNumColumns, Utils.isTablet(getContext())? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
+//				mColorChoices, getValue(), mNumColumns, ColorPickerUtils.isTablet(getContext())? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
 //
 //        //colorcalendar.setPreference(this);
 //

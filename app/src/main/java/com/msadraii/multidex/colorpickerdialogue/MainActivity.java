@@ -154,7 +154,7 @@
 //			return;
 //		Intent intent = null;
 //		// Init colors to use in dialogs
-//		int[] mColor = it.gmariotti.android.example.colorpicker.Utils.ColorUtils.colorChoice(this);
+//		int[] mColor = it.gmariotti.android.example.colorpicker.ColorPickerUtils.ColorUtils.colorChoices(this);
 //
 //		switch (item._id) {
 //		default:
@@ -180,7 +180,7 @@
 //			ColorPickerDialog colorcalendar = ColorPickerDialog.newInstance(
 //					R.string.color_picker_default_title, mColor,
 //					mSelectedColorCal0, 5,
-//					Utils.isTablet(this) ? ColorPickerDialog.SIZE_LARGE
+//					ColorPickerUtils.isTablet(this) ? ColorPickerDialog.SIZE_LARGE
 //							: ColorPickerDialog.SIZE_SMALL);
 //
 //			colorcalendar.setOnColorSelectedListener(colorcalendarListener);
@@ -292,7 +292,7 @@
 //
 //		// About
 //		case R.id.menu_about:
-//			it.gmariotti.android.example.colorpicker.Utils.showAbout(this);
+//			it.gmariotti.android.example.colorpicker.ColorPickerUtils.showAbout(this);
 //			return true;
 //
 //		}
