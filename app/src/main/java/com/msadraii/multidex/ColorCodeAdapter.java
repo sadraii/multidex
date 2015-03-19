@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.msadraii.multidex.colorpickerdialogue.ColorPickerDialog;
+import com.msadraii.multidex.colorpickerdialogue.ColorPickerSwatch;
+import com.msadraii.multidex.colorpickerdialogue.Utils;
 import com.msadraii.multidex.data.ColorCodeRepository;
 
 /**
@@ -20,9 +23,13 @@ import com.msadraii.multidex.data.ColorCodeRepository;
 public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.ViewHolder> {
 
     private Context mContext;
+    private Context mActivityContext;
 
-    public ColorCodeAdapter(Context context) {
+    private static final long COLOR_SPIN_DURATION = 100;
+
+    public ColorCodeAdapter(Context context, Context activityContext) {
         mContext = context;
+        mActivityContext = activityContext;
     }
 
     @Override
@@ -35,13 +42,65 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         // GreenDAO addItProperty() starts at 1 instead of 0, so need to add 1 to position
         ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mContext, position + 1);
+
+        holder.mFrameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ColorPickerDialog colorPicker = ColorPickerDialog.newInstance(
+                        R.string.color_picker_default_title,
+                        Utils.ColorUtils.colorChoice(mContext),
+                        Color.parseColor("#ffaa66cc"),
+                        5,
+                        ColorPickerDialog.SIZE_SMALL
+                );
+                colorPicker.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
+                    @Override
+                    public void onColorSelected(int color) {
+                        // TODO something with color
+                        holder.mImageView.animate()
+                                .rotationYBy(-90)
+                                .setDuration(COLOR_SPIN_DURATION)
+                                .withEndAction(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // test color change
+                                        ((GradientDrawable) holder.mImageView.getBackground())
+                                                .setColor(Color.parseColor("#ff847d43"));
+                                        holder.mImageView.animate()
+                                                .rotationYBy(-90)
+                                                .setDuration(COLOR_SPIN_DURATION);
+                                    }
+                                });
+                    }
+                });
+                colorPicker.show(((EditLabelActivity) mActivityContext).getFragmentManager(), "col");
+            }
+        });
+
 
         ((GradientDrawable) holder.mImageView.getBackground())
                 .setColor(Color.parseColor(colorCode.getArgb()));
         holder.mEditText.setText(colorCode.getTask());
+        holder.mEditText.setHorizontallyScrolling(true);
+        holder.mEditText.setFocusable(false);
+        holder.mEditText.setClickable(true);
+        holder.mEditText.setFocusableInTouchMode(false);
+//            holder.mEditText.setEnabled(true);
+        holder.mEditText.setCursorVisible(false);
+//            holder.mEditText.setKeyListener(null);
+        holder.mEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("viewholder", "clicked on text");
+                v.setFocusable(true);
+                v.setFocusableInTouchMode(true);
+                ((EditText) v).setCursorVisible(true);
+//                    v.setEnabled(true);
+            }
+        });
     }
 
     // Invoked by the layout manager
@@ -57,33 +116,19 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
         public ViewHolder(View v) {
             super(v);
-            mFrameLayout = (FrameLayout) v.findViewById(R.id.list_item_color_frame_layout);
-            mFrameLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("viewholder", "clicked on frame");
-                }
-            });
-
             mImageView = (ImageView) v.findViewById(R.id.list_item_color_image_ivew);
 
+            mFrameLayout = (FrameLayout) v.findViewById(R.id.list_item_color_frame_layout);
+//            mFrameLayout.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Log.d("viewholder", "clicked on frame");
+//
+//                }
+//            });
+
             mEditText = (EditText) v.findViewById(R.id.list_item_description);
-            mEditText.setFocusable(false);
-            mEditText.setClickable(true);
-            mEditText.setFocusableInTouchMode(false);
-//            mEditText.setEnabled(true);
-            mEditText.setCursorVisible(false);
-//            mEditText.setKeyListener(null);
-            mEditText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("viewholder", "clicked on text");
-                    v.setFocusable(true);
-                    v.setFocusableInTouchMode(true);
-                    ((EditText) v).setCursorVisible(true);
-//                    v.setEnabled(true);
-                }
-            });
+
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.msadraii.multidex.data;
 
 import android.app.Application;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.msadraii.multidex.DaoMaster;
@@ -13,10 +14,12 @@ import com.msadraii.multidex.DaoSession;
 public class GreenDaoApplication extends Application {
 
     public DaoSession mDaoSession;
+    private static Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        context = getApplicationContext();
         setupDatabase();
     }
 
@@ -29,6 +32,10 @@ public class GreenDaoApplication extends Application {
 
     public DaoSession getDaoSession() {
         return mDaoSession;
+    }
+
+    public static Context getAppContext() {
+        return context;
     }
 
 }

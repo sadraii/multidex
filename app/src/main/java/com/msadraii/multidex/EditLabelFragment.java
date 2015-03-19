@@ -33,7 +33,7 @@ public class EditLabelFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-        mAdapter = new ColorCodeAdapter(getActivity().getApplicationContext());
+        mAdapter = new ColorCodeAdapter(getActivity().getApplicationContext(), getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
