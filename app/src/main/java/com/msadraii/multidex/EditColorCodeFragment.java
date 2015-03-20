@@ -58,18 +58,49 @@ public class EditColorCodeFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ColorCodeAdapter(appContext, getActivity());
 
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (mRecyclerView.getChildAt(0) != null && mRecyclerView.getChildAt(0).getTop() == 0) {
-//                    Log.d(LOG_TAG, "at item 0");
-                    EditColorCodeActivity.setActionBarShadow(false);
-                } else {
-                    EditColorCodeActivity.setActionBarShadow(true);
-                }
-            }
-        });
+//        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                if (mRecyclerView.getChildAt(0) != null && mRecyclerView.getChildAt(0).getTop() == 0) {
+////                    Log.d(LOG_TAG, "at item 0");
+//                    EditColorCodeActivity.setActionBarShadow(false);
+//                } else {
+//                    EditColorCodeActivity.setActionBarShadow(true);
+//                }
+//            }
+//        });
+
+        SwipeDismissRecyclerViewTouchListener touchListener =
+                new SwipeDismissRecyclerViewTouchListener(
+                        mRecyclerView,
+                        new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onDismiss(RecyclerView recyclerView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    Log.d("remove", "position="+position);
+
+                                    // GreenDAO addIdProperty() starts at 1 instead of 0,
+                                    // so we need to add 1 to position
+                                    ColorCodeRepository.deleteColorCodeWithIdAndSort(
+                                            appContext,
+                                            position + 1);
+                                    // TODO change this back
+                                    mAdapter.notifyItemRemoved(position);
+                                }
+                                // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
+//                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+        mRecyclerView.setOnTouchListener(touchListener);
+        // Setting this scroll listener is required to ensure that during ListView scrolling,
+        // we don't look for swipes.
+        mRecyclerView.setOnScrollListener(touchListener.makeScrollListener());
 
         ImageButton fabImageButton = (ImageButton) rootView.findViewById(R.id.fab_image_button);
         fabImageButton.setOnClickListener(new View.OnClickListener() {
@@ -80,9 +111,9 @@ public class EditColorCodeFragment extends Fragment {
                 colorCode.setArgb(ColorPickerUtils.ColorUtils.randomColor(appContext));
                 colorCode.setTask("");
                 ColorCodeRepository.insertOrReplace(appContext, colorCode);
-                int position = Utils.safeLongToInt(colorCode.getId());
-                mAdapter.notifyItemInserted(position);
-                mRecyclerView.smoothScrollToPosition(position);
+//                int position = Utils.safeLongToInt(colorCode.getId());
+                mAdapter.notifyItemInserted(colorCode.getId().intValue());
+                mRecyclerView.smoothScrollToPosition(colorCode.getId().intValue());
             }
         });
 

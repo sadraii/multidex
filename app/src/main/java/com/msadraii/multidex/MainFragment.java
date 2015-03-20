@@ -66,9 +66,14 @@ public class MainFragment extends Fragment {
         recreateTables();
         addTestLabels();
 
-//        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 4);
+        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 4);
 //        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 10);
 //        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext,11);
+
+           ColorCode     label = new ColorCode();
+        label.setArgb("#ff0099cc");
+        label.setTask("6 Go hiking");
+        ColorCodeRepository.insertOrReplace(appContext, label);
 
 
 
@@ -172,15 +177,15 @@ public class MainFragment extends Fragment {
         label.setTask("3 Wash dishes");
         ColorCodeRepository.insertOrReplace(appContext, label);
 
-//        label = new ColorCode();
-//        label.setArgb("#ffffbb33");
-//        label.setTask("4 Complain");
-//        ColorCodeRepository.insertOrReplace(appContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ffff4444");
-//        label.setTask("5 Read a book");
-//        ColorCodeRepository.insertOrReplace(appContext, label);
+        label = new ColorCode();
+        label.setArgb("#ffffbb33");
+        label.setTask("4 Complain");
+        ColorCodeRepository.insertOrReplace(appContext, label);
+
+        label = new ColorCode();
+        label.setArgb("#ffff4444");
+        label.setTask("5 Read a book");
+        ColorCodeRepository.insertOrReplace(appContext, label);
 //
 //        label = new ColorCode();
 //        label.setArgb("#ff0099cc");
