@@ -65,8 +65,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        // GreenDAO addIdProperty() starts at 1 instead of 0, so we need to add 1 to position
-        final ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mAppContext, position + 1);
+        final ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mAppContext, position);
         if (colorCode == null) {
             return;
         }

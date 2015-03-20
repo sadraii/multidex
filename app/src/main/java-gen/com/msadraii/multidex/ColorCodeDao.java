@@ -41,7 +41,7 @@ public class ColorCodeDao extends AbstractDao<ColorCode, Long> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'COLOR_CODE' (" + //
-                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ," + // 0: id
+                "'_id' INTEGER PRIMARY KEY UNIQUE ," + // 0: id
                 "'ARGB' TEXT," + // 1: argb
                 "'TASK' TEXT);"); // 2: task
     }

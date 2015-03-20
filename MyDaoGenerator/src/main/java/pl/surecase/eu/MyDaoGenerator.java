@@ -11,12 +11,12 @@ public class MyDaoGenerator {
         Schema schema = new Schema(1, "com.msadraii.multidex");
 
         Entity colorCode = schema.addEntity("ColorCode");
-        colorCode.addIdProperty().autoincrement().unique();
+        colorCode.addIdProperty().unique();
         colorCode.addStringProperty("argb");
         colorCode.addStringProperty("task");
 
         Entity entry = schema.addEntity("Entry");
-        entry.addIdProperty().autoincrement().unique();
+        entry.addIdProperty().unique();
         entry.addDateProperty("date");
         entry.addStringProperty("segments");
         Property colorCodeIdProperty = entry.addLongProperty("colorCodeId").getProperty();

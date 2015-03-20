@@ -32,6 +32,15 @@ public class ColorCodeRepository {
 
     private static final String LOG_TAG = ColorCodeRepository.class.getSimpleName();
 
+    public static ColorCode createColorCode(Context context, String argb, String task) {
+        return new ColorCode(getNextId(context), argb, task);
+    }
+
+    public static long getNextId(Context context) {
+        ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
+        return (colorCodes == null) ? 0 : colorCodes.size();
+    }
+
     public static void insertOrReplace(Context context, ColorCode colorCode) {
         getColorCodeDao(context).insertOrReplace(colorCode);
     }
@@ -44,15 +53,14 @@ public class ColorCodeRepository {
      * Deletes the ColorCode and re-sorts the remaining IDs to keep a sequential order to IDs.
      */
     public static void deleteColorCodeWithIdAndSort(Context context, long id) {
-        ColorCode copyTo;
         int colorCount = getAllColorCodes(context).size();
         ColorCodeDao dao = getColorCodeDao(context);
         dao.delete(getColorCodeForId(context, id));
 
         if (colorCount > 1) {
-            for (int i = (int) id; i < colorCount; i++) {
+            for (int i = (int) id; i < colorCount - 1; i++) {
                 ColorCode copyFrom = getColorCodeForId(context, i + 1);
-                copyTo = new ColorCode(
+                ColorCode copyTo = new ColorCode(
                         copyFrom.getId() - 1,
                         copyFrom.getArgb(),
                         copyFrom.getTask()

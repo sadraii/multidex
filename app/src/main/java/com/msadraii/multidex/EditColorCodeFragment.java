@@ -89,12 +89,12 @@ public class EditColorCodeFragment extends Fragment {
                                     // so we need to add 1 to position
                                     ColorCodeRepository.deleteColorCodeWithIdAndSort(
                                             appContext,
-                                            position + 1);
+                                            position);
                                     // TODO change this back
-                                    mAdapter.notifyItemRemoved(position);
+//                                    mAdapter.notifyItemRemoved(position);
                                 }
                                 // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
-//                                mAdapter.notifyDataSetChanged();
+                                mAdapter.notifyDataSetChanged();
                             }
                         });
         mRecyclerView.setOnTouchListener(touchListener);
@@ -107,11 +107,12 @@ public class EditColorCodeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d("fab", "new button");
-                ColorCode colorCode = new ColorCode();
-                colorCode.setArgb(ColorPickerUtils.ColorUtils.randomColor(appContext));
-                colorCode.setTask("");
+                ColorCode colorCode = ColorCodeRepository.createColorCode(
+                        appContext,
+                        ColorPickerUtils.ColorUtils.randomColor(appContext),
+                        "New color code"
+                );
                 ColorCodeRepository.insertOrReplace(appContext, colorCode);
-//                int position = Utils.safeLongToInt(colorCode.getId());
                 mAdapter.notifyItemInserted(colorCode.getId().intValue());
                 mRecyclerView.smoothScrollToPosition(colorCode.getId().intValue());
             }

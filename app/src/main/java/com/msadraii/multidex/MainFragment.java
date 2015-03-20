@@ -66,14 +66,16 @@ public class MainFragment extends Fragment {
         recreateTables();
         addTestLabels();
 
-        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 4);
+//        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 4);
 //        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 10);
 //        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext,11);
 
-           ColorCode     label = new ColorCode();
-        label.setArgb("#ff0099cc");
-        label.setTask("6 Go hiking");
-        ColorCodeRepository.insertOrReplace(appContext, label);
+
+//        ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
+//                appContext,
+//                "#ff0099cc",
+//                "6 Go hiking"
+//        ));
 
 
 
@@ -162,30 +164,55 @@ public class MainFragment extends Fragment {
     }
 
     private void addTestLabels() {
-        ColorCode label = new ColorCode();
-        label.setArgb("#ff33b5e5");
-        label.setTask("1 Make breakfast");
-        ColorCodeRepository.insertOrReplace(appContext, label);
+//        ColorCode label = new ColorCode();
+//        label.setArgb("#ff33b5e5");
+//        label.setTask("1 Make breakfast");
+//        ColorCodeRepository.insertOrReplace(appContext, label);
+        ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
+                appContext,
+                "#ff33b5e5",
+                "0 Make breakfast"
+        ));
 
-        label = new ColorCode();
-        label.setArgb("#ffaa66cc");
-        label.setTask("2 Jump rope");
-        ColorCodeRepository.insertOrReplace(appContext, label);
+//        label = new ColorCode();
+//        label.setArgb("#ffaa66cc");
+//        label.setTask("2 Jump rope");
+//        ColorCodeRepository.insertOrReplace(appContext, label);
+        ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
+                appContext,
+                "#ffaa66cc",
+                "1 Jump rope"
+        ));
 
-        label = new ColorCode();
-        label.setArgb("#ff99cc00");
-        label.setTask("3 Wash dishes");
-        ColorCodeRepository.insertOrReplace(appContext, label);
+//        label = new ColorCode();
+//        label.setArgb("#ff99cc00");
+//        label.setTask("3 Wash dishes");
+//        ColorCodeRepository.insertOrReplace(appContext, label);
+        ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
+                appContext,
+                "#ff99cc00",
+                "2 Wash dishes"
+        ));
 
-        label = new ColorCode();
-        label.setArgb("#ffffbb33");
-        label.setTask("4 Complain");
-        ColorCodeRepository.insertOrReplace(appContext, label);
+//        label = new ColorCode();
+//        label.setArgb("#ffffbb33");
+//        label.setTask("4 Complain");
+//        ColorCodeRepository.insertOrReplace(appContext, label);
+        ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
+                appContext,
+                "#ffffbb33",
+                "3 Complain"
+        ));
 
-        label = new ColorCode();
-        label.setArgb("#ffff4444");
-        label.setTask("5 Read a book");
-        ColorCodeRepository.insertOrReplace(appContext, label);
+//        label = new ColorCode();
+//        label.setArgb("#ffff4444");
+//        label.setTask("5 Read a book");
+//        ColorCodeRepository.insertOrReplace(appContext, label);
+        ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
+                appContext,
+                "#ffff4444",
+                "4 Read a book"
+        ));
 //
 //        label = new ColorCode();
 //        label.setArgb("#ff0099cc");
