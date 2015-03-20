@@ -43,6 +43,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
     private Context mAppContext;
     private Context mActivityContext;
+    private boolean newlyAdded = false;
 
     private static final long COLOR_SPIN_DURATION = 100;
     private static final float COLOR_HALF_SPIN_DEGREE = -90;
@@ -66,6 +67,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mAppContext, position);
+        final int colorInt = Color.parseColor(colorCode.getArgb());
         if (colorCode == null) {
             return;
         }
@@ -80,16 +82,16 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                 ColorPickerDialog colorPicker = ColorPickerDialog.newInstance(
                         R.string.color_picker_default_title,
                         ColorPickerUtils.ColorUtils.colorChoices(mAppContext),
-                        Color.parseColor(colorCode.getArgb()),
+                        colorInt,
                         COLOR_DIALOGUE_COLUMNS,
                         ColorPickerDialog.SIZE_SMALL
                 );
                 colorPicker.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
                     @Override
                     public void onColorSelected(final int color) {
-                        String hexColor = Utils.toHexString(color);
-                        if (!colorCode.getArgb().equals(hexColor)) {
-                            colorCode.setArgb(hexColor);
+//                        String hexColor = Utils.toHexString(color);
+                        if (!(colorInt == color)) {
+                            colorCode.setArgb(Utils.toHexString(color));
                             ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
 
                             holder.mTextView.setText(
@@ -118,8 +120,35 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                         COLOR_DIALOGUE_FRAGMENT_TAG);
             }
         });
-        ((GradientDrawable) holder.mImageView.getBackground())
-                .setColor(Color.parseColor(colorCode.getArgb()));
+
+        if (newlyAdded) {
+            // TODO spin shape, can use View.post()
+            // TODO refactor spin into function
+
+            // Spins ImageView while assigning the new color halfway through the spin
+
+            ((GradientDrawable) holder.mImageView.getBackground())
+                    .setColor(Color.parseColor("#00000000"));
+            holder.mImageView.animate()
+                    .rotationYBy(COLOR_HALF_SPIN_DEGREE)
+                    .setDuration(COLOR_SPIN_DURATION)
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            // test color change
+                            ((GradientDrawable) holder.mImageView.getBackground())
+                                    .setColor(colorInt);
+                            holder.mImageView.animate()
+                                    .rotationYBy(COLOR_HALF_SPIN_DEGREE)
+                                    .setDuration(COLOR_SPIN_DURATION);
+                        }
+                    });
+
+            newlyAdded = false;
+        } else {
+            ((GradientDrawable) holder.mImageView.getBackground())
+                    .setColor(colorInt);
+        }
 
         holder.mEditText.setText(colorCode.getTask());
         holder.mEditText.setHorizontallyScrolling(true);
@@ -169,6 +198,16 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     @Override
     public int getItemCount() {
         return ColorCodeRepository.getAllColorCodes(mAppContext).size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return ColorCodeRepository.getColorCodeForId(mAppContext, position).getId();
+    }
+
+    public void setNewlyInserted(int position) {
+        newlyAdded = true;
+        notifyItemInserted(position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

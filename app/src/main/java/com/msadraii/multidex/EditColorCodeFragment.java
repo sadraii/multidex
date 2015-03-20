@@ -57,6 +57,7 @@ public class EditColorCodeFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ColorCodeAdapter(appContext, getActivity());
+        mAdapter.setHasStableIds(true);
 
 //        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
@@ -113,7 +114,8 @@ public class EditColorCodeFragment extends Fragment {
                         "New color code"
                 );
                 ColorCodeRepository.insertOrReplace(appContext, colorCode);
-                mAdapter.notifyItemInserted(colorCode.getId().intValue());
+                ((ColorCodeAdapter) mAdapter).setNewlyInserted(colorCode.getId().intValue());
+//                mAdapter.notifyItemInserted(colorCode.getId().intValue());
                 mRecyclerView.smoothScrollToPosition(colorCode.getId().intValue());
             }
         });
