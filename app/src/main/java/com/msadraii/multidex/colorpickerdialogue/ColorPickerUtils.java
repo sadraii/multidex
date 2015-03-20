@@ -36,6 +36,9 @@ import android.view.LayoutInflater;
 import android.widget.TextView;
 
 import com.msadraii.multidex.R;
+import com.msadraii.multidex.Utils;
+
+import java.util.Random;
 
 /**
  * 
@@ -62,16 +65,88 @@ public class ColorPickerUtils {
 		public static int[] colorChoices(Context context){
 		
 			int[] mColorChoices=null;	
-			String[] color_array = context.getResources().getStringArray(R.array.default_color_choice_values);
+			String[] colorValues = context.getResources().getStringArray(R.array.default_color_values);
 		
-		    if (color_array!=null && color_array.length>0) {
-		        mColorChoices = new int[color_array.length];
-		        for (int i = 0; i < color_array.length; i++) {
-		            mColorChoices[i] = Color.parseColor(color_array[i]);
+		    if (colorValues !=null && colorValues.length>0) {
+		        mColorChoices = new int[colorValues.length];
+		        for (int i = 0; i < colorValues.length; i++) {
+		            mColorChoices[i] = Color.parseColor(colorValues[i]);
 		        }
 		    }
 		    return mColorChoices;
 		}
+
+        public static String colorName(Context context, int color) {
+            String colorString = Utils.toHexString(color);
+            String[] colorValues = context.getResources().getStringArray(R.array.default_color_values);
+            String[] colorNames = context.getResources().getStringArray(R.array.default_color_names);
+            for (int i = 0; i < colorValues.length; i++) {
+                if (colorValues[i].equals(colorString)) {
+                    return colorNames[i];
+                }
+            }
+            return "";
+        }
+
+        public static String colorName(Context context, String color) {
+            String[] colorValues = context.getResources().getStringArray(R.array.default_color_values);
+            String[] colorNames = context.getResources().getStringArray(R.array.default_color_names);
+            for (int i = 0; i < colorValues.length; i++) {
+                if (colorValues[i].equals(color)) {
+                    return colorNames[i];
+                }
+            }
+            return "";
+        }
+
+        /**
+         * Returns a random color. If there are unused colors, it picks from that list first.
+         * @return
+         */
+        // TODO figure this out
+        public static String randomColor(Context context) {
+            final String[] defaultValues = context.getResources().getStringArray(R.array.default_color_values);
+//            boolean[] usedColorsBool = new boolean[defaultValues.length];
+//            final ArrayList<String> colorValues = ColorCodeRepository.getAllColorValues(context);
+////            ArrayList<String> usedColors = new ArrayList<String>();
+//            for (int i = 0; i < defaultValues.length; i++) {
+//                for (int j = 0; j < colorValues.size(); j++) {
+//                    if (defaultValues[i].equals(colorValues.get(j))) {
+////                        usedColors.add(defaultValues[i]);
+//                        usedColorsBool[i] = true;
+//                        break;
+//                    }
+//                }
+//            }
+
+
+
+            Random rand = new Random();
+            return defaultValues[rand.nextInt(defaultValues.length - 1)];
+
+
+
+//            return defaultValues[randomInt];
+//            ArrayList<String> unusedColors = new ArrayList<String>();
+//            for (int i = 0; i < defaultValues.length; i++) {
+//                for (int j = 0; j < usedColors.size(); j++) {
+//                    if (usedColors.)
+//                }
+//            }
+
+
+//            if (usedColors.size() == defaultValues.length) {
+//                int randomInt = rand.nextInt(defaultValues.length - 1);
+//                return defaultValues[randomInt];
+//            } else {
+//                ArrayList<String> unusedColors = new ArrayList<String>();
+//                for (int i = 0; i < defaultValues.length; i++) {
+//                    for (int j = 0; j < usedColors.size(); j++) {
+//                        if (usedColors.)
+//                    }
+//                }
+//            }
+        }
 		
 		/**
 		 * Parse whiteColor
@@ -100,7 +175,7 @@ public class ColorPickerUtils {
         }
         ft.addToBackStack(null);
 
-        new AboutDialog().show(ft,"dialog_about");
+        new AboutDialog().show(ft, "dialog_about");
     }
 
     /**

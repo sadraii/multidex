@@ -16,13 +16,19 @@
 
 package com.msadraii.multidex;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+
+import com.msadraii.multidex.colorpickerdialogue.ColorPickerUtils;
+import com.msadraii.multidex.data.ColorCodeRepository;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -32,6 +38,7 @@ public class EditColorCodeFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Context appContext;
 
     public EditColorCodeFragment() {
     }
@@ -41,12 +48,15 @@ public class EditColorCodeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_edit_color_codes, container, false);
 
+        appContext = getActivity().getApplicationContext();
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.labels_recycler_view);
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new ColorCodeAdapter(appContext, getActivity());
 
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -61,14 +71,27 @@ public class EditColorCodeFragment extends Fragment {
             }
         });
 
+        ImageButton fabImageButton = (ImageButton) rootView.findViewById(R.id.fab_image_button);
+        fabImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("fab", "new button");
+                ColorCode colorCode = new ColorCode();
+                colorCode.setArgb(ColorPickerUtils.ColorUtils.randomColor(appContext));
+                colorCode.setTask("");
+                ColorCodeRepository.insertOrReplace(appContext, colorCode);
+                int position = Utils.safeLongToInt(colorCode.getId());
+                mAdapter.notifyItemInserted(position);
+                mRecyclerView.smoothScrollToPosition(position);
+            }
+        });
 
-        mAdapter = new ColorCodeAdapter(getActivity().getApplicationContext(), getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
     }
 
-    public RecyclerView.LayoutManager getLayoutManager() {
-        return mLayoutManager;
-    }
+//    public RecyclerView.LayoutManager getLayoutManager() {
+//        return mLayoutManager;
+//    }
 }

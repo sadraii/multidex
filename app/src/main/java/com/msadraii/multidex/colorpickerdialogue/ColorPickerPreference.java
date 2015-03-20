@@ -69,7 +69,7 @@
 //            mItemLayoutId = a.getResourceId(R.styleable.ColorPickerPreference_cal_itemLayout, mItemLayoutId);
 //            mNumColumns = a.getInteger(R.styleable.ColorPickerPreference_cal_numColumns, mNumColumns);
 //            int choicesResId = a.getResourceId(R.styleable.ColorPickerPreference_cal_choices,
-//                    R.array.default_color_choice_values);
+//                    R.array.default_color_values);
 //            if (choicesResId > 0) {
 //                String[] choices = a.getResources().getStringArray(choicesResId);
 //                mColorChoices = new int[choices.length];

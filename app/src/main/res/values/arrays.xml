@@ -1,7 +1,6 @@
 <resources>
 
-
-    <string-array name="default_color_choice_values" translatable="false">
+    <string-array name="default_color_values" translatable="false">
         <item>#ff33b5e5</item>
         <item>#ffaa66cc</item>
         <item>#ff99cc00</item>
@@ -16,7 +15,25 @@
         <item>#ffdd3a94</item>
         <item>#ffcccccc</item>
         <item>#ff888888</item>
-        <item>#fff83139</item>
+        <item>#ff894367</item>
+    </string-array>
+
+    <string-array name="default_color_names" translatable="false">
+        <item>Picton Blue</item>
+        <item>Amethyst</item>
+        <item>Pistachio</item>
+        <item>Yellow</item>
+        <item>Coral Red</item>
+        <item>Pacific Blue</item>
+        <item>Purple</item>
+        <item>Limeade</item>
+        <item>Orange</item>
+        <item>Guardsman Red</item>
+        <item>Dark Blue</item>
+        <item>Cerise</item>
+        <item>Silver</item>
+        <item>Gray</item>
+        <item>Cannon Pink</item>
     </string-array>
 
     <string-array name="homescreen_color_choice_values" translatable="false">

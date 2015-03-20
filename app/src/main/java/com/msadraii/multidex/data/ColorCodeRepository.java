@@ -75,6 +75,15 @@ public class ColorCodeRepository {
         return (ArrayList) getColorCodeDao(context).loadAll();
     }
 
+    public static ArrayList<String> getAllColorValues(Context context) {
+        ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
+        ArrayList<String> colorValues = new ArrayList<String>();
+        for (ColorCode colorCode : colorCodes) {
+            colorValues.add(colorCode.getArgb());
+        }
+        return colorValues;
+    }
+
     public static ColorCode getColorCodeForId(Context context, long id) {
         return getColorCodeDao(context).load(id);
     }

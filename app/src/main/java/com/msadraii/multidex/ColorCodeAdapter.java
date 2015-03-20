@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.msadraii.multidex.colorpickerdialogue.ColorPickerDialog;
 import com.msadraii.multidex.colorpickerdialogue.ColorPickerSwatch;
@@ -70,6 +71,9 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
             return;
         }
 
+        holder.mTextView.setText(
+                ColorPickerUtils.ColorUtils.colorName(mAppContext, colorCode.getArgb()));
+
         // Creates a ColorPickerDialogue and assigns the selected color to the ColorCode
         holder.mFrameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +92,10 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                         if (!colorCode.getArgb().equals(hexColor)) {
                             colorCode.setArgb(hexColor);
                             ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
+
+                            holder.mTextView.setText(
+                                    ColorPickerUtils.ColorUtils.colorName(
+                                            mAppContext, colorCode.getArgb()));
 
                             // Spins ImageView while assigning the new color halfway through the spin
                             holder.mImageView.animate()
@@ -141,14 +149,18 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         holder.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                EditText editText = (EditText) v;
                 if (!hasFocus) {
-                    String text = ((EditText) v).getText().toString();
+                    editText.setCursorVisible(false);
+                    String text = editText.getText().toString();
                     // TODO check if this only happens when text != tag
-                    if (!text.equals(v.getTag())) {
+                    if (!text.equals(editText.getTag())) {
                         colorCode.setTask(text);
                         ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
                         Log.d(LOG_TAG, "inserted text= " + text);
                     }
+                } else {
+                    editText.setCursorVisible(true);
                 }
             }
         });
@@ -164,12 +176,14 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         public final FrameLayout mFrameLayout;
         public final ImageView mImageView;
         public final EditText mEditText;
+        public final TextView mTextView;
 
         public ViewHolder(View v) {
             super(v);
             mFrameLayout = (FrameLayout) v.findViewById(R.id.list_item_color_frame_layout);
             mImageView = (ImageView) v.findViewById(R.id.list_item_color_image_ivew);
             mEditText = (EditText) v.findViewById(R.id.list_item_description);
+            mTextView = (TextView) v.findViewById(R.id.list_item_color_name);
         }
     }
 }
