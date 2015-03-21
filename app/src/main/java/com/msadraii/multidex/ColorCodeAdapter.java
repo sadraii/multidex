@@ -124,6 +124,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         if (newlyAdded) {
             // TODO spin shape, can use View.post()
             // TODO refactor spin into function
+            Log.d(LOG_TAG, "newlyadded");
 
             // Spins ImageView while assigning the new color halfway through the spin
 

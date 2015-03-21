@@ -37,7 +37,9 @@ import android.widget.TextView;
 
 import com.msadraii.multidex.R;
 import com.msadraii.multidex.Utils;
+import com.msadraii.multidex.data.ColorCodeRepository;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -47,7 +49,6 @@ import java.util.Random;
  */
 public class ColorPickerUtils {
 
-	
 	/**
 	 * Utility class for colors
 	 * 
@@ -103,52 +104,40 @@ public class ColorPickerUtils {
          * Returns a random color. If there are unused colors, it picks from that list first.
          * @return
          */
-        // TODO figure this out
         public static String randomColor(Context context) {
             final String[] defaultValues = context.getResources().getStringArray(R.array.default_color_values);
-//            boolean[] usedColorsBool = new boolean[defaultValues.length];
-//            final ArrayList<String> colorValues = ColorCodeRepository.getAllColorValues(context);
-////            ArrayList<String> usedColors = new ArrayList<String>();
-//            for (int i = 0; i < defaultValues.length; i++) {
-//                for (int j = 0; j < colorValues.size(); j++) {
-//                    if (defaultValues[i].equals(colorValues.get(j))) {
-////                        usedColors.add(defaultValues[i]);
-//                        usedColorsBool[i] = true;
-//                        break;
-//                    }
-//                }
-//            }
+            final ArrayList<String> usedColorValues = ColorCodeRepository.getAllColorValues(context);
+            ArrayList<String> unusedColorValues = new ArrayList<>();
+            boolean unused;
 
-
+            for (int i = 0; i < defaultValues.length; i++) {
+                unused = true;
+                for (int j = 0; j < usedColorValues.size(); j++) {
+                    if (defaultValues[i].equals(usedColorValues.get(j))) {
+                        unused = false;
+                        break;
+                    }
+                }
+                if (unused) {
+                    unusedColorValues.add(defaultValues[i]);
+                }
+            }
 
             Random rand = new Random();
-            return defaultValues[rand.nextInt(defaultValues.length - 1)];
-
-
-
-//            return defaultValues[randomInt];
-//            ArrayList<String> unusedColors = new ArrayList<String>();
-//            for (int i = 0; i < defaultValues.length; i++) {
-//                for (int j = 0; j < usedColors.size(); j++) {
-//                    if (usedColors.)
-//                }
-//            }
-
-
-//            if (usedColors.size() == defaultValues.length) {
-//                int randomInt = rand.nextInt(defaultValues.length - 1);
-//                return defaultValues[randomInt];
-//            } else {
-//                ArrayList<String> unusedColors = new ArrayList<String>();
-//                for (int i = 0; i < defaultValues.length; i++) {
-//                    for (int j = 0; j < usedColors.size(); j++) {
-//                        if (usedColors.)
-//                    }
-//                }
-//            }
+            switch (unusedColorValues.size()) {
+                case 0: {
+                    return defaultValues[rand.nextInt(defaultValues.length - 1)];
+                }
+                case 1: {
+                    return unusedColorValues.get(0);
+                }
+                default: {
+                    return unusedColorValues.get(rand.nextInt(unusedColorValues.size() - 1));
+                }
+            }
         }
-		
-		/**
+
+        /**
 		 * Parse whiteColor
 		 * 
 		 * @return
