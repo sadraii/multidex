@@ -57,7 +57,7 @@ public class EditColorCodeFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ColorCodeAdapter(appContext, getActivity());
-        mAdapter.setHasStableIds(true);
+//        mAdapter.setHasStableIds(true);
 
 //        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
@@ -85,14 +85,9 @@ public class EditColorCodeFragment extends Fragment {
                             public void onDismiss(RecyclerView recyclerView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
                                     Log.d("remove", "position="+position);
-
-                                    // GreenDAO addIdProperty() starts at 1 instead of 0,
-                                    // so we need to add 1 to position
                                     ColorCodeRepository.deleteColorCodeWithIdAndSort(
                                             appContext,
                                             position);
-                                    // TODO change this back
-//                                    mAdapter.notifyItemRemoved(position);
                                 }
                                 // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
                                 mAdapter.notifyDataSetChanged();
@@ -107,7 +102,6 @@ public class EditColorCodeFragment extends Fragment {
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("fab", "new button");
                 ColorCode colorCode = ColorCodeRepository.createColorCode(
                         appContext,
                         ColorPickerUtils.ColorUtils.randomColor(appContext),
@@ -115,7 +109,6 @@ public class EditColorCodeFragment extends Fragment {
                 );
                 ColorCodeRepository.insertOrReplace(appContext, colorCode);
                 ((ColorCodeAdapter) mAdapter).setNewlyInserted(colorCode.getId().intValue());
-//                mAdapter.notifyItemInserted(colorCode.getId().intValue());
                 mRecyclerView.smoothScrollToPosition(colorCode.getId().intValue());
             }
         });

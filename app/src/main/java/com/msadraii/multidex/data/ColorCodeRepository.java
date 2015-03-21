@@ -60,12 +60,16 @@ public class ColorCodeRepository {
         if (colorCount > 1) {
             for (int i = (int) id; i < colorCount - 1; i++) {
                 ColorCode copyFrom = getColorCodeForId(context, i + 1);
-                ColorCode copyTo = new ColorCode(
+//                ColorCode copyTo = new ColorCode(
+//                        copyFrom.getId() - 1,
+//                        copyFrom.getArgb(),
+//                        copyFrom.getTask()
+//                );
+                insertOrReplace(context, new ColorCode(
                         copyFrom.getId() - 1,
                         copyFrom.getArgb(),
                         copyFrom.getTask()
-                );
-                insertOrReplace(context, copyTo);
+                ));
                 dao.delete(copyFrom);
             }
         }

@@ -67,7 +67,6 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mAppContext, position);
-        final int colorInt = Color.parseColor(colorCode.getArgb());
         if (colorCode == null) {
             return;
         }
@@ -79,6 +78,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         holder.mFrameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final int colorInt = Color.parseColor(colorCode.getArgb());
                 ColorPickerDialog colorPicker = ColorPickerDialog.newInstance(
                         R.string.color_picker_default_title,
                         ColorPickerUtils.ColorUtils.colorChoices(mAppContext),
@@ -121,6 +121,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
             }
         });
 
+        final int colorInt = Color.parseColor(colorCode.getArgb());
         if (newlyAdded) {
             // TODO spin shape, can use View.post()
             // TODO refactor spin into function
@@ -201,10 +202,10 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         return ColorCodeRepository.getAllColorCodes(mAppContext).size();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return ColorCodeRepository.getColorCodeForId(mAppContext, position).getId();
-    }
+//    @Override
+//    public long getItemId(int position) {
+//        return ColorCodeRepository.getColorCodeForId(mAppContext, position).getId();
+//    }
 
     public void setNewlyInserted(int position) {
         newlyAdded = true;
