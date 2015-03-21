@@ -18,25 +18,18 @@ package com.msadraii.multidex;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
-
-import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -66,71 +59,9 @@ public class MainFragment extends Fragment {
         recreateTables();
         addTestLabels();
 
-//        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 4);
-//        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext, 10);
-//        ColorCodeRepository.deleteColorCodeWithIdAndSort(appContext,11);
-
-
-//        ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
-//                appContext,
-//                "#ff0099cc",
-//                "6 Go hiking"
-//        ));
 
 
 
-        ArrayList<ColorCode> arrayList;
-        arrayList = (ArrayList) ColorCodeRepository.getAllColorCodes(appContext);
-        for (ColorCode l : arrayList) {
-            textView.append("\n" + l.getId() + l.getTask());
-            Button b = new Button(getActivity());
-            b.setText(l.getTask());
-            b.setLayoutParams(new ActionBar.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            ));
-            b.setBackgroundColor(Color.parseColor(l.getArgb()));
-            LinearLayout ll = (LinearLayout)rootView.findViewById(R.id.fragment_layout);
-            ColorDrawable c = (ColorDrawable) b.getBackground();
-            textView.append(" " + Utils.toHexString(c.getColor()));
-            ll.addView(b);
-        }
-
-
-
-
-
-//        arrayList = (ArrayList)ColorCodeRepository.getAllColorCodes(getActivity());
-//        for (Label l : arrayList) {
-//            textView.append("\nadded 1\n" + Long.toString(l.getId()));
-//        }
-//
-//        label = new Label();
-//        ColorCodeRepository.insertOrReplace(getActivity(), label);
-//        label = new Label();
-//        ColorCodeRepository.insertOrReplace(getActivity(), label);
-//
-//        arrayList = (ArrayList)ColorCodeRepository.getAllColorCodes(getActivity());
-//        for (Label l : arrayList) {
-//            textView.append("\nadded 2\n" + Long.toString(l.getId()));
-//        }
-//
-//        ColorCodeRepository.deleteColorCodeWithIdAndSort(getActivity(), 1);
-//
-//        arrayList = (ArrayList)ColorCodeRepository.getAllColorCodes(getActivity());
-//        for (Label l : arrayList) {
-//            textView.append("\ndeleted 1\n" + Long.toString(l.getId()));
-//        }
-//
-//        label = new Label();
-//        ColorCodeRepository.insertOrReplace(getActivity(), label);
-//        label = new Label();
-//        ColorCodeRepository.insertOrReplace(getActivity(), label);
-//
-//        arrayList = (ArrayList)ColorCodeRepository.getAllColorCodes(getActivity());
-//        for (Label l : arrayList) {
-//            textView.append("\nadded 2\n" + Long.toString(l.getId()));
-//        }
 
         return rootView;
     }
@@ -164,54 +95,36 @@ public class MainFragment extends Fragment {
     }
 
     private void addTestLabels() {
-//        ColorCode label = new ColorCode();
-//        label.setArgb("#ff33b5e5");
-//        label.setTask("1 Make breakfast");
-//        ColorCodeRepository.insertOrReplace(appContext, label);
         ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
                 appContext,
                 "#ff33b5e5",
                 "0 Make breakfast"
         ));
 
-//        label = new ColorCode();
-//        label.setArgb("#ffaa66cc");
-//        label.setTask("2 Jump rope");
-//        ColorCodeRepository.insertOrReplace(appContext, label);
         ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
                 appContext,
                 "#ffaa66cc",
                 "1 Jump rope"
         ));
 
-//        label = new ColorCode();
-//        label.setArgb("#ff99cc00");
-//        label.setTask("3 Wash dishes");
-//        ColorCodeRepository.insertOrReplace(appContext, label);
         ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
                 appContext,
                 "#ff99cc00",
                 "2 Wash dishes"
         ));
 
-//        label = new ColorCode();
-//        label.setArgb("#ffffbb33");
-//        label.setTask("4 Complain");
-//        ColorCodeRepository.insertOrReplace(appContext, label);
+
         ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
                 appContext,
                 "#ffffbb33",
                 "3 Complain"
         ));
 
-//        label = new ColorCode();
-//        label.setArgb("#ffff4444");
-//        label.setTask("5 Read a book");
-//        ColorCodeRepository.insertOrReplace(appContext, label);
+
         ColorCodeRepository.insertOrReplace(appContext, ColorCodeRepository.createColorCode(
                 appContext,
                 "#ffff4444",
-                "4 Read a book"
+                "4 How long is this text box and does it really wrap around or not?"
         ));
 //
 //        label = new ColorCode();

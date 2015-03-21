@@ -16,19 +16,38 @@
 
 package com.msadraii.multidex;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 
 public class MainActivity extends ActionBarActivity {
+    HyperdexAdapter mAdapter;
+    ViewPager mPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
+        setContentView(R.layout.fragment_pager);
+        mAdapter = new HyperdexAdapter(getSupportFragmentManager());
+        mPager = (ViewPager) findViewById(R.id.hyperdex_pager);
+        mPager.setAdapter(mAdapter);
 
+        Spinner spinner = (Spinner) findViewById(R.id.color_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.test_spinner, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        // TODO eraser imagebutton
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -46,5 +65,21 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static class HyperdexAdapter extends FragmentPagerAdapter {
+        public HyperdexAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return EntryFragment.init(position);
+        }
     }
 }
