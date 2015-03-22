@@ -2,14 +2,15 @@ package com.msadraii.multidex;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 /**
  * Created by Mostafa on 3/21/2015.
  */
-public class EntryViewLayout extends FrameLayout implements View.OnClickListener {
+public class EntryViewLayout extends FrameLayout implements View.OnTouchListener {
     EntryView mEntryView;
 
     public EntryViewLayout(Context context) {
@@ -24,7 +25,7 @@ public class EntryViewLayout extends FrameLayout implements View.OnClickListener
         super(context, attrs, defStyle);
         mEntryView = new EntryView(context);
         addView(mEntryView);
-        mEntryView.setOnClickListener(this);
+        mEntryView.setOnTouchListener(this);
     }
 
     public void setColor(int color) {
@@ -32,7 +33,9 @@ public class EntryViewLayout extends FrameLayout implements View.OnClickListener
     }
 
     @Override
-    public void onClick(View v) {
-        Toast.makeText(getContext(), "Mock", Toast.LENGTH_SHORT).show();
+    public boolean onTouch(View view, MotionEvent e) {
+        Log.d("touched", e.getX() + " " + e.getY());
+//        Toast.makeText(getContext(), "Mock", Toast.LENGTH_SHORT).show();
+        return false;
     }
 }

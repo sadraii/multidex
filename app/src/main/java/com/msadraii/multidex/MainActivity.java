@@ -24,49 +24,44 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
 
+import java.util.Calendar;
+
 public class MainActivity extends ActionBarActivity {
     private Context mAppContext;
     HyperdexAdapter mAdapter;
     ViewPager mPager;
+    private Spinner mSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_pager);
-
+        mAppContext = this.getApplicationContext();
         mAdapter = new HyperdexAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.hyperdex_pager);
         mPager.setAdapter(mAdapter);
 
-        Spinner spinner = (Spinner) findViewById(R.id.color_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.test_spinner, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        // TODO eraser imagebutton
-    }
-
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
-        View rootView = super.onCreateView(name, context, attrs);
-        mAppContext = this.getApplicationContext();
-
 //        clearTables();
         recreateTables();
-        addTestLabels();
+        addTestColors();
+        addTestEntries();
 
-        return rootView;
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,
+                ColorCodeRepository.getAllTasks(mAppContext));
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner = (Spinner) findViewById(R.id.color_spinner);
+        mSpinner.setAdapter(adapter);
+
+        // TODO eraser imagebutton
     }
 
     @Override
@@ -120,7 +115,35 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.clearEntries(mAppContext);
     }
 
-    private void addTestLabels() {
+
+    private void addTestEntries() {
+        Calendar cal = Calendar.getInstance();
+
+        EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
+                mAppContext,
+                cal.getTime(),
+                "4, 6, 26",
+                0
+        ));
+
+        cal.add(Calendar.DATE, 1);
+        EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
+                mAppContext,
+                cal.getTime(),
+                "2, 3, 30",
+                1
+        ));
+
+        cal.add(Calendar.DATE, 1);
+        EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
+                mAppContext,
+                cal.getTime(),
+                "27, 28, 29",
+                2
+        ));
+    }
+
+    private void addTestColors() {
         ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.createColorCode(
                 mAppContext,
                 "#ff33b5e5",

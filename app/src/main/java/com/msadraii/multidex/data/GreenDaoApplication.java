@@ -23,6 +23,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.msadraii.multidex.DaoMaster;
 import com.msadraii.multidex.DaoSession;
 
+import java.util.Date;
+
 /**
  * Initializes and provides a global context for GreenDao.
  * Created by Mostafa on 3/15/2015.

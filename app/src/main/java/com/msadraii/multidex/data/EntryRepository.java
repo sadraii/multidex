@@ -31,8 +31,30 @@ import java.util.Date;
  */
 public class EntryRepository {
 
-    public static void insertOrReplace(Context context, Entry Entry) {
-        getEntryDao(context).insertOrReplace(Entry);
+    private static final String LOG_TAG = EntryRepository.class.getSimpleName();
+
+    public static final Entry createEntry(Context context, Date date, String segments, long colorCodeId) {
+        return new Entry(getNextId(context), date, segments, colorCodeId);
+    }
+
+    public static long getNextId(Context context) {
+        ArrayList<Entry> entries = getAllEntries(context);
+        return (entries == null) ? 0 : entries.size();
+    }
+
+    // returns the date entry of first application run.
+    public static Date firstEntry(Context context) {
+        if (getAllEntries(context).size() == 0) {
+            Date date = new Date();
+            createEntry(context, date, "", 0);
+            return date;
+        } else {
+            return getEntryForId(context, 0).getDate();
+        }
+    }
+
+    public static void insertOrReplace(Context context, Entry entry) {
+        getEntryDao(context).insertOrReplace(entry);
     }
 
     public static void clearEntries(Context context) {
@@ -47,8 +69,8 @@ public class EntryRepository {
         return (ArrayList) getEntryDao(context).loadAll();
     }
     
-    public static ArrayList<Entry> getAllEntriesForDate(Context context, Date date, boolean isAM) {
-        // TODO fill out getAllEntriesForDate()
+    public static ArrayList<Entry> getEntryForDate(Context context, Date date) {
+        // TODO fill out getEntryForDate()
         return null;
     }
 

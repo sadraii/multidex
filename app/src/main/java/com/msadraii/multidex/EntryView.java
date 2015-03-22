@@ -15,7 +15,7 @@ import android.view.View;
 public class EntryView extends View {
     // TODO fill these out
     private static final float RADIUS_MULTIPLIER = 0.4f;
-    private static final float MAIN_GUIDE_LINE_STROKE_WIDTH = 6f;
+    private static final float STROKE_WIDTH = 6f;
     private static final float SUB_GUIDE_LINE_STROKE_WIDTH = 4f;
 
     private int mColor = 9999999;
@@ -68,7 +68,7 @@ public class EntryView extends View {
         mMainStrokePaint.setAntiAlias(true);
         mMainStrokePaint.setStyle(Paint.Style.STROKE);
         mMainStrokePaint.setColor(Color.BLACK);
-        mMainStrokePaint.setStrokeWidth(MAIN_GUIDE_LINE_STROKE_WIDTH);
+        mMainStrokePaint.setStrokeWidth(STROKE_WIDTH);
 
         mSubStrokePaint = new Paint();
         mSubStrokePaint.setAntiAlias(true);
@@ -96,10 +96,44 @@ public class EntryView extends View {
             mRadius = mWidth * RADIUS_MULTIPLIER;
         }
 
-        mPaint.setStrokeWidth(150f);
-        mPaint.setColor(Color.BLUE);
+        mPaint.setStrokeWidth(2f);
 
+        // 4 circles
+        mPaint.setColor(Color.BLACK);
         final RectF oval = new RectF();
+        oval.set(mCenterX - mRadius - 75f,
+                mCenterY - mRadius - 75f,
+                mCenterX + mRadius + 75f,
+                mCenterY + mRadius + 75f);
+        canvas.drawArc(oval, 0f, 360f, false, mPaint);
+
+        mPaint.setColor(Color.BLACK);
+        oval.set(mCenterX - mRadius + 75f,
+                mCenterY - mRadius + 75f,
+                mCenterX + mRadius - 75f,
+                mCenterY + mRadius - 75f);
+        canvas.drawArc(oval, 0f, 360f, false, mPaint);
+
+        mPaint.setColor(Color.BLACK);
+        oval.set(mCenterX - mRadius + 150f + 75f,
+                mCenterY - mRadius + 150f + 75f,
+                mCenterX + mRadius - 150f - 75f,
+                mCenterY + mRadius - 150f - 75f);
+        canvas.drawArc(oval, 0f, 360f, false, mPaint);
+
+        mPaint.setColor(Color.BLACK);
+        oval.set(mCenterX - mRadius + 300f + 75f,
+                mCenterY - mRadius + 300f + 75f,
+                mCenterX + mRadius - 300f - 75f,
+                mCenterY + mRadius - 300f - 75f);
+        canvas.drawArc(oval, 0f, 360f, false, mPaint);
+
+
+
+        // shapes
+        mPaint.setStrokeWidth(150f);
+
+        mPaint.setColor(Color.BLUE);
         oval.set(mCenterX - mRadius,
                 mCenterY - mRadius,
                 mCenterX + mRadius,
@@ -119,11 +153,18 @@ public class EntryView extends View {
 //        mMainPath.lineTo(endX, endY);
 //        canvas.drawPath(mMainPath, mMainStrokePaint);
 
-        mPaint.setColor(Color.CYAN);
+        mPaint.setColor(Color.LTGRAY);
         oval.set(mCenterX - mRadius + 150f,
                 mCenterY - mRadius + 150f,
                 mCenterX + mRadius - 150f,
                 mCenterY + mRadius - 150f);
+        canvas.drawArc(oval, 0f, 90f, false, mPaint);
+
+        mPaint.setColor(Color.GREEN);
+        oval.set(mCenterX - mRadius + 300f,
+                mCenterY - mRadius + 300f,
+                mCenterX + mRadius - 300f,
+                mCenterY + mRadius - 300f);
         canvas.drawArc(oval, 0f, 90f, false, mPaint);
 
         if (mColor != 9999999) {
@@ -138,91 +179,6 @@ public class EntryView extends View {
         canvas.drawArc(oval, 90f, 120f, false, mPaint);
 
 
-
-//        mPaint.setColor(Color.BLACK);
-//        mPaint.setStrokeWidth(6f);
-
-
-
-//         angle = 180f;
-//         degrees = new Float(angle).doubleValue();
-//        degrees = Math.toRadians(degrees);
-//
-//         startX = mCenterX;
-//         startY = mCenterY;
-//         endX = startX + mRadius * (float)Math.cos(degrees);
-//         endY = startY + mRadius * (float)Math.sin(degrees);
-//        mMainPath.moveTo(startX, startY);
-//        mMainPath.lineTo(endX, endY);
-//        canvas.drawPath(mMainPath, mPaint);
-
-//        mPaint.setColor(Color.LTGRAY);
-//        mPaint.setStrokeWidth(2f);
-//
-//        angle = 30f;
-//        degrees = new Float(angle).doubleValue();
-//        degrees = Math.toRadians(degrees);
-//
-//        startX = mCenterX;
-//        startY = mCenterY;
-//        endX = startX + mRadius * (float)Math.cos(degrees);
-//        endY = startY + mRadius * (float)Math.sin(degrees);
-//        mSubPath.moveTo(startX, startY);
-//        mSubPath.lineTo(endX, endY);
-//        canvas.drawPath(mSubPath, mSubStrokePaint);
-
-//        angle = 210f;
-//        degrees = new Float(angle).doubleValue();
-//        degrees = Math.toRadians(degrees);
-//
-//        startX = mCenterX;
-//        startY = mCenterY;
-//        endX = startX + mRadius * (float)Math.cos(degrees);
-//        endY = startY + mRadius * (float)Math.sin(degrees);
-//        mMainPath.moveTo(startX, startY);
-//        mMainPath.lineTo(endX, endY);
-//        canvas.drawPath(mMainPath, mPaint);
-
-
-
-
-//        drawPathDiameterLine(0f, mMainPath, mMainStrokePaint);
-//        drawPathDiameterLine(90f, mMainPath, mMainStrokePaint);
-//        drawPathDiameterLine(30f, mSubPath, mSubStrokePaint);
-//        drawPathDiameterLine(60f, mSubPath, mSubStrokePaint);
-//        drawPathDiameterLine(120f, mSubPath, mSubStrokePaint);
-//        drawPathDiameterLine(150f, mSubPath, mSubStrokePaint);
-//        invalidate();
-
-//        int debug;
-//        debug = 5;
-    }
-
-    private void drawMainGuideLines(Canvas canvas) {
-
-    }
-
-    private void drawPathDiameterLine(float angle, Path path, Paint paint) {
-        drawPathRadiusLine(angle, path, paint);
-        drawPathRadiusLine(angle + 180f, path, paint);
-    }
-
-    /**
-     * Draws a path line at angle (in degrees).
-     * @param angle
-     */
-    private void drawPathRadiusLine(float angle, Path path, Paint paint) {
-//        mGuideLineAngle = new Float(angle).doubleValue();
-        mGuideLineAngle = (double) angle;
-        mGuideLineAngle = Math.toRadians(mGuideLineAngle);
-
-//        startX = mCenterX;
-//        startY = mCenterY;
-        endX = mCenterX + mRadius * (float)Math.cos(mGuideLineAngle);
-        endY = mCenterY + mRadius * (float)Math.sin(mGuideLineAngle);
-        path.moveTo(mCenterX, mCenterY);
-        path.lineTo(endX, endY);
-        mCanvas.drawPath(path, paint);
 
     }
 }

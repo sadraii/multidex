@@ -60,11 +60,6 @@ public class ColorCodeRepository {
         if (colorCount > 1) {
             for (int i = (int) id; i < colorCount - 1; i++) {
                 ColorCode copyFrom = getColorCodeForId(context, i + 1);
-//                ColorCode copyTo = new ColorCode(
-//                        copyFrom.getId() - 1,
-//                        copyFrom.getArgb(),
-//                        copyFrom.getTask()
-//                );
                 insertOrReplace(context, new ColorCode(
                         copyFrom.getId() - 1,
                         copyFrom.getArgb(),
@@ -74,14 +69,6 @@ public class ColorCodeRepository {
             }
         }
     }
-
-//    /**
-//     * Deletes the ColorCode without re-sorting. Used internally by deleteColorCodeWithIdAndSort.
-//     * Use deleteColorCodeWithIdAndSort to keep IDs sorted for list views.
-//     */
-//    public static void deleteColorCodeWithId(Context context, long id) {
-//        getColorCodeDao(context).delete(getColorCodeForId(context, id));
-//    }
 
     public static ArrayList<ColorCode> getAllColorCodes(Context context) {
         return (ArrayList) getColorCodeDao(context).loadAll();
@@ -94,6 +81,15 @@ public class ColorCodeRepository {
             colorValues.add(colorCode.getArgb());
         }
         return colorValues;
+    }
+
+    public static ArrayList<String> getAllTasks(Context context) {
+        ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
+        ArrayList<String> tasks = new ArrayList<String>();
+        for (ColorCode colorCode : colorCodes) {
+            tasks.add(colorCode.getTask());
+        }
+        return tasks;
     }
 
     public static ColorCode getColorCodeForId(Context context, long id) {
