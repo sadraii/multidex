@@ -16,6 +16,7 @@
 
 package com.msadraii.multidex;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -47,10 +48,18 @@ public class EntryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layoutView = inflater.inflate(R.layout.fragment_entry, container,
+        View rootView = inflater.inflate(R.layout.fragment_entry, container,
                 false);
-        View tv = layoutView.findViewById(R.id.text);
-        ((TextView) tv).setText("Truiton Fragment #" + fragVal);
-        return layoutView;
+        TextView textView = (TextView) rootView.findViewById(R.id.entry_view_date);
+        textView.setText("Frag " + fragVal);
+        EntryViewLayout entryViewLayout = (EntryViewLayout)rootView.findViewById(R.id.entry_view_layout);
+        if (fragVal == 0) {
+            entryViewLayout.setColor(Color.RED);
+        } else {
+            entryViewLayout.setColor(Color.LTGRAY);
+        }
+
+
+        return rootView;
     }
 }
