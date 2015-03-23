@@ -26,8 +26,8 @@ public class EntryView extends View {
     private static final int DESIRED_WIDTH = 400;
     private static final int DESIRED_HEIGHT = 400;
     private static final int NUMBER_RINGS = 3;
-    private static final int NUMBER_SLICES = 12;
-    private static final float ARC_SLICE = 360 / NUMBER_RINGS * NUMBER_SLICES;
+    private static final int NUMBER_SLICES = 24;
+    private static final float ARC_SLICE = 360 / NUMBER_SLICES;
 
 
     private int mColor = 9999999;
@@ -39,6 +39,8 @@ public class EntryView extends View {
     private Path mMainPath;
     private Path mSubPath;
     private Paint mPaint;
+    private Paint mPaint2;
+    private Paint mPaint3;
     private Paint mMainStrokePaint;
     private Paint mSubStrokePaint;
     private double mGuideLineAngle;
@@ -86,17 +88,25 @@ public class EntryView extends View {
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
 
+//        mPaint2 = new Paint();
+//        mPaint2.setAntiAlias(true);
+//        mPaint2.setStyle(Paint.Style.STROKE);
+//
+//        mPaint3 = new Paint();
+//        mPaint3.setAntiAlias(true);
+//        mPaint3.setStyle(Paint.Style.STROKE);
+
         mMainStrokePaint = new Paint();
         mMainStrokePaint.setAntiAlias(true);
         mMainStrokePaint.setStyle(Paint.Style.STROKE);
         mMainStrokePaint.setColor(Color.BLACK);
         mMainStrokePaint.setStrokeWidth(STROKE_WIDTH);
 
-        mSubStrokePaint = new Paint();
-        mSubStrokePaint.setAntiAlias(true);
-        mSubStrokePaint.setStyle(Paint.Style.STROKE);
-        mSubStrokePaint.setColor(Color.LTGRAY);
-        mSubStrokePaint.setStrokeWidth(SUB_GUIDE_LINE_STROKE_WIDTH);
+//        mSubStrokePaint = new Paint();
+//        mSubStrokePaint.setAntiAlias(true);
+//        mSubStrokePaint.setStyle(Paint.Style.STROKE);
+//        mSubStrokePaint.setColor(Color.LTGRAY);
+//        mSubStrokePaint.setStrokeWidth(SUB_GUIDE_LINE_STROKE_WIDTH);
 
         // Parse the segments from the Entry
         mSegments = new ArrayList<>();
@@ -117,45 +127,52 @@ public class EntryView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(150f);
         final RectF oval = new RectF();
-        // TODO what is msegments value?
         for (int i = 0; i < mSegments.size(); i++) {
+            int segment = mSegments.get(i);
             for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES; j += NUMBER_RINGS) {
-                // 360 / rings * slices = degree of each slice
-                // arc from i-3 * 10     to i * 10    degrees
-                if (j % NUMBER_RINGS == 0) {
+                if (segment == j) {
                     // outer ring
                     mPaint.setColor(Color.BLUE);
                     oval.set(mCenterX - mRadius,
                             mCenterY - mRadius,
                             mCenterX + mRadius,
                             mCenterY + mRadius);
-                    canvas.drawArc(oval, j - 3 * 10, j * 10, false, mPaint);
-                }
-                else if (j % NUMBER_RINGS == NUMBER_RINGS - 1) {
+                    canvas.drawArc(oval, (j - 3) * 10, ARC_SLICE, false, mPaint);
+                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +0");
+                    break;
+                } else if (segment == j - 1) {
                     // middle ring
                     mPaint.setColor(Color.LTGRAY);
                     oval.set(mCenterX - mRadius + 150f,
                             mCenterY - mRadius + 150f,
                             mCenterX + mRadius - 150f,
                             mCenterY + mRadius - 150f);
-                    canvas.drawArc(oval, j - 3 * 10, j * 10, false, mPaint);
-                }
-                else if (j % NUMBER_RINGS == NUMBER_RINGS - 2) {
+                    canvas.drawArc(oval, (j - 3) * 10, ARC_SLICE, false, mPaint);
+                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +150");
+                    break;
+                } else if (segment == j - 2) {
                     // bottom ring
                     mPaint.setColor(Color.GREEN);
                     oval.set(mCenterX - mRadius + 300f,
                             mCenterY - mRadius + 300f,
                             mCenterX + mRadius - 300f,
                             mCenterY + mRadius - 300f);
-                    canvas.drawArc(oval, j - 3 * 10, j * 10, false, mPaint);
+                    canvas.drawArc(oval, (j - 3) * 10, ARC_SLICE, false, mPaint);
+                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +300");
+                    break;
                 }
             }
         }
 
         // shapes
 
-
-
+//
+//        mPaint.setColor(Color.BLUE);
+//                    oval.set(mCenterX - mRadius,
+//                            mCenterY - mRadius,
+//                            mCenterX + mRadius,
+//                            mCenterY + mRadius);
+//                    canvas.drawArc(oval, 0, 15, false, mPaint);
 
 
 
