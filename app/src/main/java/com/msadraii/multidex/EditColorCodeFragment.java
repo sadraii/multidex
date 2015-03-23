@@ -105,7 +105,7 @@ public class EditColorCodeFragment extends Fragment {
                 ColorCode colorCode = ColorCodeRepository.createColorCode(
                         appContext,
                         ColorPickerUtils.ColorUtils.randomColor(appContext),
-                        "New color code"
+                        ""
                 );
                 ColorCodeRepository.insertOrReplace(appContext, colorCode);
                 ((ColorCodeAdapter) mAdapter).setNewlyInserted(colorCode.getId().intValue());

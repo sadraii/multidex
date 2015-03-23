@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 /**
  * Created by Mostafa on 3/21/2015.
  */
-public class EntryViewLayout extends FrameLayout implements View.OnTouchListener {
+public class EntryViewLayout extends FrameLayout implements View.OnTouchListener { // TODO remove this class, test if EntryView onClick works
     EntryView mEntryView;
 
     public EntryViewLayout(Context context) {
@@ -28,9 +28,12 @@ public class EntryViewLayout extends FrameLayout implements View.OnTouchListener
         mEntryView.setOnTouchListener(this);
     }
 
-    public void setColor(int color) {
-        mEntryView.setColor(color);
+    public void setPosition(Context context, int id) {
+        mEntryView.setPosition(context, id);
     }
+//    public void setColor(int color) {
+//        mEntryView.setColor(color);
+//    }
 
     @Override
     public boolean onTouch(View view, MotionEvent e) {

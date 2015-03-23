@@ -17,21 +17,20 @@
 package com.msadraii.multidex;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class EditColorCodeActivity extends ActionBarActivity {
 
-    private static float elevation;
-    private static ActionBar actionBar;
+//    private static float elevation;
+//    private static ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_color_codes);
-
+        // TODO set fragment with code insteaad of XML using frag.init()
 //        if (savedInstanceState == null) {
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            FloatingActionButtonBasicFragment fragment = new FloatingActionButtonBasicFragment();
@@ -39,8 +38,8 @@ public class EditColorCodeActivity extends ActionBarActivity {
 //            transaction.commit();
 //        }
 
-        actionBar = getSupportActionBar();
-        elevation = actionBar.getElevation();
+//        actionBar = getSupportActionBar();
+//        elevation = actionBar.getElevation();
     }
 
 
@@ -66,13 +65,13 @@ public class EditColorCodeActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static void setActionBarShadow(boolean showShadow) {
-        if (actionBar != null) {
-            if (showShadow) {
-                actionBar.setElevation(elevation);
-            } else {
-                actionBar.setElevation(0f);
-            }
-        }
-    }
+//    public static void setActionBarShadow(boolean showShadow) {
+//        if (actionBar != null) {
+//            if (showShadow) {
+//                actionBar.setElevation(elevation);
+//            } else {
+//                actionBar.setElevation(0f);
+//            }
+//        }
+//    }
 }

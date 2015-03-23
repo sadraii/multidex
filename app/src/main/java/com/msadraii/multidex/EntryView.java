@@ -1,13 +1,18 @@
 package com.msadraii.multidex;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+
+import com.msadraii.multidex.data.EntryRepository;
+
+import java.util.ArrayList;
 
 /**
  * Created by Mostafa on 3/21/2015.
@@ -17,12 +22,20 @@ public class EntryView extends View {
     private static final float RADIUS_MULTIPLIER = 0.4f;
     private static final float STROKE_WIDTH = 6f;
     private static final float SUB_GUIDE_LINE_STROKE_WIDTH = 4f;
+    private static final char SEGMENT_DELIMITER = ',';
+    private static final int DESIRED_WIDTH = 400;
+    private static final int DESIRED_HEIGHT = 400;
+    private static final int NUMBER_RINGS = 3;
+    private static final int NUMBER_SLICES = 12;
+    private static final float ARC_SLICE = 360 / NUMBER_RINGS * NUMBER_SLICES;
+
 
     private int mColor = 9999999;
-    private Bitmap mBitmap;
+//    private Bitmap mBitmap;
 //    private Bitmap subBitmap;
-    private Canvas mCanvas;
+//    private Canvas mCanvas;
 //    private Canvas mTempCanvas;
+    private ColorCode mColorCode;
     private Path mMainPath;
     private Path mSubPath;
     private Paint mPaint;
@@ -36,8 +49,12 @@ public class EntryView extends View {
     private float mRadius;
 //    private float startX;
 //    private float startY;
-    private float endX;
-    private float endY;
+//    private float endX;
+//    private float endY;
+    private int mPosition;
+    private Entry mEntry;
+    private Context mAppContext;
+    private ArrayList<Integer> mSegments;
 
     public EntryView(Context context) {
         super(context);
@@ -49,8 +66,13 @@ public class EntryView extends View {
         mColor = color;
     }
 
-    public void setColor(int color) {
-        mColor = color;
+//    public void setColor(int color) {
+//        mColor = color;
+//    }
+
+    public void setPosition(Context context, int position) {
+        mAppContext = context;
+        mPosition = position;
     }
 
     @Override
@@ -75,32 +97,85 @@ public class EntryView extends View {
         mSubStrokePaint.setStyle(Paint.Style.STROKE);
         mSubStrokePaint.setColor(Color.LTGRAY);
         mSubStrokePaint.setStrokeWidth(SUB_GUIDE_LINE_STROKE_WIDTH);
+
+        // Parse the segments from the Entry
+        mSegments = new ArrayList<>();
+        mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
+        TextUtils.SimpleStringSplitter splitter = new TextUtils.SimpleStringSplitter(SEGMENT_DELIMITER);
+        splitter.setString(mEntry.getSegments());
+        for (String s : splitter) {
+            mSegments.add(Integer.valueOf(s));
+        }
+
+        int debug = 5;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        // TODO move width stuff to constructor
-        mWidth = (float) getWidth();
-        mHeight = (float) getHeight();
-        if (mBitmap == null) {
-            mBitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        Log.d("draw", "onDraw");
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(150f);
+        final RectF oval = new RectF();
+        // TODO what is msegments value?
+        for (int i = 0; i < mSegments.size(); i++) {
+            for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES; j += NUMBER_RINGS) {
+                // 360 / rings * slices = degree of each slice
+                // arc from i-3 * 10     to i * 10    degrees
+                if (j % NUMBER_RINGS == 0) {
+                    // outer ring
+                    mPaint.setColor(Color.BLUE);
+                    oval.set(mCenterX - mRadius,
+                            mCenterY - mRadius,
+                            mCenterX + mRadius,
+                            mCenterY + mRadius);
+                    canvas.drawArc(oval, j - 3 * 10, j * 10, false, mPaint);
+                }
+                else if (j % NUMBER_RINGS == NUMBER_RINGS - 1) {
+                    // middle ring
+                    mPaint.setColor(Color.LTGRAY);
+                    oval.set(mCenterX - mRadius + 150f,
+                            mCenterY - mRadius + 150f,
+                            mCenterX + mRadius - 150f,
+                            mCenterY + mRadius - 150f);
+                    canvas.drawArc(oval, j - 3 * 10, j * 10, false, mPaint);
+                }
+                else if (j % NUMBER_RINGS == NUMBER_RINGS - 2) {
+                    // bottom ring
+                    mPaint.setColor(Color.GREEN);
+                    oval.set(mCenterX - mRadius + 300f,
+                            mCenterY - mRadius + 300f,
+                            mCenterX + mRadius - 300f,
+                            mCenterY + mRadius - 300f);
+                    canvas.drawArc(oval, j - 3 * 10, j * 10, false, mPaint);
+                }
+            }
         }
-        mCanvas = canvas;
 
-        mCenterX = mWidth / 2;
-        mCenterY = mHeight / 2;
-        if (mWidth > mHeight){
-            mRadius = mHeight * RADIUS_MULTIPLIER;
-        }else{
-            mRadius = mWidth * RADIUS_MULTIPLIER;
-        }
+        // shapes
 
-        mPaint.setStrokeWidth(2f);
+
+
+
+
+
+
+
+//        if (mColor != 9999999) {
+//            mPaint.setColor(mColor);
+//        } else {
+//            mPaint.setColor(Color.GREEN);
+//        }
+//        oval.set(mCenterX - mRadius,
+//                mCenterY - mRadius,
+//                mCenterX + mRadius,
+//                mCenterY + mRadius);
+//        canvas.drawArc(oval, 90f, 120f, false, mPaint);
 
         // 4 circles
+        mPaint.setStrokeWidth(2f);
         mPaint.setColor(Color.BLACK);
-        final RectF oval = new RectF();
+
         oval.set(mCenterX - mRadius - 75f,
                 mCenterY - mRadius - 75f,
                 mCenterX + mRadius + 75f,
@@ -127,58 +202,40 @@ public class EntryView extends View {
                 mCenterX + mRadius - 300f - 75f,
                 mCenterY + mRadius - 300f - 75f);
         canvas.drawArc(oval, 0f, 360f, false, mPaint);
+    }
 
+    // TODO fix this
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-
-        // shapes
-        mPaint.setStrokeWidth(150f);
-
-        mPaint.setColor(Color.BLUE);
-        oval.set(mCenterX - mRadius,
-                mCenterY - mRadius,
-                mCenterX + mRadius,
-                mCenterY + mRadius);
-        canvas.drawArc(oval, 0f, 90f, false, mPaint);
-
-//        mPaint.setStrokeWidth(10f);
-//        float angle = 0f;
-//        double degrees = new Float(angle).doubleValue();
-//        degrees = Math.toRadians(degrees);
-//
-//        startX = mCenterX;
-//        startY = mCenterY;
-//        endX = startX + mRadius * (float)Math.cos(degrees);
-//        endY = startY + mRadius * (float)Math.sin(degrees);
-//        mMainPath.moveTo(startX, startY);
-//        mMainPath.lineTo(endX, endY);
-//        canvas.drawPath(mMainPath, mMainStrokePaint);
-
-        mPaint.setColor(Color.LTGRAY);
-        oval.set(mCenterX - mRadius + 150f,
-                mCenterY - mRadius + 150f,
-                mCenterX + mRadius - 150f,
-                mCenterY + mRadius - 150f);
-        canvas.drawArc(oval, 0f, 90f, false, mPaint);
-
-        mPaint.setColor(Color.GREEN);
-        oval.set(mCenterX - mRadius + 300f,
-                mCenterY - mRadius + 300f,
-                mCenterX + mRadius - 300f,
-                mCenterY + mRadius - 300f);
-        canvas.drawArc(oval, 0f, 90f, false, mPaint);
-
-        if (mColor != 9999999) {
-            mPaint.setColor(mColor);
+        if (widthMode == MeasureSpec.EXACTLY) {
+            mWidth = widthSize;
+        } else if (widthMode == MeasureSpec.AT_MOST) {
+            mWidth = Math.min(DESIRED_WIDTH, widthSize);
         } else {
-            mPaint.setColor(Color.GREEN);
+            mWidth = DESIRED_WIDTH;
         }
-        oval.set(mCenterX - mRadius,
-                mCenterY - mRadius,
-                mCenterX + mRadius,
-                mCenterY + mRadius);
-        canvas.drawArc(oval, 90f, 120f, false, mPaint);
 
+        if (heightMode == MeasureSpec.EXACTLY) {
+            mHeight = heightSize;
+        } else if (heightMode == MeasureSpec.AT_MOST) {
+            mHeight = Math.min(DESIRED_HEIGHT, heightSize);
+        } else {
+            mHeight = DESIRED_HEIGHT;
+        }
 
+        mCenterX = mWidth / 2;
+        mCenterY = mHeight / 2;
+        if (mWidth > mHeight){
+            mRadius = mHeight * RADIUS_MULTIPLIER;
+        }else{
+            mRadius = mWidth * RADIUS_MULTIPLIER;
+        }
 
+        setMeasuredDimension((int) mWidth, (int) mHeight);
     }
 }

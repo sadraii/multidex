@@ -16,7 +16,6 @@
 
 package com.msadraii.multidex;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,21 +27,24 @@ import android.widget.TextView;
  * Created by Mostafa on 3/21/2015.
  */
 public class EntryFragment extends Fragment {
-    int fragVal;
+    private static final String POSITION_TAG = "position";
+    private int mPosition;
 
-    static EntryFragment init(int val) {
-        EntryFragment truitonFrag = new EntryFragment();
+    // TODO include private constructor
+
+    static EntryFragment init(int position) {
+        EntryFragment entryFragment = new EntryFragment();
         // Supply val input as an argument.
         Bundle args = new Bundle();
-        args.putInt("val", val);
-        truitonFrag.setArguments(args);
-        return truitonFrag;
+        args.putInt(POSITION_TAG, position);
+        entryFragment.setArguments(args);
+        return entryFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragVal = getArguments() != null ? getArguments().getInt("val") : 1;
+        mPosition = getArguments() != null ? getArguments().getInt(POSITION_TAG) : 0; // TODO should be 0?
     }
 
     @Override
@@ -51,13 +53,14 @@ public class EntryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_entry, container,
                 false);
         TextView textView = (TextView) rootView.findViewById(R.id.entry_view_date);
-        textView.setText("Frag " + fragVal);
+        textView.setText("Frag " + mPosition);
         EntryViewLayout entryViewLayout = (EntryViewLayout)rootView.findViewById(R.id.entry_view_layout);
-        if (fragVal == 0) {
-            entryViewLayout.setColor(Color.RED);
-        } else {
-            entryViewLayout.setColor(Color.LTGRAY);
-        }
+//        if (mPosition == 0) {
+//            entryViewLayout.setColor(Color.RED);
+//        } else {
+//            entryViewLayout.setColor(Color.LTGRAY);
+//        }
+        entryViewLayout.setPosition(getActivity().getApplicationContext(), mPosition);
 
 
         return rootView;

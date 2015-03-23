@@ -21,7 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -31,13 +31,14 @@ import android.widget.Spinner;
 
 import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
+import com.msadraii.multidex.data.GreenDaoApplication;
 
 import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity {
     private Context mAppContext;
-    HyperdexAdapter mAdapter;
-    ViewPager mPager;
+    private HyperdexAdapter mAdapter;
+    private ViewPager mPager;
     private Spinner mSpinner;
 
     @Override
@@ -87,14 +88,16 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class HyperdexAdapter extends FragmentPagerAdapter {
+    public static class HyperdexAdapter extends FragmentStatePagerAdapter {
+        private Context appContext = GreenDaoApplication.getAppContext();
+
         public HyperdexAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return EntryRepository.getAllEntries(appContext).size();
         }
 
         @Override
@@ -122,7 +125,7 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
                 mAppContext,
                 cal.getTime(),
-                "4, 6, 26",
+                "4,6,26",
                 0
         ));
 
@@ -130,7 +133,7 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
                 mAppContext,
                 cal.getTime(),
-                "2, 3, 30",
+                "2,3,30",
                 1
         ));
 
@@ -138,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
                 mAppContext,
                 cal.getTime(),
-                "27, 28, 29",
+                "27,28,29",
                 2
         ));
     }

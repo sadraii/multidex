@@ -123,12 +123,10 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
         final int colorInt = Color.parseColor(colorCode.getArgb());
         if (newlyAdded) {
-            // TODO spin shape, can use View.post()
             // TODO refactor spin into function
             Log.d(LOG_TAG, "newlyadded");
 
             // Spins ImageView while assigning the new color halfway through the spin
-
             ((GradientDrawable) holder.mImageView.getBackground())
                     .setColor(Color.parseColor("#00000000"));
             holder.mImageView.animate()
@@ -145,11 +143,12 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                                     .setDuration(COLOR_SPIN_DURATION);
                         }
                     });
-
+            holder.mEditText.setHint("Enter description");
             newlyAdded = false;
         } else {
             ((GradientDrawable) holder.mImageView.getBackground())
                     .setColor(colorInt);
+//            holder.mEditText.setHint(null);
         }
 
         holder.mEditText.setText(colorCode.getTask());
