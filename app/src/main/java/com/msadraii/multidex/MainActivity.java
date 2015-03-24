@@ -27,6 +27,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -41,8 +43,9 @@ import java.util.Calendar;
 public class MainActivity extends ActionBarActivity {
     private Context mAppContext;
     private HyperdexAdapter mAdapter;
-    private ViewPager mPager;
-    private Spinner mSpinner;
+    private ViewPager mPager; // TODO: convert to local?
+    private Spinner mSpinner; // TODO: check how buttons are done in other apps
+    private int selectedColorCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,7 @@ public class MainActivity extends ActionBarActivity {
         mAdapter = new HyperdexAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.hyperdex_pager);
         mPager.setAdapter(mAdapter);
+        selectedColorCode = 0;
 
 //        clearTables();
         recreateTables();
@@ -64,8 +68,20 @@ public class MainActivity extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner = (Spinner) findViewById(R.id.color_spinner);
         mSpinner.setAdapter(adapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedColorCode = position;
+            }
 
-        // TODO: eraser imagebutton
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    public int selectedColorCode() {
+        return selectedColorCode;
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,8 +13,6 @@ import com.google.gson.Gson;
 import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
 import com.msadraii.multidex.data.EntrySegments;
-
-import java.util.ArrayList;
 
 /**
  * Created by Mostafa on 3/21/2015.
@@ -28,24 +25,20 @@ public class EntryView extends View implements View.OnTouchListener {
     private static final char SEGMENT_DELIMITER = ',';
     private static final int DESIRED_WIDTH = 400;
     private static final int DESIRED_HEIGHT = 400;
+
     private static final int NUMBER_RINGS = 3;
     private static final int NUMBER_SLICES = 24;
     private static final float ARC_SLICE = 360 / NUMBER_SLICES;
     private static final float ARC_MULTIPLIER = ARC_SLICE / NUMBER_RINGS;
+
     private static final float MAX_DIFFERENCE = 75f;
+
     private static final float OUTER_RING = 0f;
     private static final float MIDDLE_RING = 150f;
     private static final float INNER_RING = 300f;
 
 
-    private int mColor = 9999999;
-//    private Bitmap mBitmap;
-//    private Bitmap subBitmap;
-//    private Canvas mCanvas;
-//    private Canvas mTempCanvas;
     private ColorCode mColorCode;
-    private Path mMainPath;
-    private Path mSubPath;
     private Paint mPaint;
     private Paint mPaint2;
     private Paint mPaint3;
@@ -57,24 +50,16 @@ public class EntryView extends View implements View.OnTouchListener {
     private float mWidth;
     private float mHeight;
     private float mRadius;
-//    private float startX;
-//    private float startY;
-//    private float endX;
-//    private float endY;
+    private Context mContext;
     private int mPosition;
     private Entry mEntry;
     private EntrySegments mEntrySegments;
     private Context mAppContext;
-    private ArrayList<Integer> mSegments;
     final RectF mCircle = new RectF();
 
     public EntryView(Context context) {
         super(context);
-    }
-
-    public EntryView(Context context, int color) {
-        super(context);
-        mColor = color;
+        mContext = context;
     }
 
     public void setPosition(Context appContext, int position) {
@@ -99,57 +84,39 @@ public class EntryView extends View implements View.OnTouchListener {
     }
 
     // TODO: clean this up so it uses less x,y and passes less values through functions
+    // TODO: ignore swipe clicks
     @Override
     public boolean onTouch(View view, MotionEvent e) {
         float x = e.getX();
         float y = e.getY();
 //        Log.d("touched", e.getX() + " " + e.getY());
-
-//        for (int i = 0; i < 360; i += ARC_SLICE) {
-//            double angle = angleOfClick(x, y);
-//            if (clickWithinRing(x, y, OUTER_RING)) {
-//                Toast.makeText(getContext(), "Outer + " + angleOfClick(x, y), Toast.LENGTH_SHORT).show();
-//            } else if (clickWithinRing(x, y, MIDDLE_RING)) {
-//                Toast.makeText(getContext(), "Middle + " + angleOfClick(x, y), Toast.LENGTH_SHORT).show();
-//            } else if (clickWithinRing(x, y, INNER_RING)) {
-//                Toast.makeText(getContext(), "Inner + " + angleOfClick(x, y), Toast.LENGTH_SHORT).show();
-//            }
-//        }
+        int colorCodeId = ((MainActivity) mContext).selectedColorCode();
 
         for (int i = 3; i < NUMBER_RINGS * NUMBER_SLICES + 1; i += NUMBER_RINGS) {
             double angle = angleOfClick(x, y);
             if (angle >= (i - NUMBER_RINGS) * ARC_MULTIPLIER && angle < i * ARC_MULTIPLIER) {
                 if (clickWithinRing(x, y, OUTER_RING)) {
-//                    Toast.makeText(getContext(), "" + i, Toast.LENGTH_SHORT).show();
                     if (mEntrySegments.hasSegment(i)) {
                         mEntrySegments.removeSegment(i);
-//                        Toast.makeText(getContext(), i + " exists", Toast.LENGTH_SHORT).show();
                     } else {
                         // TODO: remove hardcoded 0
-                        mEntrySegments.addSegment(i, 0);
-//                        Toast.makeText(getContext(), i + " NOT exists", Toast.LENGTH_SHORT).show();
+                        mEntrySegments.addSegment(i, colorCodeId);
                     }
                     invalidate();
                 } else if (clickWithinRing(x, y, MIDDLE_RING)) {
-//                    Toast.makeText(getContext(), "" + (i - 1), Toast.LENGTH_SHORT).show();
                     if (mEntrySegments.hasSegment(i - 1)) {
                         mEntrySegments.removeSegment(i - 1);
-//                        Toast.makeText(getContext(), i + " exists", Toast.LENGTH_SHORT).show();
                     } else {
                         // TODO: remove hardcoded 0
-                        mEntrySegments.addSegment(i - 1, 4);
-//                        Toast.makeText(getContext(), i + " NOT exists", Toast.LENGTH_SHORT).show();
+                        mEntrySegments.addSegment(i - 1, colorCodeId);
                     }
                     invalidate();
                 } else if (clickWithinRing(x, y, INNER_RING)) {
-//                    Toast.makeText(getContext(), "" + (i - 2), Toast.LENGTH_SHORT).show();
                     if (mEntrySegments.hasSegment(i - 2)) {
                         mEntrySegments.removeSegment(i - 2);
-//                        Toast.makeText(getContext(), i - 2 + " exists", Toast.LENGTH_SHORT).show();
                     } else {
                         // TODO: remove hardcoded 0
-                        mEntrySegments.addSegment(i - 2, 3);
-//                        Toast.makeText(getContext(), i + " NOT exists", Toast.LENGTH_SHORT).show();
+                        mEntrySegments.addSegment(i - 2, colorCodeId);
                     }
                     invalidate();
                 }
@@ -165,9 +132,6 @@ public class EntryView extends View implements View.OnTouchListener {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         setOnTouchListener(this);
-
-        mMainPath = new Path();
-        mSubPath = new Path();
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true);

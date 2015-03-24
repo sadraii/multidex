@@ -30,7 +30,8 @@ public class EntryFragment extends Fragment {
     private static final String POSITION_TAG = "position";
     private int mPosition;
 
-    // TODO: include private constructor
+    public EntryFragment() {
+    }
 
     static EntryFragment init(int position) {
         EntryFragment entryFragment = new EntryFragment();
@@ -44,7 +45,7 @@ public class EntryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPosition = getArguments() != null ? getArguments().getInt(POSITION_TAG) : 0; // TODO: should be 0?
+        mPosition = (getArguments() != null) ? getArguments().getInt(POSITION_TAG) : 0; // TODO: should be 0?
     }
 
     @Override
