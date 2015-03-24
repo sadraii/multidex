@@ -30,7 +30,7 @@ public class EditColorCodeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_color_codes);
-        // TODO set fragment with code insteaad of XML using frag.init()
+        // TODO: set fragment with code insteaad of XML using frag.init()
 //        if (savedInstanceState == null) {
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            FloatingActionButtonBasicFragment fragment = new FloatingActionButtonBasicFragment();

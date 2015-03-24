@@ -123,7 +123,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
         final int colorInt = Color.parseColor(colorCode.getArgb());
         if (newlyAdded) {
-            // TODO refactor spin into function
+            // TODO: refactor spin into function
             Log.d(LOG_TAG, "newlyadded");
 
             // Spins ImageView while assigning the new color halfway through the spin
@@ -167,13 +167,13 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                 ((EditText) v).setCursorVisible(true);
 //                v.setFocusable(true);
 //                v.setEnabled(true);
-                // TODO get activity's fragment
+                // TODO: get activity's fragment
 //                ((EditColorCodeActivity) mActivityContext).getLayoutManager().scrollToPosition(position);
                 // or scrollToPositionWithOffset()
             }
         });
 
-        // TODO focus change does not happen when editing text and pressing back button
+        // TODO: focus change does not happen when editing text and pressing back button
         holder.mEditText.setTag(colorCode.getTask());
         holder.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -182,7 +182,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                 if (!hasFocus) {
                     editText.setCursorVisible(false);
                     String text = editText.getText().toString();
-                    // TODO check if this only happens when text != tag
+                    // TODO: check if this only happens when text != tag
                     if (!text.equals(editText.getTag())) {
                         colorCode.setTask(text);
                         ColorCodeRepository.insertOrReplace(mAppContext, colorCode);

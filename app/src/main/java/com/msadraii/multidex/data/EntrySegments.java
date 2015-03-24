@@ -18,8 +18,23 @@ public class EntrySegments {
         return mSegmentIds;
     }
 
-    public int getSegmentId(int id) {
-        return mSegmentIds.get(id);
+    public boolean hasSegment(int id) {
+        for (int i = 0; i < mSegmentIds.size(); i++) {
+            if (mSegmentIds.get(i) == id) {
+                return true;
+            }
+        }
+        return false;
+//        return mSegmentIds.get(id);
+    }
+
+    public void removeSegment(int id) {
+        for (int i = 0; i < mSegmentIds.size(); i++) {
+            if (mSegmentIds.get(i) == id) {
+                mSegmentIds.remove(i);
+                mColorCodeIds.remove(i);
+            }
+        }
     }
 
     public void setSegmentIdArray(ArrayList<Integer> segmentIds) {
@@ -38,8 +53,9 @@ public class EntrySegments {
         this.mColorCodeIds = colorCodeIds;
     }
 
-    public void addSegmentId(int id) {
+    public void addSegment(int id, int colorCodeId) {
         mSegmentIds.add(id);
+        mColorCodeIds.add(colorCodeId);
     }
 
     public void addColorCodeId(int id) {

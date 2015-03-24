@@ -65,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
         mSpinner = (Spinner) findViewById(R.id.color_spinner);
         mSpinner.setAdapter(adapter);
 
-        // TODO eraser imagebutton
+        // TODO: eraser imagebutton
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
 
         switch (id) {
             case R.id.action_settings: {
-                // TODO settings activity
+                // TODO: settings activity
                 return true;
             }
             case R.id.action_edit_label: {
@@ -127,12 +127,14 @@ public class MainActivity extends ActionBarActivity {
         Gson gson = new Gson();
 
         EntrySegments entrySegments = new EntrySegments();
-        entrySegments.addSegmentId(4);
-        entrySegments.addSegmentId(6);
-        entrySegments.addSegmentId(24);
-        entrySegments.addColorCodeId(4);
-        entrySegments.addColorCodeId(2);
-        entrySegments.addColorCodeId(3);
+        entrySegments.addSegment(72, 4);
+        entrySegments.addSegment(67, 2);
+        entrySegments.addSegment(7, 3);
+        entrySegments.addSegment(10, 1);
+//        entrySegments.addColorCodeId(4);
+//        entrySegments.addColorCodeId(2);
+//        entrySegments.addColorCodeId(3);
+//        entrySegments.addColorCodeId(1);
         Log.d("gson= ", gson.toJson(entrySegments));
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
                 mAppContext,
@@ -142,12 +144,12 @@ public class MainActivity extends ActionBarActivity {
         ));
 
         entrySegments = new EntrySegments();
-        entrySegments.addSegmentId(2);
-        entrySegments.addSegmentId(3);
-        entrySegments.addSegmentId(30);
-        entrySegments.addColorCodeId(1);
-        entrySegments.addColorCodeId(0);
-        entrySegments.addColorCodeId(4);
+        entrySegments.addSegment(2, 1);
+        entrySegments.addSegment(3, 0);
+        entrySegments.addSegment(30, 4);
+//        entrySegments.addColorCodeId(1);
+//        entrySegments.addColorCodeId(0);
+//        entrySegments.addColorCodeId(4);
         Log.d("gson= ", gson.toJson(entrySegments));
         cal.add(Calendar.DATE, 1);
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
@@ -158,12 +160,12 @@ public class MainActivity extends ActionBarActivity {
         ));
 
         entrySegments = new EntrySegments();
-        entrySegments.addSegmentId(27);
-        entrySegments.addSegmentId(28);
-        entrySegments.addSegmentId(29);
-        entrySegments.addColorCodeId(2);
-        entrySegments.addColorCodeId(3);
-        entrySegments.addColorCodeId(1);
+        entrySegments.addSegment(27, 2);
+        entrySegments.addSegment(28, 3);
+        entrySegments.addSegment(29, 1);
+//        entrySegments.addColorCodeId(2);
+//        entrySegments.addColorCodeId(3);
+//        entrySegments.addColorCodeId(1);
         Log.d("gson= ", gson.toJson(entrySegments));
         cal.add(Calendar.DATE, 1);
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(

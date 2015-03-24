@@ -70,7 +70,7 @@ public class EntryRepository {
     }
     
     public static ArrayList<Entry> getEntryForDate(Context context, Date date) {
-        // TODO fill out getEntryForDate()
+        // TODO: fill out getEntryForDate()
         return null;
     }
 

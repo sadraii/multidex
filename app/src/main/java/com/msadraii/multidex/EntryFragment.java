@@ -30,7 +30,7 @@ public class EntryFragment extends Fragment {
     private static final String POSITION_TAG = "position";
     private int mPosition;
 
-    // TODO include private constructor
+    // TODO: include private constructor
 
     static EntryFragment init(int position) {
         EntryFragment entryFragment = new EntryFragment();
@@ -44,7 +44,7 @@ public class EntryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPosition = getArguments() != null ? getArguments().getInt(POSITION_TAG) : 0; // TODO should be 0?
+        mPosition = getArguments() != null ? getArguments().getInt(POSITION_TAG) : 0; // TODO: should be 0?
     }
 
     @Override
@@ -55,13 +55,7 @@ public class EntryFragment extends Fragment {
         TextView textView = (TextView) rootView.findViewById(R.id.entry_view_date);
         textView.setText("Frag " + mPosition);
         EntryViewLayout entryViewLayout = (EntryViewLayout)rootView.findViewById(R.id.entry_view_layout);
-//        if (mPosition == 0) {
-//            entryViewLayout.setColor(Color.RED);
-//        } else {
-//            entryViewLayout.setColor(Color.LTGRAY);
-//        }
         entryViewLayout.setPosition(getActivity().getApplicationContext(), mPosition);
-
 
         return rootView;
     }
