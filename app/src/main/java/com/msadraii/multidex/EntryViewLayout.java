@@ -28,8 +28,8 @@ public class EntryViewLayout extends FrameLayout implements View.OnTouchListener
         mEntryView.setOnTouchListener(this);
     }
 
-    public void setPosition(Context context, int id) {
-        mEntryView.setPosition(context, id);
+    public void setPosition(Context appContext, int id) {
+        mEntryView.setPosition(appContext, id);
     }
 //    public void setColor(int color) {
 //        mEntryView.setColor(color);

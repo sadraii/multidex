@@ -6,11 +6,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
+import com.msadraii.multidex.data.EntrySegments;
 
 import java.util.ArrayList;
 
@@ -55,8 +57,10 @@ public class EntryView extends View {
 //    private float endY;
     private int mPosition;
     private Entry mEntry;
+    private EntrySegments mEntrySegments;
     private Context mAppContext;
     private ArrayList<Integer> mSegments;
+    final RectF mCircle = new RectF();
 
     public EntryView(Context context) {
         super(context);
@@ -72,8 +76,8 @@ public class EntryView extends View {
 //        mColor = color;
 //    }
 
-    public void setPosition(Context context, int position) {
-        mAppContext = context;
+    public void setPosition(Context appContext, int position) {
+        mAppContext = appContext;
         mPosition = position;
     }
 
@@ -88,140 +92,104 @@ public class EntryView extends View {
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
 
-//        mPaint2 = new Paint();
-//        mPaint2.setAntiAlias(true);
-//        mPaint2.setStyle(Paint.Style.STROKE);
-//
-//        mPaint3 = new Paint();
-//        mPaint3.setAntiAlias(true);
-//        mPaint3.setStyle(Paint.Style.STROKE);
-
         mMainStrokePaint = new Paint();
         mMainStrokePaint.setAntiAlias(true);
         mMainStrokePaint.setStyle(Paint.Style.STROKE);
         mMainStrokePaint.setColor(Color.BLACK);
         mMainStrokePaint.setStrokeWidth(STROKE_WIDTH);
 
-//        mSubStrokePaint = new Paint();
-//        mSubStrokePaint.setAntiAlias(true);
-//        mSubStrokePaint.setStyle(Paint.Style.STROKE);
-//        mSubStrokePaint.setColor(Color.LTGRAY);
-//        mSubStrokePaint.setStrokeWidth(SUB_GUIDE_LINE_STROKE_WIDTH);
-
         // Parse the segments from the Entry
-        mSegments = new ArrayList<>();
         mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
-        TextUtils.SimpleStringSplitter splitter = new TextUtils.SimpleStringSplitter(SEGMENT_DELIMITER);
-        splitter.setString(mEntry.getSegments());
-        for (String s : splitter) {
-            mSegments.add(Integer.valueOf(s));
-        }
-
-        int debug = 5;
+        Gson gson = new Gson();
+        mEntrySegments = gson.fromJson(mEntry.getSegments(), EntrySegments.class);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.d("draw", "onDraw");
+
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(150f);
-        final RectF oval = new RectF();
-        for (int i = 0; i < mSegments.size(); i++) {
-            int segment = mSegments.get(i);
+
+        // loops through segments, coloring them in
+        for (int i = 0; i < mEntrySegments.size(); i++) {
+            int segment = mEntrySegments.getSegmentIds().get(i);
+
+            mColorCode = ColorCodeRepository.getColorCodeForId(mAppContext,
+                    mEntrySegments.getColorCodeId(i));
+            mPaint.setColor(Color.parseColor(mColorCode.getArgb()));
+
+            // loops through the slices, from outer ring to inner ring, and colors in any segments
             for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES; j += NUMBER_RINGS) {
+                // TODO put these if-else in another loop to create dynamic number of rings
                 if (segment == j) {
-                    // outer ring
-                    mPaint.setColor(Color.BLUE);
-                    oval.set(mCenterX - mRadius,
+
+                    // draw outer ring
+                    mCircle.set(mCenterX - mRadius,
                             mCenterY - mRadius,
                             mCenterX + mRadius,
                             mCenterY + mRadius);
-                    canvas.drawArc(oval, (j - 3) * 10, ARC_SLICE, false, mPaint);
-                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +0");
+                    canvas.drawArc(mCircle, (j - NUMBER_RINGS) * 10, ARC_SLICE, false, mPaint);
+//                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +0");
                     break;
                 } else if (segment == j - 1) {
-                    // middle ring
-                    mPaint.setColor(Color.LTGRAY);
-                    oval.set(mCenterX - mRadius + 150f,
+
+                    // draw middle ring
+                    mCircle.set(mCenterX - mRadius + 150f,
                             mCenterY - mRadius + 150f,
                             mCenterX + mRadius - 150f,
                             mCenterY + mRadius - 150f);
-                    canvas.drawArc(oval, (j - 3) * 10, ARC_SLICE, false, mPaint);
-                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +150");
+                    canvas.drawArc(mCircle, (j - NUMBER_RINGS) * 10, ARC_SLICE, false, mPaint);
+//                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +150");
                     break;
                 } else if (segment == j - 2) {
-                    // bottom ring
-                    mPaint.setColor(Color.GREEN);
-                    oval.set(mCenterX - mRadius + 300f,
+
+                    // draw inner ring
+                    mCircle.set(mCenterX - mRadius + 300f,
                             mCenterY - mRadius + 300f,
                             mCenterX + mRadius - 300f,
                             mCenterY + mRadius - 300f);
-                    canvas.drawArc(oval, (j - 3) * 10, ARC_SLICE, false, mPaint);
-                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +300");
+                    canvas.drawArc(mCircle, (j - NUMBER_RINGS) * 10, ARC_SLICE, false, mPaint);
+//                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +300");
                     break;
                 }
             }
         }
 
-        // shapes
-
-//
-//        mPaint.setColor(Color.BLUE);
-//                    oval.set(mCenterX - mRadius,
-//                            mCenterY - mRadius,
-//                            mCenterX + mRadius,
-//                            mCenterY + mRadius);
-//                    canvas.drawArc(oval, 0, 15, false, mPaint);
-
-
-
-
-
-//        if (mColor != 9999999) {
-//            mPaint.setColor(mColor);
-//        } else {
-//            mPaint.setColor(Color.GREEN);
-//        }
-//        oval.set(mCenterX - mRadius,
-//                mCenterY - mRadius,
-//                mCenterX + mRadius,
-//                mCenterY + mRadius);
-//        canvas.drawArc(oval, 90f, 120f, false, mPaint);
-
-        // 4 circles
+        // draw 4 guide circles
         mPaint.setStrokeWidth(2f);
         mPaint.setColor(Color.BLACK);
 
-        oval.set(mCenterX - mRadius - 75f,
+        mCircle.set(mCenterX - mRadius - 75f,
                 mCenterY - mRadius - 75f,
                 mCenterX + mRadius + 75f,
                 mCenterY + mRadius + 75f);
-        canvas.drawArc(oval, 0f, 360f, false, mPaint);
+        canvas.drawArc(mCircle, 0f, 360f, false, mPaint);
 
         mPaint.setColor(Color.BLACK);
-        oval.set(mCenterX - mRadius + 75f,
+        mCircle.set(mCenterX - mRadius + 75f,
                 mCenterY - mRadius + 75f,
                 mCenterX + mRadius - 75f,
                 mCenterY + mRadius - 75f);
-        canvas.drawArc(oval, 0f, 360f, false, mPaint);
+        canvas.drawArc(mCircle, 0f, 360f, false, mPaint);
 
         mPaint.setColor(Color.BLACK);
-        oval.set(mCenterX - mRadius + 150f + 75f,
+        mCircle.set(mCenterX - mRadius + 150f + 75f,
                 mCenterY - mRadius + 150f + 75f,
                 mCenterX + mRadius - 150f - 75f,
                 mCenterY + mRadius - 150f - 75f);
-        canvas.drawArc(oval, 0f, 360f, false, mPaint);
+        canvas.drawArc(mCircle, 0f, 360f, false, mPaint);
 
         mPaint.setColor(Color.BLACK);
-        oval.set(mCenterX - mRadius + 300f + 75f,
+        mCircle.set(mCenterX - mRadius + 300f + 75f,
                 mCenterY - mRadius + 300f + 75f,
                 mCenterX + mRadius - 300f - 75f,
                 mCenterY + mRadius - 300f - 75f);
-        canvas.drawArc(oval, 0f, 360f, false, mPaint);
+        canvas.drawArc(mCircle, 0f, 360f, false, mPaint);
     }
 
-    // TODO fix this
+    // TODO fix center/width at bottom
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);

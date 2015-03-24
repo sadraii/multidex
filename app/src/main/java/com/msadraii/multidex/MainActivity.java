@@ -24,13 +24,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.gson.Gson;
 import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
+import com.msadraii.multidex.data.EntrySegments;
 import com.msadraii.multidex.data.GreenDaoApplication;
 
 import java.util.Calendar;
@@ -121,29 +124,55 @@ public class MainActivity extends ActionBarActivity {
 
     private void addTestEntries() {
         Calendar cal = Calendar.getInstance();
+        Gson gson = new Gson();
 
+        EntrySegments entrySegments = new EntrySegments();
+        entrySegments.addSegmentId(4);
+        entrySegments.addSegmentId(6);
+        entrySegments.addSegmentId(24);
+        entrySegments.addColorCodeId(4);
+        entrySegments.addColorCodeId(2);
+        entrySegments.addColorCodeId(3);
+        Log.d("gson= ", gson.toJson(entrySegments));
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
                 mAppContext,
                 cal.getTime(),
-                "4,6,26",
+                gson.toJson(entrySegments),
                 0
         ));
 
+        entrySegments = new EntrySegments();
+        entrySegments.addSegmentId(2);
+        entrySegments.addSegmentId(3);
+        entrySegments.addSegmentId(30);
+        entrySegments.addColorCodeId(1);
+        entrySegments.addColorCodeId(0);
+        entrySegments.addColorCodeId(4);
+        Log.d("gson= ", gson.toJson(entrySegments));
         cal.add(Calendar.DATE, 1);
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
                 mAppContext,
                 cal.getTime(),
-                "2,3,30",
+                gson.toJson(entrySegments),
                 1
         ));
 
+        entrySegments = new EntrySegments();
+        entrySegments.addSegmentId(27);
+        entrySegments.addSegmentId(28);
+        entrySegments.addSegmentId(29);
+        entrySegments.addColorCodeId(2);
+        entrySegments.addColorCodeId(3);
+        entrySegments.addColorCodeId(1);
+        Log.d("gson= ", gson.toJson(entrySegments));
         cal.add(Calendar.DATE, 1);
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
                 mAppContext,
                 cal.getTime(),
-                "27,28,29",
+                gson.toJson(entrySegments),
                 2
         ));
+        mAdapter.notifyDataSetChanged();
     }
 
     private void addTestColors() {
