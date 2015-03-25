@@ -38,6 +38,7 @@ import com.msadraii.multidex.data.ColorCodeRepository;
  * A placeholder fragment containing a simple view.
  */
 public class EditColorCodeFragment extends Fragment {
+    private static final String LOG_TAG = EditColorCodeFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -45,6 +46,24 @@ public class EditColorCodeFragment extends Fragment {
     private Context appContext;
 
     public EditColorCodeFragment() {
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        Log.d(LOG_TAG, "onSaveInstanceState()");
+        // TODO: write to DB
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onActivityCreated()");
+        // TODO: read DB
+//        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+//        if (savedInstanceState != null) {
+//            mLocation = savedInstanceState.getString(LOCATION_KEY);
+//        }
+        super.onActivityCreated(savedInstanceState);
     }
 
     // TODO: save instance state / write to DB on save

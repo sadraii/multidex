@@ -85,7 +85,7 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    public int selectedColorCode() {
+    public int getSelectedColorCode() {
         return selectedColorCode;
     }
 

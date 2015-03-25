@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
@@ -30,6 +31,7 @@ public class EntryView extends View implements View.OnTouchListener {
     // TODO: fill these out
     private static final float RADIUS_MULTIPLIER = 0.4f;
     private static final float STROKE_WIDTH = 6f;
+    private static final float ARC_STROKE_WIDTH = 150f;
     private static final float SUB_GUIDE_LINE_STROKE_WIDTH = 4f;
     private static final char SEGMENT_DELIMITER = ',';
     private static final int DESIRED_WIDTH = 400;
@@ -42,9 +44,20 @@ public class EntryView extends View implements View.OnTouchListener {
 
     private static final float MAX_DIFFERENCE = 75f;
 
-    private static final float OUTER_RING = 0f;
-    private static final float MIDDLE_RING = 150f;
-    private static final float INNER_RING = 300f;
+//    private static final float OUTER_RING = 0f;
+//    private static final float MIDDLE_RING = 150f;
+//    private static final float INNER_RING = 300f;
+    private enum Ring {
+        OUTER (0f),
+        MIDDLE (150f),
+        INNER (300f),
+        NONE (-1);
+
+        private float offset;
+        Ring(float offset) {
+            this.offset = offset;
+        }
+    }
 
 
     private ColorCode mColorCode;
@@ -66,7 +79,8 @@ public class EntryView extends View implements View.OnTouchListener {
     private Set<Integer> mSegmentKeys;
     private Iterator<Integer> mIterator;
     private Context mAppContext;
-    final RectF mCircle = new RectF();
+    final RectF mBounds = new RectF();
+    private Ring mRing;
 
     public EntryView(Context context) {
         super(context);
@@ -90,8 +104,15 @@ public class EntryView extends View implements View.OnTouchListener {
         return Math.sqrt(Math.pow(x - mCenterX, 2) + Math.pow(y - mCenterY, 2));
     }
 
-    private boolean clickWithinRing(float x, float y, float ringWidth) {
-        return (Math.abs(distanceOfClick(x, y) - mRadius + ringWidth) <= MAX_DIFFERENCE);
+    private Ring getHitRing(float x, float y) {
+        if (Math.abs(distanceOfClick(x, y) - mRadius + Ring.OUTER.offset) <= MAX_DIFFERENCE) {
+            return Ring.OUTER;
+        } else if (Math.abs(distanceOfClick(x, y) - mRadius + Ring.MIDDLE.offset) <= MAX_DIFFERENCE) {
+            return Ring.MIDDLE;
+        } else if (Math.abs(distanceOfClick(x, y) - mRadius + Ring.INNER.offset) <= MAX_DIFFERENCE) {
+            return Ring.INNER;
+        }
+        return Ring.NONE;
     }
 
     // TODO: clean this up so it uses less x,y and passes less values through functions
@@ -101,42 +122,45 @@ public class EntryView extends View implements View.OnTouchListener {
         float x = e.getX();
         float y = e.getY();
 //        Log.d("touched", e.getX() + " " + e.getY());
-        int colorCodeId = ((MainActivity) mContext).selectedColorCode();
+        int colorCodeId = ((MainActivity) mContext).getSelectedColorCode();
 
-        for (int i = 3; i < NUMBER_RINGS * NUMBER_SLICES + 1; i += NUMBER_RINGS) {
+        // Find the segment that was touched and toggle it on/off
+        for (int i = NUMBER_RINGS; i < NUMBER_RINGS * NUMBER_SLICES + 1; i += NUMBER_RINGS) {
             double angle = angleOfClick(x, y);
             if (angle >= (i - NUMBER_RINGS) * ARC_MULTIPLIER && angle < i * ARC_MULTIPLIER) {
-                if (clickWithinRing(x, y, OUTER_RING)) {
-                    if (mEntrySegments.containsKey(i)) {
-                        mEntrySegments.remove(i);
-                    } else {
-                        // TODO: remove hardcoded 0
-                        mEntrySegments.put(i, colorCodeId);
+//                if (clickWithinRing(x, y, OUTER_RING)) {
+//                    toggleSegment(i, colorCodeId);
+//                } else if (clickWithinRing(x, y, MIDDLE_RING)) {
+//                    toggleSegment(i - 1, colorCodeId);
+//                } else if (clickWithinRing(x, y, INNER_RING)) {
+//                    toggleSegment(i - 2, colorCodeId);
+//                }
+                switch (getHitRing(x, y)) {
+                    case OUTER: {
+                        toggleSegment(i, colorCodeId);
+                        break;
                     }
-                    invalidate();
-                } else if (clickWithinRing(x, y, MIDDLE_RING)) {
-                    if (mEntrySegments.containsKey(i - 1)) {
-                        mEntrySegments.remove(i - 1);
-                    } else {
-                        // TODO: remove hardcoded 0
-                        mEntrySegments.put(i - 1, colorCodeId);
+                    case MIDDLE: {
+                        toggleSegment(i - 1, colorCodeId);
+                        break;
                     }
-                    invalidate();
-                } else if (clickWithinRing(x, y, INNER_RING)) {
-                    if (mEntrySegments.containsKey(i - 2)) {
-                        mEntrySegments.remove(i - 2);
-                    } else {
-                        // TODO: remove hardcoded 0
-                        mEntrySegments.put(i - 2, colorCodeId);
+                    case INNER: {
+                        toggleSegment(i - 2, colorCodeId);
+                        break;
                     }
-                    invalidate();
                 }
             }
         }
-
-
-
         return false;
+    }
+
+    private void toggleSegment(int key, int colorCodeId) {
+        if (mEntrySegments.containsKey(key)) {
+            mEntrySegments.remove(key);
+        } else {
+            mEntrySegments.put(key, colorCodeId);
+        }
+        invalidate();
     }
 
     @Override
@@ -162,16 +186,24 @@ public class EntryView extends View implements View.OnTouchListener {
         mMainStrokePaint.setColor(Color.BLACK);
         mMainStrokePaint.setStrokeWidth(STROKE_WIDTH);
 
-        // Parse the segments from the Entry
+
 //        mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
         PagerAdapter adapter = ((MainActivity) mContext).getPagerAdapter();
         Fragment frag = ((MainActivity.HyperdexAdapter) adapter).getRegisteredFragment(
                 ((MainActivity) mContext).getViewPager().getCurrentItem());
         mEntry = ((EntryFragment) frag).getEntry();
 
+        // Parse the segments from the Entry
         Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
         mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
 
+    }
+
+    private void setBounds(RectF rect, float offset) {
+        rect.set(mCenterX - mRadius + offset,
+                mCenterY - mRadius + offset,
+                mCenterX + mRadius - offset,
+                mCenterY + mRadius - offset);
     }
 
     @Override
@@ -180,7 +212,7 @@ public class EntryView extends View implements View.OnTouchListener {
         Log.d("draw", "onDraw");
 
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(150f);
+        mPaint.setStrokeWidth(ARC_STROKE_WIDTH);
 
         // loops through segments, coloring them in
         mSegmentKeys = mEntrySegments.keySet();
@@ -197,94 +229,41 @@ public class EntryView extends View implements View.OnTouchListener {
                 // TODO: const stroke size
                 if (segment == j) {
                     // draw outer ring
-                    mCircle.set(mCenterX - mRadius,
-                            mCenterY - mRadius,
-                            mCenterX + mRadius,
-                            mCenterY + mRadius);
-                    canvas.drawArc(mCircle, (j - NUMBER_RINGS) * ARC_MULTIPLIER, ARC_SLICE, false, mPaint);
+                    setBounds(mBounds, 0f);
+                    canvas.drawArc(mBounds, (j - NUMBER_RINGS) * ARC_MULTIPLIER, ARC_SLICE, false, mPaint);
 //                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +0");
                     break;
                 } else if (segment == j - 1) {
                     // draw middle ring
-                    mCircle.set(mCenterX - mRadius + 150f,
-                            mCenterY - mRadius + 150f,
-                            mCenterX + mRadius - 150f,
-                            mCenterY + mRadius - 150f);
-                    canvas.drawArc(mCircle, (j - NUMBER_RINGS) * ARC_MULTIPLIER, ARC_SLICE, false, mPaint);
+                    setBounds(mBounds, 150f);
+                    canvas.drawArc(mBounds, (j - NUMBER_RINGS) * ARC_MULTIPLIER, ARC_SLICE, false, mPaint);
 //                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +150");
                     break;
                 } else if (segment == j - 2) {
                     // draw inner ring
-                    mCircle.set(mCenterX - mRadius + 300f,
-                            mCenterY - mRadius + 300f,
-                            mCenterX + mRadius - 300f,
-                            mCenterY + mRadius - 300f);
-                    canvas.drawArc(mCircle, (j - NUMBER_RINGS) * ARC_MULTIPLIER, ARC_SLICE, false, mPaint);
+                    setBounds(mBounds, 300f);
+                    canvas.drawArc(mBounds, (j - NUMBER_RINGS) * ARC_MULTIPLIER, ARC_SLICE, false, mPaint);
 //                    Log.d("drawArc", "( " + (j - 3) * 10 + "," + j * 10 + " ) at +300");
                     break;
                 }
             }
         }
 
-        // draw 4 guide circles
+        // draw 4 guide circles from outermost to innermost
         mPaint.setStrokeWidth(2f);
         mPaint.setColor(Color.BLACK);
 
-        mCircle.set(mCenterX - mRadius - 75f,
-                mCenterY - mRadius - 75f,
-                mCenterX + mRadius + 75f,
-                mCenterY + mRadius + 75f);
-        canvas.drawArc(mCircle, 0f, 360f, false, mPaint);
+        setBounds(mBounds, -75f);
+        canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
-        mPaint.setColor(Color.BLACK);
-        mCircle.set(mCenterX - mRadius + 75f,
-                mCenterY - mRadius + 75f,
-                mCenterX + mRadius - 75f,
-                mCenterY + mRadius - 75f);
-        canvas.drawArc(mCircle, 0f, 360f, false, mPaint);
+        setBounds(mBounds, 75f);
+        canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
-        mPaint.setColor(Color.BLACK);
-        mCircle.set(mCenterX - mRadius + 150f + 75f,
-                mCenterY - mRadius + 150f + 75f,
-                mCenterX + mRadius - 150f - 75f,
-                mCenterY + mRadius - 150f - 75f);
-        canvas.drawArc(mCircle, 0f, 360f, false, mPaint);
+        setBounds(mBounds, 150f + 75f);
+        canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
-        mPaint.setColor(Color.BLACK);
-        mCircle.set(mCenterX - mRadius + 300f + 75f,
-                mCenterY - mRadius + 300f + 75f,
-                mCenterX + mRadius - 300f - 75f,
-                mCenterY + mRadius - 300f - 75f);
-        canvas.drawArc(mCircle, 0f, 360f, false, mPaint);
-
-        // testing bounding boxes
-//        mPaint.setColor(Color.BLUE);
-//        mPaint.setPathEffect(new DashPathEffect(new float[]{10, 10, 10, 10}, 0));
-//        canvas.drawRect(mCenterX - mRadius,
-//                mCenterY - mRadius,
-//                mCenterX + mRadius,
-//                mCenterY + mRadius, mPaint);
-//        canvas.drawRect(mCenterX - mRadius - 50,
-//                mCenterY - mRadius - 50,
-//                mCenterX + mRadius + 50,
-//                mCenterY + mRadius + 50, mPaint);
-//        canvas.drawRect(mCenterX - mRadius + 50,
-//                mCenterY - mRadius + 50,
-//                mCenterX + mRadius - 50,
-//                mCenterY + mRadius - 50, mPaint);
-//
-//        canvas.drawRect(mCenterX - mRadius + 150,
-//                mCenterY - mRadius + 150,
-//                mCenterX + mRadius - 150,
-//                mCenterY + mRadius - 150, mPaint);
-//        canvas.drawRect(mCenterX - mRadius - 50 + 150,
-//                mCenterY - mRadius - 50 + 150,
-//                mCenterX + mRadius + 50 - 150,
-//                mCenterY + mRadius + 50 - 150, mPaint);
-//        canvas.drawRect(mCenterX - mRadius + 50 + 150,
-//                mCenterY - mRadius + 50 + 150,
-//                mCenterX + mRadius - 50 - 150,
-//                mCenterY + mRadius - 50 - 150, mPaint);
+        setBounds(mBounds, 300f + 75f);
+        canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
     }
 
     // TODO: fix center/width at bottom
@@ -320,5 +299,11 @@ public class EntryView extends View implements View.OnTouchListener {
         }
 
         setMeasuredDimension((int) mWidth, (int) mHeight);
+    }
+
+    // TODO: on not pause, update fragment Entry segments
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return super.onSaveInstanceState();
     }
 }
