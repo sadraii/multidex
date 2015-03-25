@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.msadraii.multidex;
+package com.msadraii.multidex.util;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.msadraii.multidex.R;
 
 /**
  * Created by Mostafa on 3/15/2015.

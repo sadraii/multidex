@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.msadraii.multidex;
+package com.msadraii.multidex.colorcode;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.msadraii.multidex.R;
 
 public class EditColorCodeActivity extends ActionBarActivity {
 
@@ -30,7 +32,7 @@ public class EditColorCodeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_color_codes);
-        // TODO: set fragment with code insteaad of XML using frag.init()
+        // TODO: set fragment with code insteaad of XML using frag.newInstance()
 //        if (savedInstanceState == null) {
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            FloatingActionButtonBasicFragment fragment = new FloatingActionButtonBasicFragment();

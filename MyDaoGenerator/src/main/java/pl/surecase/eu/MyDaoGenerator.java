@@ -9,6 +9,7 @@ public class MyDaoGenerator {
 
     public static void main(String args[]) throws Exception {
         Schema schema = new Schema(1, "com.msadraii.multidex");
+        schema.enableKeepSectionsByDefault();
 
         Entity colorCode = schema.addEntity("ColorCode");
         colorCode.addIdProperty().unique();

@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EditColorCodeActivity"
+            android:name=".colorcode.EditColorCodeActivity"
             android:label="@string/title_activity_edit_color_codes"
             android:parentActivityName="com.msadraii.multidex.MainActivity" >
             <meta-data

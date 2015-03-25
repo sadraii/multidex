@@ -22,23 +22,28 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.google.gson.Gson;
+import com.msadraii.multidex.colorcode.EditColorCodeActivity;
 import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
-import com.msadraii.multidex.data.EntrySegments;
 import com.msadraii.multidex.data.GreenDaoApplication;
+import com.msadraii.multidex.entry.EntryFragment;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity {
     private Context mAppContext;
@@ -107,8 +112,17 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public PagerAdapter getPagerAdapter() {
+        return mAdapter;
+    }
+
+    public ViewPager getViewPager() {
+        return mPager;
+    }
+
     public static class HyperdexAdapter extends FragmentStatePagerAdapter {
-        private Context appContext = GreenDaoApplication.getAppContext();
+//        private Context appContext = GreenDaoApplication.getAppContext();
+        SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
         public HyperdexAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -116,12 +130,29 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public int getCount() {
-            return EntryRepository.getAllEntries(appContext).size();
+            return EntryRepository.getAllEntries(GreenDaoApplication.getAppContext()).size();
         }
 
         @Override
         public Fragment getItem(int position) {
-            return EntryFragment.init(position);
+            return EntryFragment.newInstance(position);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        public Fragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
         }
     }
 
@@ -142,11 +173,11 @@ public class MainActivity extends ActionBarActivity {
         Calendar cal = Calendar.getInstance();
         Gson gson = new Gson();
 
-        EntrySegments entrySegments = new EntrySegments();
-        entrySegments.addSegment(72, 4);
-        entrySegments.addSegment(67, 2);
-        entrySegments.addSegment(7, 3);
-        entrySegments.addSegment(10, 1);
+        HashMap<Integer, Integer> entrySegments = new HashMap<>();
+        entrySegments.put(72, 4);
+        entrySegments.put(67, 2);
+        entrySegments.put(7, 3);
+        entrySegments.put(10, 1);
 //        entrySegments.addColorCodeId(4);
 //        entrySegments.addColorCodeId(2);
 //        entrySegments.addColorCodeId(3);
@@ -159,10 +190,10 @@ public class MainActivity extends ActionBarActivity {
                 0
         ));
 
-        entrySegments = new EntrySegments();
-        entrySegments.addSegment(2, 1);
-        entrySegments.addSegment(3, 0);
-        entrySegments.addSegment(30, 4);
+        entrySegments = new HashMap<>();
+        entrySegments.put(2, 1);
+        entrySegments.put(3, 0);
+        entrySegments.put(30, 4);
 //        entrySegments.addColorCodeId(1);
 //        entrySegments.addColorCodeId(0);
 //        entrySegments.addColorCodeId(4);
@@ -175,10 +206,10 @@ public class MainActivity extends ActionBarActivity {
                 1
         ));
 
-        entrySegments = new EntrySegments();
-        entrySegments.addSegment(27, 2);
-        entrySegments.addSegment(28, 3);
-        entrySegments.addSegment(29, 1);
+        entrySegments = new HashMap<>();
+        entrySegments.put(27, 2);
+        entrySegments.put(28, 3);
+        entrySegments.put(29, 1);
 //        entrySegments.addColorCodeId(2);
 //        entrySegments.addColorCodeId(3);
 //        entrySegments.addColorCodeId(1);

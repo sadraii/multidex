@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.msadraii.multidex;
+package com.msadraii.multidex.colorcode;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -29,6 +29,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.msadraii.multidex.ColorCode;
+import com.msadraii.multidex.R;
+import com.msadraii.multidex.util.Utils;
 import com.msadraii.multidex.colorpickerdialogue.ColorPickerDialog;
 import com.msadraii.multidex.colorpickerdialogue.ColorPickerSwatch;
 import com.msadraii.multidex.colorpickerdialogue.ColorPickerUtils;

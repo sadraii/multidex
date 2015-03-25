@@ -1,18 +1,27 @@
-package com.msadraii.multidex;
+package com.msadraii.multidex.entry;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.msadraii.multidex.ColorCode;
+import com.msadraii.multidex.Entry;
+import com.msadraii.multidex.MainActivity;
 import com.msadraii.multidex.data.ColorCodeRepository;
-import com.msadraii.multidex.data.EntryRepository;
-import com.msadraii.multidex.data.EntrySegments;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Mostafa on 3/21/2015.
@@ -53,7 +62,9 @@ public class EntryView extends View implements View.OnTouchListener {
     private Context mContext;
     private int mPosition;
     private Entry mEntry;
-    private EntrySegments mEntrySegments;
+    private HashMap<Integer, Integer> mEntrySegments;
+    private Set<Integer> mSegmentKeys;
+    private Iterator<Integer> mIterator;
     private Context mAppContext;
     final RectF mCircle = new RectF();
 
@@ -96,27 +107,27 @@ public class EntryView extends View implements View.OnTouchListener {
             double angle = angleOfClick(x, y);
             if (angle >= (i - NUMBER_RINGS) * ARC_MULTIPLIER && angle < i * ARC_MULTIPLIER) {
                 if (clickWithinRing(x, y, OUTER_RING)) {
-                    if (mEntrySegments.hasSegment(i)) {
-                        mEntrySegments.removeSegment(i);
+                    if (mEntrySegments.containsKey(i)) {
+                        mEntrySegments.remove(i);
                     } else {
                         // TODO: remove hardcoded 0
-                        mEntrySegments.addSegment(i, colorCodeId);
+                        mEntrySegments.put(i, colorCodeId);
                     }
                     invalidate();
                 } else if (clickWithinRing(x, y, MIDDLE_RING)) {
-                    if (mEntrySegments.hasSegment(i - 1)) {
-                        mEntrySegments.removeSegment(i - 1);
+                    if (mEntrySegments.containsKey(i - 1)) {
+                        mEntrySegments.remove(i - 1);
                     } else {
                         // TODO: remove hardcoded 0
-                        mEntrySegments.addSegment(i - 1, colorCodeId);
+                        mEntrySegments.put(i - 1, colorCodeId);
                     }
                     invalidate();
                 } else if (clickWithinRing(x, y, INNER_RING)) {
-                    if (mEntrySegments.hasSegment(i - 2)) {
-                        mEntrySegments.removeSegment(i - 2);
+                    if (mEntrySegments.containsKey(i - 2)) {
+                        mEntrySegments.remove(i - 2);
                     } else {
                         // TODO: remove hardcoded 0
-                        mEntrySegments.addSegment(i - 2, colorCodeId);
+                        mEntrySegments.put(i - 2, colorCodeId);
                     }
                     invalidate();
                 }
@@ -152,9 +163,15 @@ public class EntryView extends View implements View.OnTouchListener {
         mMainStrokePaint.setStrokeWidth(STROKE_WIDTH);
 
         // Parse the segments from the Entry
-        mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
-        Gson gson = new Gson();
-        mEntrySegments = gson.fromJson(mEntry.getSegments(), EntrySegments.class);
+//        mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
+        PagerAdapter adapter = ((MainActivity) mContext).getPagerAdapter();
+        Fragment frag = ((MainActivity.HyperdexAdapter) adapter).getRegisteredFragment(
+                ((MainActivity) mContext).getViewPager().getCurrentItem());
+        mEntry = ((EntryFragment) frag).getEntry();
+
+        Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
+        mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
+
     }
 
     @Override
@@ -166,11 +183,12 @@ public class EntryView extends View implements View.OnTouchListener {
         mPaint.setStrokeWidth(150f);
 
         // loops through segments, coloring them in
-        for (int i = 0; i < mEntrySegments.size(); i++) {
-            int segment = mEntrySegments.getSegmentIds().get(i);
+        mSegmentKeys = mEntrySegments.keySet();
+        for(mIterator = mSegmentKeys.iterator(); mIterator.hasNext(); ) {
+            int segment = mIterator.next();
 
             mColorCode = ColorCodeRepository.getColorCodeForId(mAppContext,
-                    mEntrySegments.getColorCodeId(i));
+                    mEntrySegments.get(segment));
             mPaint.setColor(Color.parseColor(mColorCode.getArgb()));
 
             // loops through the slices, from outer ring to inner ring, and colors in any segments

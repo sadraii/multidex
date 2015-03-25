@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.msadraii.multidex;
+package com.msadraii.multidex.colorcode;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -27,6 +27,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.msadraii.multidex.ColorCode;
+import com.msadraii.multidex.R;
+import com.msadraii.multidex.util.SimpleDividerItemDecoration;
+import com.msadraii.multidex.util.SwipeDismissRecyclerViewTouchListener;
 import com.msadraii.multidex.colorpickerdialogue.ColorPickerUtils;
 import com.msadraii.multidex.data.ColorCodeRepository;
 
@@ -43,6 +47,7 @@ public class EditColorCodeFragment extends Fragment {
     public EditColorCodeFragment() {
     }
 
+    // TODO: save instance state / write to DB on save
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

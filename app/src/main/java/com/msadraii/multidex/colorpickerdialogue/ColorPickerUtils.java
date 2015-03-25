@@ -36,7 +36,7 @@ import android.view.LayoutInflater;
 import android.widget.TextView;
 
 import com.msadraii.multidex.R;
-import com.msadraii.multidex.Utils;
+import com.msadraii.multidex.util.Utils;
 import com.msadraii.multidex.data.ColorCodeRepository;
 
 import java.util.ArrayList;

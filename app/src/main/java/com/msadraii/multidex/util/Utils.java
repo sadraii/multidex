@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.msadraii.multidex;
+package com.msadraii.multidex.util;
 
 /**
  * Created by Mostafa on 3/19/2015.

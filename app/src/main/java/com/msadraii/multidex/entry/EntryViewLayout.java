@@ -1,7 +1,8 @@
-package com.msadraii.multidex;
+package com.msadraii.multidex.entry;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 /**
@@ -20,6 +21,7 @@ public class EntryViewLayout extends FrameLayout { // TODO: remove this class, t
 
     public EntryViewLayout(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
+        Log.d("ABOUT TO CALL ENTRYVIEW", "-----------------------");
         mEntryView = new EntryView(context);
         addView(mEntryView);
     }
