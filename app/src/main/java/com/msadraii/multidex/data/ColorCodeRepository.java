@@ -20,6 +20,7 @@ import android.content.Context;
 
 import com.msadraii.multidex.ColorCode;
 import com.msadraii.multidex.ColorCodeDao;
+import com.msadraii.multidex.R;
 
 import java.util.ArrayList;
 
@@ -91,7 +92,12 @@ public class ColorCodeRepository {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
         ArrayList<String> tasks = new ArrayList<String>();
         for (ColorCode colorCode : colorCodes) {
-            tasks.add(colorCode.getTask());
+            String task = colorCode.getTask();
+            if (task == null || task.equals("")) {
+                tasks.add(context.getString(R.string.hint_list_item_description));
+            } else {
+                tasks.add(colorCode.getTask());
+            }
         }
         return tasks;
     }

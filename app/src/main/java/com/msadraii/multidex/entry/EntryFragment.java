@@ -17,9 +17,7 @@
 package com.msadraii.multidex.entry;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +28,7 @@ import android.widget.TextView;
 import com.msadraii.multidex.Entry;
 import com.msadraii.multidex.R;
 import com.msadraii.multidex.data.EntryRepository;
+import com.msadraii.multidex.dialogues.DatePickerFragment;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -68,6 +67,7 @@ public class EntryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // TODO: take a look at ColorPickerDialogue onCreate()
         mPosition = (getArguments() != null)
                 ? getArguments().getInt(POSITION_TAG)
                 : savedInstanceState.getInt(POSITION_TAG);
@@ -91,7 +91,13 @@ public class EntryFragment extends Fragment {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment newFragment = new DatePickerFragment();
+                DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        // TODO: fill this out
+                    }
+                });
                 newFragment.show(getActivity().getSupportFragmentManager(),
                         DATE_DIALOGUE_FRAGMENT_TAG);
             }
@@ -121,25 +127,5 @@ public class EntryFragment extends Fragment {
         outState.putInt(POSITION_TAG, mPosition);
         EntryRepository.insertOrReplace(getActivity().getApplicationContext(), mEntry);
         super.onSaveInstanceState(outState);
-    }
-
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            Calendar c = Calendar.getInstance();
-            return new DatePickerDialog(
-                    getActivity(),
-                    this,
-                    c.get(Calendar.YEAR),
-                    c.get(Calendar.MONTH),
-                    c.get(Calendar.DAY_OF_MONTH)
-            );
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
-        }
     }
 }
