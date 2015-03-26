@@ -32,7 +32,7 @@ import com.msadraii.multidex.ColorCode;
 import com.msadraii.multidex.R;
 import com.msadraii.multidex.util.SimpleDividerItemDecoration;
 import com.msadraii.multidex.util.SwipeDismissRecyclerViewTouchListener;
-import com.msadraii.multidex.colorpickerdialogue.ColorPickerUtils;
+import com.msadraii.multidex.dialogues.ColorPickerUtils;
 import com.msadraii.multidex.data.ColorCodeRepository;
 
 /**
@@ -99,6 +99,7 @@ public class EditColorCodeFragment extends Fragment {
                 new SwipeDismissRecyclerViewTouchListener(
                         mRecyclerView,
                         new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
+                            // Do not delete last color code
                             @Override
                             public boolean canDismiss(int position) {
                                 int size = ColorCodeRepository.getAllColorCodes(appContext).size();
@@ -116,8 +117,7 @@ public class EditColorCodeFragment extends Fragment {
                             public void onDismiss(RecyclerView recyclerView,
                                                   int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
-                                    Log.d("remove", "position="+position);
-                                    ColorCodeRepository.deleteColorCodeWithIdAndSort(
+                                    ColorCodeRepository.deleteColorCodeAndSort(
                                             appContext,
                                             position);
                                 }

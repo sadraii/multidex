@@ -52,7 +52,7 @@ public class ColorCodeRepository {
     /**
      * Deletes the ColorCode and re-sorts the remaining IDs to keep a sequential order to IDs.
      */
-    public static void deleteColorCodeWithIdAndSort(Context context, long id) {
+    public static void deleteColorCodeAndSort(Context context, long id) {
         int colorCount = getAllColorCodes(context).size();
         ColorCodeDao dao = getColorCodeDao(context);
         dao.delete(getColorCodeForId(context, id));
@@ -70,8 +70,12 @@ public class ColorCodeRepository {
         }
     }
 
+    public static int size(Context context) {
+        return (int) getColorCodeDao(context).count();
+    }
+
     public static ArrayList<ColorCode> getAllColorCodes(Context context) {
-        return (ArrayList) getColorCodeDao(context).loadAll();
+        return (ArrayList<ColorCode>) getColorCodeDao(context).loadAll();
     }
 
     public static ArrayList<String> getAllColorValues(Context context) {

@@ -1,5 +1,3 @@
-
-
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -19,7 +17,7 @@
  * https://android.googlesource.com/platform/frameworks/opt/colorpicker/+/master/src/com/android/colorpicker
  */
 
-package com.msadraii.multidex.colorpickerdialogue;
+package com.msadraii.multidex.dialogues;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;

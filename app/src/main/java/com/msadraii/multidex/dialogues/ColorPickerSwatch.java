@@ -17,7 +17,7 @@
  * https://android.googlesource.com/platform/frameworks/opt/colorpicker/+/master/src/com/android/colorpicker
  */
 
-package com.msadraii.multidex.colorpickerdialogue;
+package com.msadraii.multidex.dialogues;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

@@ -16,22 +16,30 @@
 
 package com.msadraii.multidex.entry;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.msadraii.multidex.Entry;
 import com.msadraii.multidex.R;
 import com.msadraii.multidex.data.EntryRepository;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 /**
  * Created by Mostafa on 3/21/2015.
  */
 public class EntryFragment extends Fragment {
     private static final String POSITION_TAG = "position";
+    private static final String DATE_DIALOGUE_FRAGMENT_TAG = "date_dialogue_fragment";
 
     private int mPosition;
     private Entry mEntry;
@@ -49,9 +57,11 @@ public class EntryFragment extends Fragment {
 
     public static EntryFragment newInstance(int position) {
         EntryFragment entryFragment = new EntryFragment();
+
         Bundle args = new Bundle();
         args.putInt(POSITION_TAG, position);
         entryFragment.setArguments(args);
+
         return entryFragment;
     }
 
@@ -72,8 +82,20 @@ public class EntryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_entry, container, false);
 
+        final Calendar cal = Calendar.getInstance();
+        cal.setTime(mEntry.getDate());
+
         TextView textView = (TextView) rootView.findViewById(R.id.entry_view_date);
-        textView.setText("Frag " + mPosition);
+        textView.setText(cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+                + " " + String.valueOf(cal.get(Calendar.DATE)));
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePickerFragment();
+                newFragment.show(getActivity().getSupportFragmentManager(),
+                        DATE_DIALOGUE_FRAGMENT_TAG);
+            }
+        });
 
         EntryViewLayout entryViewLayout =
                 (EntryViewLayout) rootView.findViewById(R.id.entry_view_layout);
@@ -99,5 +121,25 @@ public class EntryFragment extends Fragment {
         outState.putInt(POSITION_TAG, mPosition);
         EntryRepository.insertOrReplace(getActivity().getApplicationContext(), mEntry);
         super.onSaveInstanceState(outState);
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Calendar c = Calendar.getInstance();
+            return new DatePickerDialog(
+                    getActivity(),
+                    this,
+                    c.get(Calendar.YEAR),
+                    c.get(Calendar.MONTH),
+                    c.get(Calendar.DAY_OF_MONTH)
+            );
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+        }
     }
 }

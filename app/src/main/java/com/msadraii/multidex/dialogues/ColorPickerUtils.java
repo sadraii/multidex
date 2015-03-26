@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.msadraii.multidex.colorpickerdialogue;
+package com.msadraii.multidex.dialogues;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -64,8 +64,7 @@ public class ColorPickerUtils {
 		 * @return
 		 */
 		public static int[] colorChoices(Context context){
-		
-			int[] mColorChoices=null;	
+			int[] mColorChoices=null;
 			String[] colorValues = context.getResources().getStringArray(R.array.default_color_values);
 		
 		    if (colorValues !=null && colorValues.length>0) {
@@ -78,20 +77,13 @@ public class ColorPickerUtils {
 		}
 
         public static String colorName(Context context, int color) {
-            String colorString = Utils.toHexString(color);
-            String[] colorValues = context.getResources().getStringArray(R.array.default_color_values);
-            String[] colorNames = context.getResources().getStringArray(R.array.default_color_names);
-            for (int i = 0; i < colorValues.length; i++) {
-                if (colorValues[i].equals(colorString)) {
-                    return colorNames[i];
-                }
-            }
-            return "";
+            return colorName(context, Utils.toHexString(color));
         }
 
         public static String colorName(Context context, String color) {
             String[] colorValues = context.getResources().getStringArray(R.array.default_color_values);
             String[] colorNames = context.getResources().getStringArray(R.array.default_color_names);
+
             for (int i = 0; i < colorValues.length; i++) {
                 if (colorValues[i].equals(color)) {
                     return colorNames[i];
@@ -110,16 +102,16 @@ public class ColorPickerUtils {
             ArrayList<String> unusedColorValues = new ArrayList<>();
             boolean unused;
 
-            for (int i = 0; i < defaultValues.length; i++) {
+            for (String value : defaultValues) {
                 unused = true;
-                for (int j = 0; j < usedColorValues.size(); j++) {
-                    if (defaultValues[i].equals(usedColorValues.get(j))) {
+                for (String used : usedColorValues) {
+                    if (value.equals(used)) {
                         unused = false;
                         break;
                     }
                 }
                 if (unused) {
-                    unusedColorValues.add(defaultValues[i]);
+                    unusedColorValues.add(value);
                 }
             }
 

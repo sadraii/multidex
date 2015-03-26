@@ -37,7 +37,6 @@ public class EntryViewLayout extends FrameLayout { // TODO: remove this class, t
 
     public EntryViewLayout(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
-        Log.d("ABOUT TO CALL ENTRYVIEW", "-----------------------");
         mEntryView = new EntryView(context);
         addView(mEntryView);
     }

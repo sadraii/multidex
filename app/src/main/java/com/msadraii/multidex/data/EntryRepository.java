@@ -33,7 +33,7 @@ public class EntryRepository {
 
     private static final String LOG_TAG = EntryRepository.class.getSimpleName();
 
-    public static final Entry createEntry(Context context, Date date, String segments, long colorCodeId) {
+    public static Entry createEntry(Context context, Date date, String segments, long colorCodeId) {
         return new Entry(getNextId(context), date, segments, colorCodeId);
     }
 
@@ -53,6 +53,10 @@ public class EntryRepository {
         }
     }
 
+    public static int size(Context context) {
+        return (int) getEntryDao(context).count();
+    }
+
     public static void insertOrReplace(Context context, Entry entry) {
         getEntryDao(context).insertOrReplace(entry);
     }
@@ -66,7 +70,7 @@ public class EntryRepository {
     }
 
     public static ArrayList<Entry> getAllEntries(Context context) {
-        return (ArrayList) getEntryDao(context).loadAll();
+        return (ArrayList<Entry>) getEntryDao(context).loadAll();
     }
     
     public static ArrayList<Entry> getEntryForDate(Context context, Date date) {

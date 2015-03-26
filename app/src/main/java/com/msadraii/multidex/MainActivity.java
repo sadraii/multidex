@@ -55,6 +55,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_pager);
+
         mAppContext = this.getApplicationContext();
         mAdapter = new HyperdexAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.hyperdex_pager);
@@ -177,10 +178,6 @@ public class MainActivity extends ActionBarActivity {
         entrySegments.put(67, 2);
         entrySegments.put(7, 3);
         entrySegments.put(10, 1);
-//        entrySegments.addColorCodeId(4);
-//        entrySegments.addColorCodeId(2);
-//        entrySegments.addColorCodeId(3);
-//        entrySegments.addColorCodeId(1);
         Log.d("gson= ", gson.toJson(entrySegments));
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
                 mAppContext,
@@ -193,9 +190,6 @@ public class MainActivity extends ActionBarActivity {
         entrySegments.put(2, 1);
         entrySegments.put(3, 0);
         entrySegments.put(30, 4);
-//        entrySegments.addColorCodeId(1);
-//        entrySegments.addColorCodeId(0);
-//        entrySegments.addColorCodeId(4);
         Log.d("gson= ", gson.toJson(entrySegments));
         cal.add(Calendar.DATE, 1);
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
@@ -209,9 +203,6 @@ public class MainActivity extends ActionBarActivity {
         entrySegments.put(27, 2);
         entrySegments.put(28, 3);
         entrySegments.put(29, 1);
-//        entrySegments.addColorCodeId(2);
-//        entrySegments.addColorCodeId(3);
-//        entrySegments.addColorCodeId(1);
         Log.d("gson= ", gson.toJson(entrySegments));
         cal.add(Calendar.DATE, 1);
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
@@ -242,83 +233,16 @@ public class MainActivity extends ActionBarActivity {
                 "2 Wash dishes"
         ));
 
-
         ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.createColorCode(
                 mAppContext,
                 "#ffffbb33",
                 "3 Complain"
         ));
 
-
         ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.createColorCode(
                 mAppContext,
                 "#ffff4444",
                 "4 How long is this text box and does it really wrap around or not?"
         ));
-//
-//        label = new ColorCode();
-//        label.setArgb("#ff0099cc");
-//        label.setTask("6 Go hiking");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ff9933cc");
-//        label.setTask("7 Homework LOL");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ff669900");
-//        label.setTask("8 Watch TBBT");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ffff8800");
-//        label.setTask("9 Sleep");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ffcc0000");
-//        label.setTask("10 Fix this app!");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ff292884");
-//        label.setTask("11 Be lazy");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ffdd3a94");
-//        label.setTask("12 How long is this text box and does it really wrap around or not?");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ffcccccc");
-//        label.setTask("13 Visit Hawaii");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ff888888");
-//        label.setTask("14 Get more sleep");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ff33b5e5");
-//        label.setTask("15 Mmmm lollipops");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ffaa66cc");
-//        label.setTask("16 Almost there");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ff292884");
-//        label.setTask("17 Almost there");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
-//
-//        label = new ColorCode();
-//        label.setArgb("#ff99cc00");
-//        label.setTask("18 Need more items");
-//        ColorCodeRepository.insertOrReplace(mAppContext, label);
     }
 }

@@ -24,7 +24,6 @@ import android.graphics.RectF;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -64,7 +63,7 @@ public class EntryView extends View implements View.OnTouchListener {
         OUTER (0f),
         MIDDLE (150f),
         INNER (300f),
-        NONE (-1);
+        NONE (-1f);
 
         private float offset;
         Ring(float offset) {
@@ -75,7 +74,6 @@ public class EntryView extends View implements View.OnTouchListener {
     private Context mContext;
     private Context mAppContext;
 
-    // Canvas
     private Paint mPaint;
     private float mCenterX;
     private float mCenterY;
@@ -84,9 +82,8 @@ public class EntryView extends View implements View.OnTouchListener {
 
     private int mPosition;
 
-    // Mouse click
-    private float mInitialX;
-    private float mInitialY;
+    private float mInitialClickX;
+    private float mInitialClickY;
 
     private ColorCode mColorCode;
     private Entry mEntry;
@@ -104,49 +101,28 @@ public class EntryView extends View implements View.OnTouchListener {
         mPosition = position;
     }
 
-    /**
-     * Returns the click angle from center point.
-     * @param x
-     * @param y
-     * @return
-     */
-    private double clickAngle(float x, float y) {
-        double angle = (Math.atan2(y - mCenterY, x - mCenterX) * 180 / Math.PI);
-        if (angle < 0) {
-            angle += 360;
-        }
-        return angle;
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        setOnTouchListener(this);
+
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setStyle(Paint.Style.STROKE);
+
+        // Get Entry from fragment
+        PagerAdapter adapter = ((MainActivity) mContext).getPagerAdapter();
+        Fragment frag = ((MainActivity.HyperdexAdapter) adapter).getRegisteredFragment(
+                ((MainActivity) mContext).getViewPager().getCurrentItem());
+        mEntry = ((EntryFragment) frag).getEntry();
+
+        // Parse the segments from the Entry
+        Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
+        mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
     }
 
     /**
-     * Returns the distance to center point using Pythagorean theorem.
-     * @param x
-     * @param y
-     * @return
-     */
-    private double clickDistance(float x, float y) {
-        return Math.sqrt(Math.pow(x - mCenterX, 2) + Math.pow(y - mCenterY, 2));
-    }
-
-    /**
-     * Returns which ring was clicked using a Ring enum.
-     * @param x
-     * @param y
-     * @return
-     */
-    private Ring ringClicked(float x, float y) {
-        if (Math.abs(clickDistance(x, y) - mRadius + Ring.OUTER.offset) <= SLICE_MAX_DIFF) {
-            return Ring.OUTER;
-        } else if (Math.abs(clickDistance(x, y) - mRadius + Ring.MIDDLE.offset) <= SLICE_MAX_DIFF) {
-            return Ring.MIDDLE;
-        } else if (Math.abs(clickDistance(x, y) - mRadius + Ring.INNER.offset) <= SLICE_MAX_DIFF) {
-            return Ring.INNER;
-        }
-        return Ring.NONE;
-    }
-
-    /**
-     *
+     * Handles clicks and ignores swipes.
      * @param view
      * @param e
      * @return
@@ -156,13 +132,13 @@ public class EntryView extends View implements View.OnTouchListener {
     public boolean onTouch(View view, MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-                mInitialX = e.getX();
-                mInitialY = e.getY();
+                mInitialClickX = e.getX();
+                mInitialClickY = e.getY();
                 break;
             }
             case MotionEvent.ACTION_UP: {
-                final float dX = Math.abs(mInitialX - e.getX());
-                final float dY = Math.abs(mInitialY - e.getY());
+                final float dX = Math.abs(mInitialClickX - e.getX());
+                final float dY = Math.abs(mInitialClickY - e.getY());
 
                 if (dX < SWIPE_MAX_DIFF && dY < SWIPE_MAX_DIFF) {
                     findSegmentAndToggle();
@@ -180,10 +156,10 @@ public class EntryView extends View implements View.OnTouchListener {
         int colorCodeId = ((MainActivity) mContext).getSelectedColorCode();
 
         for (int i = NUMBER_RINGS; i < NUMBER_RINGS * NUMBER_SLICES + 1; i += NUMBER_RINGS) {
-            double angle = clickAngle(mInitialX, mInitialY);
+            double angle = clickAngle(mInitialClickX, mInitialClickY);
 
             if (angle >= (i - NUMBER_RINGS) * SLICE_MULTIPLIER && angle < i * SLICE_MULTIPLIER) {
-                switch (ringClicked(mInitialX, mInitialY)) {
+                switch (ringClicked(mInitialClickX, mInitialClickY)) {
                     case OUTER: {
                         toggleSegment(i, colorCodeId);
                         break;
@@ -212,37 +188,52 @@ public class EntryView extends View implements View.OnTouchListener {
         invalidate();
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        setOnTouchListener(this);
-
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setStyle(Paint.Style.STROKE);
-
-        // Get Entry from fragment
-        PagerAdapter adapter = ((MainActivity) mContext).getPagerAdapter();
-        Fragment frag = ((MainActivity.HyperdexAdapter) adapter).getRegisteredFragment(
-                ((MainActivity) mContext).getViewPager().getCurrentItem());
-        mEntry = ((EntryFragment) frag).getEntry();
-
-        // Parse the segments from the Entry
-        Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
-        mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
+    /**
+     * Returns which ring was clicked using a Ring enum.
+     * @param x
+     * @param y
+     * @return
+     */
+    private Ring ringClicked(float x, float y) {
+        if (Math.abs(clickDistance(x, y) - mRadius + Ring.OUTER.offset) <= SLICE_MAX_DIFF) {
+            return Ring.OUTER;
+        } else if (Math.abs(clickDistance(x, y) - mRadius + Ring.MIDDLE.offset) <= SLICE_MAX_DIFF) {
+            return Ring.MIDDLE;
+        } else if (Math.abs(clickDistance(x, y) - mRadius + Ring.INNER.offset) <= SLICE_MAX_DIFF) {
+            return Ring.INNER;
+        }
+        return Ring.NONE;
     }
 
-    private void setBounds(RectF rect, float offset) {
-        rect.set(mCenterX - mRadius + offset,
-                mCenterY - mRadius + offset,
-                mCenterX + mRadius - offset,
-                mCenterY + mRadius - offset);
+    /**
+     * Returns the click angle from center point.
+     * @param x
+     * @param y
+     * @return
+     */
+    private double clickAngle(float x, float y) {
+        double angle = (Math.atan2(y - mCenterY, x - mCenterX) * 180 / Math.PI);
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
     }
+
+    /**
+     * Returns the distance to center point using Pythagorean theorem.
+     * @param x
+     * @param y
+     * @return
+     */
+    private double clickDistance(float x, float y) {
+        return Math.sqrt(Math.pow(x - mCenterX, 2) + Math.pow(y - mCenterY, 2));
+    }
+
+
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d("draw", "onDraw");
 
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(RING_STROKE_WIDTH);
@@ -295,6 +286,13 @@ public class EntryView extends View implements View.OnTouchListener {
 
         setBounds(mBounds, Ring.INNER.offset + SLICE_MAX_DIFF);
         canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+    }
+
+    private void setBounds(RectF rect, float offset) {
+        rect.set(mCenterX - mRadius + offset,
+                mCenterY - mRadius + offset,
+                mCenterX + mRadius - offset,
+                mCenterY + mRadius - offset);
     }
 
     @Override

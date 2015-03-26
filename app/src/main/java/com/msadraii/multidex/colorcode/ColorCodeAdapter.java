@@ -31,11 +31,11 @@ import android.widget.TextView;
 
 import com.msadraii.multidex.ColorCode;
 import com.msadraii.multidex.R;
-import com.msadraii.multidex.util.Utils;
-import com.msadraii.multidex.colorpickerdialogue.ColorPickerDialog;
-import com.msadraii.multidex.colorpickerdialogue.ColorPickerSwatch;
-import com.msadraii.multidex.colorpickerdialogue.ColorPickerUtils;
 import com.msadraii.multidex.data.ColorCodeRepository;
+import com.msadraii.multidex.dialogues.ColorPickerDialog;
+import com.msadraii.multidex.dialogues.ColorPickerSwatch;
+import com.msadraii.multidex.dialogues.ColorPickerUtils;
+import com.msadraii.multidex.util.Utils;
 
 /**
  * Created by Mostafa on 3/15/2015.
@@ -68,7 +68,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mAppContext, position);
         if (colorCode == null) {
             return;
@@ -220,12 +220,12 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         public final EditText mEditText;
         public final TextView mTextView;
 
-        public ViewHolder(View v) {
-            super(v);
-            mFrameLayout = (FrameLayout) v.findViewById(R.id.list_item_color_frame_layout);
-            mImageView = (ImageView) v.findViewById(R.id.list_item_color_image_ivew);
-            mEditText = (EditText) v.findViewById(R.id.list_item_description);
-            mTextView = (TextView) v.findViewById(R.id.list_item_color_name);
+        public ViewHolder(View view) {
+            super(view);
+            mFrameLayout = (FrameLayout) view.findViewById(R.id.list_item_color_frame_layout);
+            mImageView = (ImageView) view.findViewById(R.id.list_item_color_image_ivew);
+            mEditText = (EditText) view.findViewById(R.id.list_item_description);
+            mTextView = (TextView) view.findViewById(R.id.list_item_color_name);
         }
     }
 }
