@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.msadraii.multidex.ColorCode;
 import com.msadraii.multidex.R;
@@ -42,7 +43,6 @@ public class EditColorCodeFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private Context appContext;
 
     public EditColorCodeFragment() {
@@ -78,10 +78,9 @@ public class EditColorCodeFragment extends Fragment {
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         mRecyclerView.setHasFixedSize(true);
 
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new ColorCodeAdapter(appContext, getActivity());
-//        mAdapter.setHasStableIds(true);
 
 //        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
@@ -102,18 +101,28 @@ public class EditColorCodeFragment extends Fragment {
                         new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
                             @Override
                             public boolean canDismiss(int position) {
+                                int size = ColorCodeRepository.getAllColorCodes(appContext).size();
+                                if (size == 1) {
+                                    Toast.makeText(appContext,
+                                            R.string.toast_cannot_delete_list_item,
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                    return false;
+                                }
                                 return true;
                             }
 
                             @Override
-                            public void onDismiss(RecyclerView recyclerView, int[] reverseSortedPositions) {
+                            public void onDismiss(RecyclerView recyclerView,
+                                                  int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
                                     Log.d("remove", "position="+position);
                                     ColorCodeRepository.deleteColorCodeWithIdAndSort(
                                             appContext,
                                             position);
                                 }
-                                // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
+                                // Do not call notifyItemRemoved for every item, it will cause gaps
+                                // on deleting items
                                 mAdapter.notifyDataSetChanged();
                             }
                         });

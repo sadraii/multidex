@@ -146,7 +146,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                                     .setDuration(COLOR_SPIN_DURATION);
                         }
                     });
-            holder.mEditText.setHint("Enter description");
+//            holder.mEditText.setHint("Enter description");
             newlyAdded = false;
         } else {
             ((GradientDrawable) holder.mImageView.getBackground())

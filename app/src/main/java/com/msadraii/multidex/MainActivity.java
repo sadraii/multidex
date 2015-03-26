@@ -48,8 +48,7 @@ import java.util.HashMap;
 public class MainActivity extends ActionBarActivity {
     private Context mAppContext;
     private HyperdexAdapter mAdapter;
-    private ViewPager mPager; // TODO: convert to local?
-    private Spinner mSpinner; // TODO: check how buttons are done in other apps
+    private ViewPager mPager;
     private int selectedColorCode;
 
     @Override
@@ -63,17 +62,17 @@ public class MainActivity extends ActionBarActivity {
         selectedColorCode = 0;
 
 //        clearTables();
-        recreateTables();
-        addTestColors();
-        addTestEntries();
+//        recreateTables();
+//        addTestColors();
+//        addTestEntries();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
                 ColorCodeRepository.getAllTasks(mAppContext));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner = (Spinner) findViewById(R.id.color_spinner);
-        mSpinner.setAdapter(adapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Spinner spinner = (Spinner) findViewById(R.id.color_spinner);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedColorCode = position;

@@ -48,6 +48,7 @@
             android:layout_height="wrap_content"
             fontFamily="sans-serif-condensed"
             textAppearance="?android:textAppearanceLarge"
+            android:hint="@string/hint_list_item_description"
             android:inputType="textNoSuggestions"
             style="?android:listSeparatorTextViewStyle"
             android:background="#00000000"/>

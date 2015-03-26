@@ -22,4 +22,8 @@
     <string name="action_edit_color_codes">Edit Color Codes</string>
 
     <string name="title_activity_edit_color_codes">Color Codes</string>
+
+    <string name="hint_list_item_description">Enter description</string>
+
+    <string name="toast_cannot_delete_list_item">Need at least one color code.</string>
 </resources>
