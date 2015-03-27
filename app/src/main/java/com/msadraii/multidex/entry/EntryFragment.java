@@ -124,8 +124,8 @@ public class EntryFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putInt(POSITION_TAG, mPosition);
         EntryRepository.insertOrReplace(getActivity().getApplicationContext(), mEntry);
-        super.onSaveInstanceState(outState);
     }
 }

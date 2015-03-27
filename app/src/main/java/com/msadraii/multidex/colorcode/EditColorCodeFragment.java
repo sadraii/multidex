@@ -50,9 +50,9 @@ public class EditColorCodeFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState()");
         // TODO: write to DB
-        super.onSaveInstanceState(outState);
     }
 
     @Override
