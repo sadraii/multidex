@@ -33,26 +33,63 @@ public class EntryRepository {
 
     private static final String LOG_TAG = EntryRepository.class.getSimpleName();
 
-    public static Entry createEntry(Context context, Date date, String segments, long colorCodeId) {
+    /**
+     * Creates, inserts, and returns the next available {@link Entry}.
+     *
+     * @param context
+     * @param date
+     * @param segments
+     * @param colorCodeId
+     * @return
+     */
+    public static Entry addNextEntry(Context context, Date date, String segments,
+                                        long colorCodeId) {
+        Entry entry = initEntry(context, date, segments, colorCodeId);
+        insertOrReplace(context, entry);
+        return entry;
+    }
+
+
+    /**
+     * Creates and returns an {@link Entry} set to the next available ID.
+     *
+     * @param context
+     * @param date
+     * @param segments
+     * @param colorCodeId
+     * @return
+     */
+    public static Entry initEntry(Context context, Date date, String segments, long colorCodeId) {
         return new Entry(getNextId(context), date, segments, colorCodeId);
     }
 
+    /**
+     * Returns the next unused ID.
+     *
+     * @param context
+     * @return
+     */
     public static long getNextId(Context context) {
         ArrayList<Entry> entries = getAllEntries(context);
         return (entries == null) ? 0 : entries.size();
     }
 
-    // returns the date entry of first application run.
-    public static Date firstEntry(Context context) {
-        if (getAllEntries(context).size() == 0) {
-            Date date = new Date();
-            createEntry(context, date, "", 0);
-            return date;
-        } else {
-            return getEntryForId(context, 0).getDate();
-        }
+    /**
+     * Returns the first {@link Entry} or <code>null</code> if no entry exists.
+     *
+     * @param context
+     * @return
+     */
+    public static Entry getFirstEntry(Context context) {
+        return (getAllEntries(context).size() == 0) ? null : getEntryForId(context, 0);
     }
 
+    /**
+     * Returns the total number of entries.
+     *
+     * @param context
+     * @return
+     */
     public static int size(Context context) {
         return (int) getEntryDao(context).count();
     }

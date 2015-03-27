@@ -28,6 +28,7 @@ import com.msadraii.multidex.R;
 import com.msadraii.multidex.data.EntryRepository;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by Mostafa on 3/21/2015.
@@ -82,9 +83,9 @@ public class EntryFragment extends Fragment {
         cal.setTime(mEntry.getDate());
 
         TextView textView = (TextView) rootView.findViewById(R.id.entry_view_date);
-//        textView.setText(cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
-//                + " " + String.valueOf(cal.get(Calendar.DATE)));
-        textView.setText(String.valueOf(mPosition)); // TODO: change this back to date
+        textView.setText(cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+                + " " + String.valueOf(cal.get(Calendar.DATE)));
+//        textView.setText(String.valueOf(mPosition)); // TODO: change this back to date
 //        textView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

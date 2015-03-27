@@ -43,7 +43,9 @@ import com.msadraii.multidex.data.GreenDaoApplication;
 import com.msadraii.multidex.entry.EntryFragment;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ActionBarActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -59,15 +61,25 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.fragment_pager);
 
         mAppContext = this.getApplicationContext();
+
+        DEBUG_firstInstall(true);
+
         mAdapter = new HyperdexAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.hyperdex_pager);
         mPager.setAdapter(mAdapter);
+        // TODO: today's date. If no savedinstancestate, go to today's date
+        if (savedInstanceState != null) {
+
+        } else {
+            mPager.setCurrentItem(getEntryIdForToday(), false);
+        }
         selectedColorCode = 0;
 
 //        clearTables();
 //        recreateTables();
 //        addTestColors();
 //        addTestEntries();
+        mPager.getAdapter()
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
@@ -87,6 +99,37 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
+    private void DEBUG_firstInstall(boolean firstInstall) {
+        if (firstInstall) {
+            // TODO: probably don't do this in case of uninstall/reinstall, check if db exists first
+            recreateTables();
+            ColorCodeRepository.addNextColorCode(mAppContext, "#ff33b5e5", "0 Make breakfast");
+            EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(), "", 0);
+        }
+    }
+
+    // TODO: test 2 times for same day. test different days, but plus/minus 24 hours on the current day. should not add 1 day if more than 24hrs, go by DATE not TIME
+
+    /**
+     * Returns the ID of the {@link Entry} for today.
+     *
+     * @return The ID of the {@link Entry} for today.
+     */
+    private int getEntryIdForToday() {
+        Entry entry = EntryRepository.getFirstEntry(mAppContext);
+        if (entry != null) {
+            Date first = entry.getDate();
+            Date today = Calendar.getInstance().getTime();
+            long difference = today.getTime() - first.getTime();
+            return TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS));
+        }
+    }
+
+    /**
+     * Returns the currently selected {@link ColorCode} ID of the {@link Spinner}.
+     *
+     * @return  The currently selected {@link ColorCode} ID.
+     */
     public int getSelectedColorCode() {
         return selectedColorCode;
     }
@@ -114,12 +157,34 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Retrieve the current {@link PagerAdapter}.
+     *
+     * @return  The currently registered {@link PagerAdapter}.
+     */
     public PagerAdapter getPagerAdapter() {
         return mAdapter;
     }
 
+    /**
+     * Retrieve the current {@link ViewPager}.
+     *
+     * @return  The currently registered {@link ViewPager}.
+     */
     public ViewPager getViewPager() {
         return mPager;
+    }
+
+    private void recreateTables() {
+        ColorCodeRepository.dropTable(mAppContext);
+        EntryRepository.dropTable(mAppContext);
+        ColorCodeRepository.createTable(mAppContext);
+        EntryRepository.createTable(mAppContext);
+    }
+
+    private void clearTables() {
+        ColorCodeRepository.clearColorCodes(mAppContext);
+        EntryRepository.clearEntries(mAppContext);
     }
 
     public static class HyperdexAdapter extends FragmentStatePagerAdapter {
@@ -142,18 +207,24 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        public int getItemPosition(Object object) {
-            return super.getItemPosition(object);
-        }
-
-        @Override
         public Object instantiateItem(ViewGroup container, int position) {
             // TODO: fix getTime()
-            // If scrolled to last entry, create a new one for the next day
-            if (position == EntryRepository.getAllEntries(appContext).size() - 1) {
-                EntryRepository.insertOrReplace(appContext,
-                        EntryRepository.createEntry(appContext,
-                                Calendar.getInstance().getTime(), "", 0));
+            // If user scrolled to the last entry, create a new one for the next day
+            // If there is a gap between last entry date and today's date, create entries until
+            // tomorrow's date.
+            int size = EntryRepository.getAllEntries(appContext).size();
+            Date lastEntryDate = EntryRepository.getEntryForId(appContext, size - 1).getDate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(lastEntryDate);
+
+            if (position == size - 1) {
+                cal.add(Calendar.DATE, 1);
+                EntryRepository.addNextEntry(appContext, cal.getTime(), "", 0);
+            } else if (position >= size) {
+                while (EntryRepository.getAllEntries(appContext).size() < position + 2) {
+                    cal.add(Calendar.DATE, 1);
+                    EntryRepository.addNextEntry(appContext, cal.getTime(), "", 0);
+                }
             }
 
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
@@ -172,19 +243,6 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void recreateTables() {
-        ColorCodeRepository.dropTable(mAppContext);
-        EntryRepository.dropTable(mAppContext);
-        ColorCodeRepository.createTable(mAppContext);
-        EntryRepository.createTable(mAppContext);
-    }
-
-    private void clearTables() {
-        ColorCodeRepository.clearColorCodes(mAppContext);
-        EntryRepository.clearEntries(mAppContext);
-    }
-
-
     private void addTestEntries() {
         Calendar cal = Calendar.getInstance();
         Gson gson = new Gson();
@@ -195,7 +253,7 @@ public class MainActivity extends ActionBarActivity {
         entrySegments.put(7, 3);
         entrySegments.put(10, 1);
         Log.d("gson= ", gson.toJson(entrySegments));
-        EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
+        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
                 mAppContext,
                 cal.getTime(),
                 gson.toJson(entrySegments),
@@ -208,7 +266,7 @@ public class MainActivity extends ActionBarActivity {
         entrySegments.put(30, 4);
         Log.d("gson= ", gson.toJson(entrySegments));
         cal.add(Calendar.DATE, 1);
-        EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
+        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
                 mAppContext,
                 cal.getTime(),
                 gson.toJson(entrySegments),
@@ -221,7 +279,7 @@ public class MainActivity extends ActionBarActivity {
         entrySegments.put(29, 1);
         Log.d("gson= ", gson.toJson(entrySegments));
         cal.add(Calendar.DATE, 1);
-        EntryRepository.insertOrReplace(mAppContext, EntryRepository.createEntry(
+        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
                 mAppContext,
                 cal.getTime(),
                 gson.toJson(entrySegments),
@@ -231,31 +289,31 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void addTestColors() {
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.createColorCode(
+        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
                 mAppContext,
                 "#ff33b5e5",
                 "0 Make breakfast"
         ));
 
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.createColorCode(
+        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
                 mAppContext,
                 "#ffaa66cc",
                 "1 Jump rope"
         ));
 
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.createColorCode(
+        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
                 mAppContext,
                 "#ff99cc00",
                 "2 Wash dishes"
         ));
 
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.createColorCode(
+        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
                 mAppContext,
                 "#ffffbb33",
                 "3 Complain"
         ));
 
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.createColorCode(
+        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
                 mAppContext,
                 "#ffff4444",
                 "4 How long is this text box and does it really wrap around or not?"

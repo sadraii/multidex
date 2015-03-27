@@ -135,7 +135,7 @@ public class EditColorCodeFragment extends Fragment {
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ColorCode colorCode = ColorCodeRepository.createColorCode(
+                ColorCode colorCode = ColorCodeRepository.initColorCode(
                         appContext,
                         ColorPickerUtils.ColorUtils.randomColor(appContext),
                         ""

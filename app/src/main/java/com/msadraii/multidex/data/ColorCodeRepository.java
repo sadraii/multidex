@@ -33,10 +33,38 @@ public class ColorCodeRepository {
 
     private static final String LOG_TAG = ColorCodeRepository.class.getSimpleName();
 
-    public static ColorCode createColorCode(Context context, String argb, String task) {
+    /**
+     * Creates, inserts, and returns the next available {@link ColorCode}.
+     *
+     * @param context
+     * @param argb
+     * @param task
+     * @return
+     */
+    public static ColorCode addNextColorCode(Context context, String argb, String task) {
+        ColorCode colorCode = initColorCode(context, argb, task);
+        insertOrReplace(context, colorCode);
+        return colorCode;
+    }
+
+    /**
+     * Creates and returns a {@link ColorCode} set to the next available ID.
+     *
+     * @param context
+     * @param argb
+     * @param task
+     * @return
+     */
+    public static ColorCode initColorCode(Context context, String argb, String task) {
         return new ColorCode(getNextId(context), argb, task);
     }
 
+    /**
+     * Returns the next unused ID.
+     *
+     * @param context
+     * @return
+     */
     public static long getNextId(Context context) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
         return (colorCodes == null) ? 0 : colorCodes.size();
