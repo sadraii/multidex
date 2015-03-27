@@ -16,22 +16,18 @@
 
 package com.msadraii.multidex.entry;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.msadraii.multidex.Entry;
 import com.msadraii.multidex.R;
 import com.msadraii.multidex.data.EntryRepository;
-import com.msadraii.multidex.dialogues.DatePickerFragment;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * Created by Mostafa on 3/21/2015.
@@ -86,22 +82,23 @@ public class EntryFragment extends Fragment {
         cal.setTime(mEntry.getDate());
 
         TextView textView = (TextView) rootView.findViewById(R.id.entry_view_date);
-        textView.setText(cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
-                + " " + String.valueOf(cal.get(Calendar.DATE)));
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        // TODO: fill this out
-                    }
-                });
-                newFragment.show(getActivity().getSupportFragmentManager(),
-                        DATE_DIALOGUE_FRAGMENT_TAG);
-            }
-        });
+//        textView.setText(cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+//                + " " + String.valueOf(cal.get(Calendar.DATE)));
+        textView.setText(String.valueOf(mPosition)); // TODO: change this back to date
+//        textView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DatePickerFragment newFragment = new DatePickerFragment();
+//                newFragment.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+//                    @Override
+//                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                        // TODO: fill this out
+//                    }
+//                });
+//                newFragment.show(getActivity().getSupportFragmentManager(),
+//                        DATE_DIALOGUE_FRAGMENT_TAG);
+//            }
+//        });
 
         EntryViewLayout entryViewLayout =
                 (EntryViewLayout) rootView.findViewById(R.id.entry_view_layout);

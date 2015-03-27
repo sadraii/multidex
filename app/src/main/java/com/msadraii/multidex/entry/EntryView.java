@@ -117,8 +117,13 @@ public class EntryView extends View implements View.OnTouchListener {
         mEntry = ((EntryFragment) frag).getEntry();
 
         // Parse the segments from the Entry
-        Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
-        mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
+        if (mEntry.hasSegments()) {
+            Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {
+            }.getType();
+            mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
+        } else {
+            mEntrySegments = new HashMap<>();
+        }
     }
 
     /**

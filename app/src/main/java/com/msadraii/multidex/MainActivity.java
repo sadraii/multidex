@@ -46,6 +46,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity {
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
     private Context mAppContext;
     private HyperdexAdapter mAdapter;
     private ViewPager mPager;
@@ -121,7 +123,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public static class HyperdexAdapter extends FragmentStatePagerAdapter {
-//        private Context appContext = GreenDaoApplication.getAppContext();
+        private Context appContext = GreenDaoApplication.getAppContext();
         SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
         public HyperdexAdapter(FragmentManager fragmentManager) {
@@ -130,7 +132,8 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public int getCount() {
-            return EntryRepository.getAllEntries(GreenDaoApplication.getAppContext()).size();
+            // Space for 10 years of entries
+            return 3650;
         }
 
         @Override
@@ -139,7 +142,20 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
+        public int getItemPosition(Object object) {
+            return super.getItemPosition(object);
+        }
+
+        @Override
         public Object instantiateItem(ViewGroup container, int position) {
+            // TODO: fix getTime()
+            // If scrolled to last entry, create a new one for the next day
+            if (position == EntryRepository.getAllEntries(appContext).size() - 1) {
+                EntryRepository.insertOrReplace(appContext,
+                        EntryRepository.createEntry(appContext,
+                                Calendar.getInstance().getTime(), "", 0));
+            }
+
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
             registeredFragments.put(position, fragment);
             return fragment;

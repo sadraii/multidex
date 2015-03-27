@@ -133,6 +133,9 @@ public class Entry {
     }
 
     // KEEP METHODS - put your custom methods here
+    public boolean hasSegments() {
+        return (segments == null || segments.equals("")) ? false : true;
+    }
     public HashMap<Integer, Integer> getEntrySegments() {
         return entrySegments;
     }
