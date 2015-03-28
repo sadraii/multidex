@@ -20,6 +20,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="action_edit_color_codes">Edit Color Codes</string>
+    <string name="action_calendar">Go to Date</string>
 
     <string name="title_activity_edit_color_codes">Color Codes</string>
 

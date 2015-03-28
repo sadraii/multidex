@@ -16,6 +16,7 @@
 
 package com.msadraii.multidex;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 
 import com.google.gson.Gson;
@@ -40,6 +42,7 @@ import com.msadraii.multidex.colorcode.EditColorCodeActivity;
 import com.msadraii.multidex.data.ColorCodeRepository;
 import com.msadraii.multidex.data.EntryRepository;
 import com.msadraii.multidex.data.GreenDaoApplication;
+import com.msadraii.multidex.dialogues.DatePickerFragment;
 import com.msadraii.multidex.entry.EntryFragment;
 
 import java.util.Calendar;
@@ -49,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ActionBarActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String DATE_DIALOGUE_FRAGMENT_TAG = "date_dialogue_fragment";
 
     private Context mAppContext;
     private HyperdexAdapter mAdapter;
@@ -79,7 +83,6 @@ public class MainActivity extends ActionBarActivity {
 //        recreateTables();
 //        addTestColors();
 //        addTestEntries();
-        mPager.getAdapter()
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
@@ -121,8 +124,9 @@ public class MainActivity extends ActionBarActivity {
             Date first = entry.getDate();
             Date today = Calendar.getInstance().getTime();
             long difference = today.getTime() - first.getTime();
-            return TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS));
+            return (int) TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS);
         }
+        return 0;
     }
 
     /**
@@ -145,6 +149,10 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.action_calendar: {
+                showDatePicker();
+                return true;
+            }
             case R.id.action_settings: {
                 // TODO: settings activity
                 return true;
@@ -155,6 +163,50 @@ public class MainActivity extends ActionBarActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDatePicker() {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                mPager.setCurrentItem(daysSinceFirstEntry(year, monthOfYear, dayOfMonth));
+            }
+        });
+        newFragment.show(getSupportFragmentManager(),
+                DATE_DIALOGUE_FRAGMENT_TAG);
+    }
+
+    @SuppressWarnings("deprecation")
+    private int daysSinceFirstEntry(int year, int monthOfYear, int dayOfMonth) {
+        Entry firstEntry = EntryRepository.getFirstEntry(mAppContext);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(firstEntry.getDate());
+        int firstDay = cal.get(Calendar.DAY_OF_YEAR);
+        int firstYear = cal.get(Calendar.YEAR);
+
+        cal.setTime(new Date(year - 1900, monthOfYear, dayOfMonth));
+        int currentDay = cal.get(Calendar.DAY_OF_YEAR);
+        int currentYear = cal.get(Calendar.YEAR);
+
+        int differenceInDays = 0;
+
+        if (firstYear == currentYear) {
+            differenceInDays = currentDay - firstDay; // - 1 needed?
+        } else {
+            for (int i = currentYear; i > firstYear; i--) {
+                // Account for leap year
+                int daysInYear = (i % 4 == 0) ? 366 : 365;
+
+                if (firstYear == i - 1) {
+                    // subtract days from year and exit
+                    differenceInDays += daysInYear - firstDay + currentDay;
+                } else {
+                    differenceInDays += daysInYear;
+                }
+            }
+        }
+        return differenceInDays;
     }
 
     /**
