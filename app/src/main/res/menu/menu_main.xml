@@ -20,7 +20,7 @@
       tools:context=".MainActivity">
     <item android:id="@+id/action_calendar"
           android:title="@string/action_calendar"
-          android:icon="@drawable/ic_menu_calendar_holo_light"
+          android:icon="@drawable/ic_menu_today_no_date_holo_light"
           android:orderInCategory="80"
           app:showAsAction="ifRoom" />
     <item android:id="@+id/action_edit_label"

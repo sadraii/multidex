@@ -44,11 +44,11 @@ import com.sadraii.hyperdex.data.EntryRepository;
 import com.sadraii.hyperdex.data.GreenDaoApplication;
 import com.sadraii.hyperdex.dialogues.DatePickerFragment;
 import com.sadraii.hyperdex.entry.EntryFragment;
+import com.sadraii.hyperdex.util.Utils;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ActionBarActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -75,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
         if (savedInstanceState != null) {
 
         } else {
-            mPager.setCurrentItem(getEntryIdForToday(), false);
+            mPager.setCurrentItem(Utils.getEntryIdForToday(mAppContext), false);
         }
         selectedColorCode = 0;
 
@@ -107,27 +107,11 @@ public class MainActivity extends ActionBarActivity {
             // TODO: probably don't do this in case of uninstall/reinstall, check if db exists first
             recreateTables();
             ColorCodeRepository.addNextColorCode(mAppContext, "#ff33b5e5", "0 Make breakfast");
-            EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(), "", 0);
+            EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(), "");
         }
     }
 
     // TODO: test 2 times for same day. test different days, but plus/minus 24 hours on the current day. should not add 1 day if more than 24hrs, go by DATE not TIME
-
-    /**
-     * Returns the ID of the {@link Entry} for today.
-     *
-     * @return The ID of the {@link Entry} for today.
-     */
-    private int getEntryIdForToday() {
-        Entry entry = EntryRepository.getFirstEntry(mAppContext);
-        if (entry != null) {
-            Date first = entry.getDate();
-            Date today = Calendar.getInstance().getTime();
-            long difference = today.getTime() - first.getTime();
-            return (int) TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS);
-        }
-        return 0;
-    }
 
     /**
      * Returns the currently selected {@link ColorCode} ID of the {@link Spinner}.
@@ -173,55 +157,12 @@ public class MainActivity extends ActionBarActivity {
         newFragment.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mPager.setCurrentItem(daysSinceFirstEntry(year, monthOfYear, dayOfMonth));
+                mPager.setCurrentItem(Utils.daysSinceFirstEntry(mAppContext, year, monthOfYear,
+                        dayOfMonth));
             }
         });
         newFragment.show(getSupportFragmentManager(),
                 DATE_DIALOGUE_FRAGMENT_TAG);
-    }
-
-    /**
-     * Returns the number of days since the date of the first {@link Entry}.
-     *
-     * @param   year
-     * @param   monthOfYear
-     * @param   dayOfMonth
-     * @return  The number of days since the date of the first {@link Entry}.
-     */
-    @SuppressWarnings("deprecation")
-    private int daysSinceFirstEntry(int year, int monthOfYear, int dayOfMonth) {
-        Entry firstEntry = EntryRepository.getFirstEntry(mAppContext);
-        Calendar cal = Calendar.getInstance();
-
-        cal.setTime(firstEntry.getDate());
-        int firstDay = cal.get(Calendar.DAY_OF_YEAR);
-        int firstYear = cal.get(Calendar.YEAR);
-
-        // Date() counts 1900 as 0 for year
-        cal.setTime(new Date(year - 1900, monthOfYear, dayOfMonth));
-        int currentDay = cal.get(Calendar.DAY_OF_YEAR);
-        int currentYear = cal.get(Calendar.YEAR);
-
-        int differenceInDays = 0;
-
-        // If both dates are in the same year, simply subtract days.
-        // Otherwise, loop through the years adding full years and partial days for the last year.
-        if (firstYear == currentYear) {
-            differenceInDays = currentDay - firstDay;
-        } else {
-            for (int i = currentYear; i > firstYear; i--) {
-                // Account for leap year
-                int daysInYear = (i % 4 == 0) ? 366 : 365;
-
-                // If on the last year, add partial days. Otherwise add full year.
-                if (firstYear == i - 1) {
-                    differenceInDays += daysInYear - firstDay + currentDay;
-                } else {
-                    differenceInDays += daysInYear;
-                }
-            }
-        }
-        return differenceInDays;
     }
 
     /**
@@ -298,11 +239,11 @@ public class MainActivity extends ActionBarActivity {
             // tomorrow's date.
             if (position == size - 1) {
                 cal.add(Calendar.DATE, 1);
-                EntryRepository.addNextEntry(appContext, cal.getTime(), "", 0);
+                EntryRepository.addNextEntry(appContext, cal.getTime(), "");
             } else if (position >= size) {
                 while (EntryRepository.size(appContext) < position + 2) {
                     cal.add(Calendar.DATE, 1);
-                    EntryRepository.addNextEntry(appContext, cal.getTime(), "", 0);
+                    EntryRepository.addNextEntry(appContext, cal.getTime(), "");
                 }
             }
 
@@ -335,8 +276,7 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
                 mAppContext,
                 cal.getTime(),
-                gson.toJson(entrySegments),
-                0
+                gson.toJson(entrySegments)
         ));
 
         entrySegments = new HashMap<>();
@@ -348,8 +288,7 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
                 mAppContext,
                 cal.getTime(),
-                gson.toJson(entrySegments),
-                1
+                gson.toJson(entrySegments)
         ));
 
         entrySegments = new HashMap<>();
@@ -361,8 +300,7 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
                 mAppContext,
                 cal.getTime(),
-                gson.toJson(entrySegments),
-                2
+                gson.toJson(entrySegments)
         ));
         mAdapter.notifyDataSetChanged();
     }

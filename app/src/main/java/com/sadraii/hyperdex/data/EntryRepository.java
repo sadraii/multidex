@@ -39,12 +39,10 @@ public class EntryRepository {
      * @param context
      * @param date
      * @param segments
-     * @param colorCodeId
      * @return
      */
-    public static Entry addNextEntry(Context context, Date date, String segments,
-                                        long colorCodeId) {
-        Entry entry = initEntry(context, date, segments, colorCodeId);
+    public static Entry addNextEntry(Context context, Date date, String segments) {
+        Entry entry = initEntry(context, date, segments);
         insertOrReplace(context, entry);
         return entry;
     }
@@ -56,11 +54,10 @@ public class EntryRepository {
      * @param context
      * @param date
      * @param segments
-     * @param colorCodeId
      * @return
      */
-    public static Entry initEntry(Context context, Date date, String segments, long colorCodeId) {
-        return new Entry(getNextId(context), date, segments, colorCodeId);
+    public static Entry initEntry(Context context, Date date, String segments) {
+        return new Entry(getNextId(context), date, segments);
     }
 
     /**

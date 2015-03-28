@@ -18,7 +18,6 @@ package pl.surecase.eu;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
-import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 
 public class MyDaoGenerator {
@@ -36,8 +35,8 @@ public class MyDaoGenerator {
         entry.addIdProperty().unique();
         entry.addDateProperty("date");
         entry.addStringProperty("segments");
-        Property colorCodeIdProperty = entry.addLongProperty("colorCodeId").getProperty();
-        entry.addToOne(colorCode, colorCodeIdProperty);
+//        Property colorCodeIdProperty = entry.addLongProperty("colorCodeId").getProperty();
+//        entry.addToOne(colorCode, colorCodeIdProperty);
 
         new DaoGenerator().generateAll(schema, args[0]);
     }

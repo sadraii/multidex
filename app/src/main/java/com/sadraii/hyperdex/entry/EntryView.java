@@ -128,6 +128,7 @@ public class EntryView extends View implements View.OnTouchListener {
 
     /**
      * Handles clicks and ignores swipes.
+     *
      * @param view
      * @param e
      * @return
@@ -195,6 +196,7 @@ public class EntryView extends View implements View.OnTouchListener {
 
     /**
      * Returns which ring was clicked using a Ring enum.
+     *
      * @param x
      * @param y
      * @return
@@ -212,6 +214,7 @@ public class EntryView extends View implements View.OnTouchListener {
 
     /**
      * Returns the click angle from center point.
+     *
      * @param x
      * @param y
      * @return
@@ -226,6 +229,7 @@ public class EntryView extends View implements View.OnTouchListener {
 
     /**
      * Returns the distance to center point using Pythagorean theorem.
+     *
      * @param x
      * @param y
      * @return
