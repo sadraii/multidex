@@ -15,16 +15,16 @@
  limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.msadraii.multidex" >
+    package="com.sadraii.hyperdex" >
 
     <application
-        android:name="com.msadraii.multidex.data.GreenDaoApplication"
+        android:name="com.sadraii.hyperdex.data.GreenDaoApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.msadraii.multidex.MainActivity"
+            android:name="com.sadraii.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,12 +33,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".colorcode.EditColorCodeActivity"
+            android:name="com.sadraii.hyperdex.colorcode.EditColorCodeActivity"
             android:label="@string/title_activity_edit_color_codes"
-            android:parentActivityName="com.msadraii.multidex.MainActivity" >
+            android:parentActivityName="com.sadraii.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.msadraii.multidex.MainActivity" />
+                android:value="com.sadraii.MainActivity" />
         </activity>
     </application>
 

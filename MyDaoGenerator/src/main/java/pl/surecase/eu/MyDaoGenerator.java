@@ -8,7 +8,7 @@ import de.greenrobot.daogenerator.Schema;
 public class MyDaoGenerator {
 
     public static void main(String args[]) throws Exception {
-        Schema schema = new Schema(1, "com.msadraii.multidex");
+        Schema schema = new Schema(1, "com.sadraii.hyperdex");
         schema.enableKeepSectionsByDefault();
 
         Entity colorCode = schema.addEntity("ColorCode");
