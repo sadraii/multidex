@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.sadraii.hyperdex.ColorCode;
 import com.sadraii.hyperdex.R;
 import com.sadraii.hyperdex.data.ColorCodeRepository;
 import com.sadraii.hyperdex.dialogues.ColorPickerUtils;
@@ -102,10 +101,9 @@ public class EditColorCodeFragment extends Fragment {
                             // Do not delete last color code
                             @Override
                             public boolean canDismiss(int position) {
-                                int size = ColorCodeRepository.getAllColorCodes(appContext).size();
-                                if (size == 1) {
+                                if (ColorCodeRepository.size(appContext) == 1) {
                                     Toast.makeText(appContext,
-                                            R.string.toast_cannot_delete_list_item,
+                                            R.string.toast_cannot_delete_color_code,
                                             Toast.LENGTH_SHORT)
                                             .show();
                                     return false;
@@ -117,9 +115,7 @@ public class EditColorCodeFragment extends Fragment {
                             public void onDismiss(RecyclerView recyclerView,
                                                   int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
-                                    ColorCodeRepository.deleteColorCodeAndSort(
-                                            appContext,
-                                            position);
+                                    ColorCodeRepository.deleteColorCodeAndSort(appContext, position);
                                 }
                                 // Do not call notifyItemRemoved for every item, it will cause gaps
                                 // on deleting items
@@ -131,18 +127,24 @@ public class EditColorCodeFragment extends Fragment {
         // we don't look for swipes.
         mRecyclerView.setOnScrollListener(touchListener.makeScrollListener());
 
+        // Adds a new ColorCode with a random color unless all colors are used.
         ImageButton fabImageButton = (ImageButton) rootView.findViewById(R.id.fab_image_button);
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ColorCode colorCode = ColorCodeRepository.initColorCode(
-                        appContext,
-                        ColorPickerUtils.ColorUtils.randomColor(appContext),
-                        ""
-                );
-                ColorCodeRepository.insertOrReplace(appContext, colorCode);
-                ((ColorCodeAdapter) mAdapter).setNewlyInserted(colorCode.getId().intValue());
-                mRecyclerView.smoothScrollToPosition(colorCode.getId().intValue());
+                String randomColor = ColorPickerUtils.ColorUtils.randomColor(appContext);
+                if (randomColor != null) {
+                    long colorCodeId = ColorCodeRepository.addNextColorCode(appContext,
+                            randomColor, "").getId();
+
+                    ((ColorCodeAdapter) mAdapter).setNewlyInserted((int) colorCodeId);
+                    mRecyclerView.smoothScrollToPosition((int) colorCodeId);
+                } else {
+                    Toast.makeText(appContext,
+                            R.string.toast_cannot_add_color_code,
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         });
 
@@ -150,8 +152,4 @@ public class EditColorCodeFragment extends Fragment {
 
         return rootView;
     }
-
-//    public RecyclerView.LayoutManager getLayoutManager() {
-//        return mLayoutManager;
-//    }
 }

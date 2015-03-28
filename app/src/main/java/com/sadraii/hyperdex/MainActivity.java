@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sadraii;
+package com.sadraii.hyperdex;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -38,9 +38,6 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 
 import com.google.gson.Gson;
-import com.sadraii.hyperdex.ColorCode;
-import com.sadraii.hyperdex.Entry;
-import com.sadraii.hyperdex.R;
 import com.sadraii.hyperdex.colorcode.EditColorCodeActivity;
 import com.sadraii.hyperdex.data.ColorCodeRepository;
 import com.sadraii.hyperdex.data.EntryRepository;
@@ -168,6 +165,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Show the {@link DatePickerFragment} and scroll the {@link ViewPager} to the date picked.
+     */
     private void showDatePicker() {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
@@ -180,29 +180,41 @@ public class MainActivity extends ActionBarActivity {
                 DATE_DIALOGUE_FRAGMENT_TAG);
     }
 
+    /**
+     * Returns the number of days since the date of the first {@link Entry}.
+     *
+     * @param   year
+     * @param   monthOfYear
+     * @param   dayOfMonth
+     * @return  The number of days since the date of the first {@link Entry}.
+     */
     @SuppressWarnings("deprecation")
     private int daysSinceFirstEntry(int year, int monthOfYear, int dayOfMonth) {
         Entry firstEntry = EntryRepository.getFirstEntry(mAppContext);
         Calendar cal = Calendar.getInstance();
+
         cal.setTime(firstEntry.getDate());
         int firstDay = cal.get(Calendar.DAY_OF_YEAR);
         int firstYear = cal.get(Calendar.YEAR);
 
+        // Date() counts 1900 as 0 for year
         cal.setTime(new Date(year - 1900, monthOfYear, dayOfMonth));
         int currentDay = cal.get(Calendar.DAY_OF_YEAR);
         int currentYear = cal.get(Calendar.YEAR);
 
         int differenceInDays = 0;
 
+        // If both dates are in the same year, simply subtract days.
+        // Otherwise, loop through the years adding full years and partial days for the last year.
         if (firstYear == currentYear) {
-            differenceInDays = currentDay - firstDay; // - 1 needed?
+            differenceInDays = currentDay - firstDay;
         } else {
             for (int i = currentYear; i > firstYear; i--) {
                 // Account for leap year
                 int daysInYear = (i % 4 == 0) ? 366 : 365;
 
+                // If on the last year, add partial days. Otherwise add full year.
                 if (firstYear == i - 1) {
-                    // subtract days from year and exit
                     differenceInDays += daysInYear - firstDay + currentDay;
                 } else {
                     differenceInDays += daysInYear;
@@ -250,9 +262,13 @@ public class MainActivity extends ActionBarActivity {
             super(fragmentManager);
         }
 
+        /**
+         * Returns enough space for 10 years of entries.
+         *
+         * @return  Space for 10 years of entries.
+         */
         @Override
         public int getCount() {
-            // Space for 10 years of entries
             return 3650;
         }
 
@@ -261,22 +277,30 @@ public class MainActivity extends ActionBarActivity {
             return EntryFragment.newInstance(position);
         }
 
+        /**
+         * Creates extra {@link Entry} objects in the DB to always have one more than the current
+         * Entry for seamless scrolling. If there is a gap between the last Entry in DB and the
+         * current Entry, it fills that gap with Entries and creates one for tomorrow.
+         *
+         * @param container
+         * @param position
+         * @return
+         */
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            // TODO: fix getTime()
-            // If user scrolled to the last entry, create a new one for the next day
-            // If there is a gap between last entry date and today's date, create entries until
-            // tomorrow's date.
-            int size = EntryRepository.getAllEntries(appContext).size();
+            int size = EntryRepository.size(appContext);
             Date lastEntryDate = EntryRepository.getEntryForId(appContext, size - 1).getDate();
             Calendar cal = Calendar.getInstance();
             cal.setTime(lastEntryDate);
 
+            // If user scrolled to the last entry, create a new one for the next day
+            // If there is a gap between last entry date and today's date, create entries until
+            // tomorrow's date.
             if (position == size - 1) {
                 cal.add(Calendar.DATE, 1);
                 EntryRepository.addNextEntry(appContext, cal.getTime(), "", 0);
             } else if (position >= size) {
-                while (EntryRepository.getAllEntries(appContext).size() < position + 2) {
+                while (EntryRepository.size(appContext) < position + 2) {
                     cal.add(Calendar.DATE, 1);
                     EntryRepository.addNextEntry(appContext, cal.getTime(), "", 0);
                 }

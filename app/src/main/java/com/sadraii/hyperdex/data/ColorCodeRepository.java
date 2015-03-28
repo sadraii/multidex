@@ -82,7 +82,7 @@ public class ColorCodeRepository {
      * Deletes the ColorCode and re-sorts the remaining IDs to keep a sequential order to IDs.
      */
     public static void deleteColorCodeAndSort(Context context, long id) {
-        int colorCount = getAllColorCodes(context).size();
+        int colorCount = (int) getColorCodeDao(context).count();
         ColorCodeDao dao = getColorCodeDao(context);
         dao.delete(getColorCodeForId(context, id));
 

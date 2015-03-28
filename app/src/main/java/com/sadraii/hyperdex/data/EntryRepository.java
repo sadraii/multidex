@@ -81,7 +81,7 @@ public class EntryRepository {
      * @return
      */
     public static Entry getFirstEntry(Context context) {
-        return (getAllEntries(context).size() == 0) ? null : getEntryForId(context, 0);
+        return (size(context) == 0) ? null : getEntryForId(context, 0);
     }
 
     /**

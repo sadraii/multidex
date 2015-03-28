@@ -30,7 +30,6 @@ import android.widget.ProgressBar;
 
 import com.sadraii.hyperdex.R;
 
-
 /**
  * A dialog which takes in as input an array of colors and creates a palette allowing the user to
  * select a specific color swatch, which invokes a listener.
@@ -59,8 +58,8 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
 
     protected ColorPickerSwatch.OnColorSelectedListener mListener;
 
+    // Empty constructor required for dialog fragments.
     public ColorPickerDialog() {
-        // Empty constructor required for dialog fragments.
     }
 
     public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,

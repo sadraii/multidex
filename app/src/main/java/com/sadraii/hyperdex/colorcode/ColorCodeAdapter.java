@@ -201,7 +201,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     // Invoked by the layout manager
     @Override
     public int getItemCount() {
-        return ColorCodeRepository.getAllColorCodes(mAppContext).size();
+        return ColorCodeRepository.size(mAppContext);
     }
 
 //    @Override

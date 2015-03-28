@@ -1,18 +1,24 @@
-/*******************************************************************************
- * Copyright 2013 Gabriele Mariotti
+/*
+ * Copyright 2015, Mostafa Sadraii
+ * Copyright 2013, Gabriele Mariotti
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ *
+ * Local modifications:
+ * added colorName()
+ * added randomColors()
+ */
+
 package com.sadraii.hyperdex.dialogues;
 
 import android.app.Activity;
@@ -58,7 +64,7 @@ public class ColorPickerUtils {
 	public static class ColorUtils{
 		
 		/**
-		 * Create an array of int with colors
+		 * Create an array of ints with colors
 		 * 
 		 * @param context
 		 * @return
@@ -67,7 +73,7 @@ public class ColorPickerUtils {
 			int[] mColorChoices=null;
 			String[] colorValues = context.getResources().getStringArray(R.array.default_color_values);
 		
-		    if (colorValues !=null && colorValues.length>0) {
+		    if (colorValues !=null && colorValues.length > 0) {
 		        mColorChoices = new int[colorValues.length];
 		        for (int i = 0; i < colorValues.length; i++) {
 		            mColorChoices[i] = Color.parseColor(colorValues[i]);
@@ -80,6 +86,15 @@ public class ColorPickerUtils {
             return colorName(context, Utils.toHexString(color));
         }
 
+        /**
+         * Returns the corresponding String name of the given color, or an empty string if not
+         * found.
+         *
+         * @param context
+         * @param color
+         * @return  Returns the corresponding String name of the given color, or an empty string
+         * if not found.
+         */
         public static String colorName(Context context, String color) {
             String[] colorValues = context.getResources().getStringArray(R.array.default_color_values);
             String[] colorNames = context.getResources().getStringArray(R.array.default_color_names);
@@ -93,8 +108,9 @@ public class ColorPickerUtils {
         }
 
         /**
-         * Returns a random color. If there are unused colors, it picks from that list first.
-         * @return
+         * Returns a random unused color until all colors are picked. Then it returns null.
+         *
+         * @return  Returns a random unused color until all colors are picked. Then it returns null.
          */
         public static String randomColor(Context context) {
             final String[] defaultValues = context.getResources().getStringArray(R.array.default_color_values);
@@ -116,15 +132,17 @@ public class ColorPickerUtils {
             }
 
             Random rand = new Random();
-            switch (unusedColorValues.size()) {
+            int size = unusedColorValues.size();
+            switch (size) {
                 case 0: {
-                    return defaultValues[rand.nextInt(defaultValues.length - 1)];
+                    return null;
+//                    return defaultValues[rand.nextInt(defaultValues.length - 1)];
                 }
                 case 1: {
                     return unusedColorValues.get(0);
                 }
                 default: {
-                    return unusedColorValues.get(rand.nextInt(unusedColorValues.size() - 1));
+                    return unusedColorValues.get(rand.nextInt(size - 1));
                 }
             }
         }

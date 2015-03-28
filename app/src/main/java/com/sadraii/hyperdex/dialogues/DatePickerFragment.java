@@ -23,7 +23,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
-import com.sadraii.MainActivity;
+import com.sadraii.hyperdex.MainActivity;
 import com.sadraii.hyperdex.Entry;
 import com.sadraii.hyperdex.data.EntryRepository;
 
@@ -35,6 +35,11 @@ import java.util.Calendar;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
     private DatePickerDialog.OnDateSetListener mListener;
+
+    // TODO: copy savedintancestate stuff from ColorPicker
+    // Empty constructor required for dialog fragments.
+    public DatePickerFragment() {
+    }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Context appContext = getActivity().getApplicationContext();

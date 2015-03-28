@@ -29,7 +29,7 @@ import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sadraii.MainActivity;
+import com.sadraii.hyperdex.MainActivity;
 import com.sadraii.hyperdex.ColorCode;
 import com.sadraii.hyperdex.Entry;
 import com.sadraii.hyperdex.data.ColorCodeRepository;
@@ -233,8 +233,6 @@ public class EntryView extends View implements View.OnTouchListener {
     private double clickDistance(float x, float y) {
         return Math.sqrt(Math.pow(x - mCenterX, 2) + Math.pow(y - mCenterY, 2));
     }
-
-
 
     @Override
     protected void onDraw(Canvas canvas) {

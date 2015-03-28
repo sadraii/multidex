@@ -26,5 +26,6 @@
 
     <string name="hint_list_item_description">Enter description</string>
 
-    <string name="toast_cannot_delete_list_item">Need at least one color code.</string>
+    <string name="toast_cannot_delete_color_code">Need at least one color code.</string>
+    <string name="toast_cannot_add_color_code">All color slots are assigned.</string>
 </resources>
