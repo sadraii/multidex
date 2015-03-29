@@ -20,10 +20,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import com.sadraii.hyperdex.Entry;
+
 /**
  * Created by Mostafa on 3/21/2015.
  */
-public class EntryViewLayout extends FrameLayout { // TODO: remove this class, test if EntryView onClick works
+public class EntryViewLayout extends FrameLayout {
     EntryView mEntryView;
 
     public EntryViewLayout(Context context) {
@@ -40,7 +42,22 @@ public class EntryViewLayout extends FrameLayout { // TODO: remove this class, t
         addView(mEntryView);
     }
 
-    public void setPosition(Context appContext, int id) {
-        mEntryView.setPosition(appContext, id);
+    /**
+     * The position passed from the fragment associates the EntryView to the fragment Entry object.
+     *
+     * @param appContext
+     * @param position
+     */
+    public void setPosition(Context appContext, int position) {
+        mEntryView.setPosition(appContext, position);
+    }
+
+    /**
+     * Called by the associated fragment in order to save the {@link Entry} to persistent storage.
+     *
+     * @return  The {@link Entry} representing this the {@link EntryView}.
+     */
+    public Entry getEntry() {
+        return mEntryView.getEntry();
     }
 }

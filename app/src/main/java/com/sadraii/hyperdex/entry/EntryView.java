@@ -21,20 +21,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sadraii.hyperdex.MainActivity;
-import com.sadraii.hyperdex.ColorCode;
 import com.sadraii.hyperdex.Entry;
+import com.sadraii.hyperdex.MainActivity;
 import com.sadraii.hyperdex.data.ColorCodeRepository;
+import com.sadraii.hyperdex.data.EntryRepository;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -85,8 +83,9 @@ public class EntryView extends View implements View.OnTouchListener {
     private float mInitialClickX;
     private float mInitialClickY;
 
-    private ColorCode mColorCode;
     private Entry mEntry;
+    private int mColorCodeId;
+    private ArrayList<String> mColorCodeValues;
     private HashMap<Integer, Integer> mEntrySegments;
     private Set<Integer> mSegmentKeys;
     private Iterator<Integer> mIterator;
@@ -96,6 +95,12 @@ public class EntryView extends View implements View.OnTouchListener {
         mContext = context;
     }
 
+    /**
+     * The position passed from the fragment associates the EntryView with the Entry object.
+     *
+     * @param appContext
+     * @param position
+     */
     public void setPosition(Context appContext, int position) {
         mAppContext = appContext;
         mPosition = position;
@@ -110,16 +115,10 @@ public class EntryView extends View implements View.OnTouchListener {
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
 
-        // Get Entry from fragment
-        PagerAdapter adapter = ((MainActivity) mContext).getPagerAdapter();
-        Fragment frag = ((MainActivity.HyperdexAdapter) adapter).getRegisteredFragment(
-                ((MainActivity) mContext).getViewPager().getCurrentItem());
-        mEntry = ((EntryFragment) frag).getEntry();
-
+        mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
         // Parse the segments from the Entry
         if (mEntry.hasSegments()) {
-            Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {
-            }.getType();
+            Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
             mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
         } else {
             mEntrySegments = new HashMap<>();
@@ -246,13 +245,14 @@ public class EntryView extends View implements View.OnTouchListener {
         mPaint.setStrokeWidth(RING_STROKE_WIDTH);
 
         // Loop through segments, coloring them in
+        mColorCodeValues = ColorCodeRepository.getAllColorValues(mAppContext);
         mSegmentKeys = mEntrySegments.keySet();
         for(mIterator = mSegmentKeys.iterator(); mIterator.hasNext(); ) {
             int segment = mIterator.next();
 
-            mColorCode = ColorCodeRepository.getColorCodeForId(mAppContext,
-                    mEntrySegments.get(segment));
-            mPaint.setColor(Color.parseColor(mColorCode.getArgb()));
+            // Get the segment's color
+            mColorCodeId = mEntrySegments.get(segment);
+            mPaint.setColor(Color.parseColor(mColorCodeValues.get(mColorCodeId)));
 
             // Loop through the slices, from outer ring to inner ring, and draw any segments
             for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES + 1; j += NUMBER_RINGS) {
@@ -295,13 +295,6 @@ public class EntryView extends View implements View.OnTouchListener {
         canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
     }
 
-    private void setBounds(RectF rect, float offset) {
-        rect.set(mCenterX - mRadius + offset,
-                mCenterY - mRadius + offset,
-                mCenterX + mRadius - offset,
-                mCenterY + mRadius - offset);
-    }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         float width;
@@ -336,9 +329,21 @@ public class EntryView extends View implements View.OnTouchListener {
         setMeasuredDimension((int) width, (int) height);
     }
 
-    // TODO: on not pause, update fragment Entry segments
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        return super.onSaveInstanceState();
+    /**
+     * Called by the associated fragment in order to save the {@link Entry} to persistent storage.
+     *
+     * @return  The {@link Entry} representing this view.
+     */
+    public Entry getEntry() {
+        Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
+        mEntry.setSegments(new Gson().toJson(mEntrySegments, hashMapType));
+        return mEntry;
+    }
+
+    private void setBounds(RectF rect, float offset) {
+        rect.set(mCenterX - mRadius + offset,
+                mCenterY - mRadius + offset,
+                mCenterX + mRadius - offset,
+                mCenterY + mRadius - offset);
     }
 }

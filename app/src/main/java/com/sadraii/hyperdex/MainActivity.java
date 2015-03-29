@@ -88,8 +88,6 @@ public class MainActivity extends ActionBarActivity {
             int current_item = sharedPref.getInt(getString(R.string.pref_current_pager_item),
                     entryId);
             mPager.setCurrentItem(current_item, false);
-//            mPager.setCurrentItem(entryId, false);
-//            selectedColorCode = 0;
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -98,7 +96,8 @@ public class MainActivity extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = (Spinner) findViewById(R.id.color_spinner);
         spinner.setAdapter(adapter);
-        // If color code previously selected has been since deleted, reset to first color code
+        // If color code that was previously selected has since been deleted, reset to first
+        // color code as fallback
         if (adapter.getCount() <= selectedColorCode) {
             selectedColorCode = 0;
         }
@@ -298,10 +297,6 @@ public class MainActivity extends ActionBarActivity {
         public void destroyItem(ViewGroup container, int position, Object object) {
             registeredFragments.remove(position);
             super.destroyItem(container, position, object);
-        }
-
-        public Fragment getRegisteredFragment(int position) {
-            return registeredFragments.get(position);
         }
     }
 

@@ -88,7 +88,7 @@ public class EditColorCodeFragment extends Fragment {
                             public boolean canDismiss(int position) {
                                 if (ColorCodeRepository.size(mAppContext) == 1) {
                                     Toast.makeText(mAppContext,
-                                            R.string.toast_cannot_delete_color_code,
+                                            R.string.toast_cannot_delete_color,
                                             Toast.LENGTH_SHORT)
                                             .show();
                                     return false;
@@ -126,7 +126,7 @@ public class EditColorCodeFragment extends Fragment {
                     mRecyclerView.smoothScrollToPosition((int) colorCodeId);
                 } else {
                     Toast.makeText(mAppContext,
-                            R.string.toast_cannot_add_color_code,
+                            R.string.toast_cannot_add_color,
                             Toast.LENGTH_SHORT)
                             .show();
                 }

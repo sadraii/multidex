@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sadraii.hyperdex.ColorCode;
 import com.sadraii.hyperdex.R;
@@ -36,6 +37,8 @@ import com.sadraii.hyperdex.dialogues.ColorPickerDialog;
 import com.sadraii.hyperdex.dialogues.ColorPickerSwatch;
 import com.sadraii.hyperdex.dialogues.ColorPickerUtils;
 import com.sadraii.hyperdex.util.Utils;
+
+import java.util.ArrayList;
 
 /**
  * Created by Mostafa on 3/15/2015.
@@ -92,15 +95,28 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                 colorPicker.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
                     @Override
                     public void onColorSelected(final int color) {
-//                        String hexColor = Utils.toHexString(color);
-                        if (!(colorInt == color)) {
-                            colorCode.setArgb(Utils.toHexString(color));
-                            ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
+                        String colorString = Utils.toHexString(color);
 
+                        if (colorInt != color) {
+                            // Color picked must be unique
+                            ArrayList<String> colorCodeValues =
+                                    ColorCodeRepository.getAllColorValues(mAppContext);
+                            for (String value : colorCodeValues) {
+                                if (colorString.equals(value)) {
+                                    Toast.makeText(mAppContext,
+                                            R.string.toast_cannot_change_color,
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                    return;
+                                }
+                            }
+
+                            colorCode.setArgb(colorString);
+                            ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
+                            // Set color name
                             holder.mTextView.setText(
                                     ColorPickerUtils.ColorUtils.colorName(
                                             mAppContext, colorCode.getArgb()));
-
                             // Spins ImageView while assigning the new color halfway through the spin
                             holder.mImageView.animate()
                                     .rotationYBy(COLOR_HALF_SPIN_DEGREE)

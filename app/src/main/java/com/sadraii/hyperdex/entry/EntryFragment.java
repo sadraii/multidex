@@ -34,21 +34,14 @@ import java.util.Locale;
  * Created by Mostafa on 3/21/2015.
  */
 public class EntryFragment extends Fragment {
+    private static final String LOG_TAG = EntryFragment.class.getSimpleName();
     private static final String POSITION_TAG = "position";
-    private static final String DATE_DIALOGUE_FRAGMENT_TAG = "date_dialogue_fragment";
 
     private int mPosition;
     private Entry mEntry;
+    private EntryViewLayout mEntryViewLayout;
 
     public EntryFragment() {
-    }
-
-    public Entry getEntry() {
-        return mEntry;
-    }
-    // TODO: may need this if entry view's mEntry has different state than fragment's mEntry
-    public void setEntry(Entry entry) {
-        mEntry = entry;
     }
 
     public static EntryFragment newInstance(int position) {
@@ -81,34 +74,35 @@ public class EntryFragment extends Fragment {
 
         final Calendar cal = Calendar.getInstance();
         cal.setTime(mEntry.getDate());
+        String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+        String day = String.valueOf(cal.get(Calendar.DATE));
 
         TextView textView = (TextView) rootView.findViewById(R.id.entry_view_date);
-        textView.setText(cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
-                + " " + String.valueOf(cal.get(Calendar.DATE)));
+        textView.setText(month + day);
 
-        EntryViewLayout entryViewLayout =
-                (EntryViewLayout) rootView.findViewById(R.id.entry_view_layout);
-        entryViewLayout.setPosition(getActivity().getApplicationContext(), mPosition);
+        mEntryViewLayout = (EntryViewLayout) rootView.findViewById(R.id.entry_view_layout);
+        mEntryViewLayout.setPosition(getActivity().getApplicationContext(), mPosition);
 
         return rootView;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-//        mPosition = (getArguments() != null)
-//                ? getArguments().getInt(POSITION_TAG)
-//                : savedInstanceState.getInt(POSITION_TAG);
-//
-//        if (mEntry == null) {
-//            mEntry = EntryRepository.getEntryForId(getActivity().getApplicationContext(), mPosition);
-//        }
-        super.onActivityCreated(savedInstanceState);
+    public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getAndSaveEntry();
     }
 
     @Override
-    public void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-//        outState.putInt(POSITION_TAG, mPosition);
+    public void onPause() {
+        super.onPause();
+        getAndSaveEntry();
+    }
+
+    /**
+     * Retrieves the Entry from the EntryView and writes it the database.
+     */
+    private void getAndSaveEntry() {
+        mEntry = mEntryViewLayout.getEntry();
         EntryRepository.insertOrReplace(getActivity().getApplicationContext(), mEntry);
     }
 }
