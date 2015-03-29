@@ -28,4 +28,9 @@
 
     <string name="toast_cannot_delete_color_code">Need at least one color code.</string>
     <string name="toast_cannot_add_color_code">All color slots are assigned.</string>
+
+    <string name="pref_first_run_key">first_run</string>
+    <bool name="pref_first_run_default">true</bool>
+    <string name="pref_selected_color_code">selected_color_code</string>
+    <string name="pref_current_pager_item">current_pager_item</string>
 </resources>

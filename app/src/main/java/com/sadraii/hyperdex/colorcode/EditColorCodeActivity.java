@@ -33,13 +33,14 @@ public class EditColorCodeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_color_codes);
-        // TODO: set fragment with code insteaad of XML using frag.newInstance()
-//        if (savedInstanceState == null) {
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            FloatingActionButtonBasicFragment fragment = new FloatingActionButtonBasicFragment();
-//            transaction.replace(R.id.sample_content_fragment, fragment);
-//            transaction.commit();
-//        }
+
+        if (savedInstanceState == null) {
+            EditColorCodeFragment fragment = EditColorCodeFragment.newInstance();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_color_code_container, fragment)
+                    .commit();
+        }
 
 //        actionBar = getSupportActionBar();
 //        elevation = actionBar.getElevation();

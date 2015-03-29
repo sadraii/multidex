@@ -19,6 +19,7 @@ package com.sadraii.hyperdex;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -53,6 +54,8 @@ import java.util.HashMap;
 public class MainActivity extends ActionBarActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String DATE_DIALOGUE_FRAGMENT_TAG = "date_dialogue_fragment";
+    private static final String SELECTED_COLOR_CODE = "selected_color_code";
+    private static final String CURRENT_PAGER_ITEM = "current_pager_item";
 
     private Context mAppContext;
     private HyperdexAdapter mAdapter;
@@ -66,23 +69,28 @@ public class MainActivity extends ActionBarActivity {
 
         mAppContext = this.getApplicationContext();
 
-        DEBUG_firstInstall(true);
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        boolean firstRunDefault = getResources().getBoolean(R.bool.pref_first_run_default);
+        boolean firstRun = sharedPref.getBoolean(
+                getString(R.string.pref_first_run_key), firstRunDefault);
+        DEBUG_firstInstall(firstRun);
 
         mAdapter = new HyperdexAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.hyperdex_pager);
         mPager.setAdapter(mAdapter);
-        // TODO: today's date. If no savedinstancestate, go to today's date
+
+        int entryId = Utils.getEntryIdForToday(mAppContext);
         if (savedInstanceState != null) {
-
+            mPager.setCurrentItem(savedInstanceState.getInt(CURRENT_PAGER_ITEM, entryId), false);
+            selectedColorCode = savedInstanceState.getInt(SELECTED_COLOR_CODE, 0);
         } else {
-            mPager.setCurrentItem(Utils.getEntryIdForToday(mAppContext), false);
+            selectedColorCode = sharedPref.getInt(getString(R.string.pref_selected_color_code), 0);
+            int current_item = sharedPref.getInt(getString(R.string.pref_current_pager_item),
+                    entryId);
+            mPager.setCurrentItem(current_item, false);
+//            mPager.setCurrentItem(entryId, false);
+//            selectedColorCode = 0;
         }
-        selectedColorCode = 0;
-
-//        clearTables();
-//        recreateTables();
-//        addTestColors();
-//        addTestEntries();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
@@ -90,6 +98,11 @@ public class MainActivity extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = (Spinner) findViewById(R.id.color_spinner);
         spinner.setAdapter(adapter);
+        // If color code previously selected has been since deleted, reset to first color code
+        if (adapter.getCount() <= selectedColorCode) {
+            selectedColorCode = 0;
+        }
+        spinner.setSelection(selectedColorCode, false);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -108,10 +121,39 @@ public class MainActivity extends ActionBarActivity {
             recreateTables();
             ColorCodeRepository.addNextColorCode(mAppContext, "#ff33b5e5", "0 Make breakfast");
             EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(), "");
+
+            getPreferences(Context.MODE_PRIVATE)
+                    .edit()
+                    .putBoolean(getString(R.string.pref_first_run_key), false)
+                    .commit();
+        }
+    }
+    private void DEBUG_wipeTables(boolean wipe) {
+        if (wipe) {
+//            clearTables();
+            recreateTables();
+            addTestColors();
+            addTestEntries();
         }
     }
 
-    // TODO: test 2 times for same day. test different days, but plus/minus 24 hours on the current day. should not add 1 day if more than 24hrs, go by DATE not TIME
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d(LOG_TAG, "MainActivity onSaveInstanceState()");
+        super.onSaveInstanceState(outState);
+        outState.putInt(SELECTED_COLOR_CODE, selectedColorCode);
+        outState.putInt(CURRENT_PAGER_ITEM, mPager.getCurrentItem());
+    }
+    @Override
+    protected void onPause() {
+        Log.d(LOG_TAG, "MainActivity onPause()");
+        super.onPause();
+        getPreferences(Context.MODE_PRIVATE)
+                .edit()
+                .putInt(getString(R.string.pref_selected_color_code), selectedColorCode)
+                .putInt(getString(R.string.pref_current_pager_item), mPager.getCurrentItem())
+                .commit();
+    }
 
     /**
      * Returns the currently selected {@link ColorCode} ID of the {@link Spinner}.
@@ -156,9 +198,9 @@ public class MainActivity extends ActionBarActivity {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mPager.setCurrentItem(Utils.daysSinceFirstEntry(mAppContext, year, monthOfYear,
-                        dayOfMonth));
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                mPager.setCurrentItem(Utils.daysSinceFirstEntry(mAppContext, year, month,
+                        day));
             }
         });
         newFragment.show(getSupportFragmentManager(),

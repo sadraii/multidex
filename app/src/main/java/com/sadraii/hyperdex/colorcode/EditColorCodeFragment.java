@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,27 +41,13 @@ public class EditColorCodeFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private Context appContext;
+    private Context mAppContext;
 
     public EditColorCodeFragment() {
     }
 
-    @Override
-    public void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d(LOG_TAG, "onSaveInstanceState()");
-        // TODO: write to DB
-    }
-
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "onActivityCreated()");
-        // TODO: read DB
-//        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
-//        if (savedInstanceState != null) {
-//            mLocation = savedInstanceState.getString(LOCATION_KEY);
-//        }
-        super.onActivityCreated(savedInstanceState);
+    public static EditColorCodeFragment newInstance() {
+        return new EditColorCodeFragment();
     }
 
     // TODO: save instance state / write to DB on save
@@ -71,7 +56,7 @@ public class EditColorCodeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_edit_color_codes, container, false);
 
-        appContext = getActivity().getApplicationContext();
+        mAppContext = getActivity().getApplicationContext();
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.labels_recycler_view);
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
@@ -79,7 +64,7 @@ public class EditColorCodeFragment extends Fragment {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new ColorCodeAdapter(appContext, getActivity());
+        mAdapter = new ColorCodeAdapter(mAppContext, getActivity());
 
 //        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
@@ -101,8 +86,8 @@ public class EditColorCodeFragment extends Fragment {
                             // Do not delete last color code
                             @Override
                             public boolean canDismiss(int position) {
-                                if (ColorCodeRepository.size(appContext) == 1) {
-                                    Toast.makeText(appContext,
+                                if (ColorCodeRepository.size(mAppContext) == 1) {
+                                    Toast.makeText(mAppContext,
                                             R.string.toast_cannot_delete_color_code,
                                             Toast.LENGTH_SHORT)
                                             .show();
@@ -115,7 +100,7 @@ public class EditColorCodeFragment extends Fragment {
                             public void onDismiss(RecyclerView recyclerView,
                                                   int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
-                                    ColorCodeRepository.deleteColorCodeAndSort(appContext, position);
+                                    ColorCodeRepository.deleteColorCodeAndSort(mAppContext, position);
                                 }
                                 // Do not call notifyItemRemoved for every item, it will cause gaps
                                 // on deleting items
@@ -132,15 +117,15 @@ public class EditColorCodeFragment extends Fragment {
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String randomColor = ColorPickerUtils.ColorUtils.randomColor(appContext);
+                String randomColor = ColorPickerUtils.ColorUtils.randomColor(mAppContext);
                 if (randomColor != null) {
-                    long colorCodeId = ColorCodeRepository.addNextColorCode(appContext,
+                    long colorCodeId = ColorCodeRepository.addNextColorCode(mAppContext,
                             randomColor, "").getId();
 
                     ((ColorCodeAdapter) mAdapter).setNewlyInserted((int) colorCodeId);
                     mRecyclerView.smoothScrollToPosition((int) colorCodeId);
                 } else {
-                    Toast.makeText(appContext,
+                    Toast.makeText(mAppContext,
                             R.string.toast_cannot_add_color_code,
                             Toast.LENGTH_SHORT)
                             .show();

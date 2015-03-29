@@ -64,10 +64,10 @@ public class EntryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: take a look at ColorPickerDialogue onCreate()
+
         mPosition = (getArguments() != null)
                 ? getArguments().getInt(POSITION_TAG)
-                : savedInstanceState.getInt(POSITION_TAG);
+                : 0;
 
         if (mEntry == null) {
             mEntry = EntryRepository.getEntryForId(getActivity().getApplicationContext(), mPosition);
@@ -108,7 +108,7 @@ public class EntryFragment extends Fragment {
     @Override
     public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(POSITION_TAG, mPosition);
+//        outState.putInt(POSITION_TAG, mPosition);
         EntryRepository.insertOrReplace(getActivity().getApplicationContext(), mEntry);
     }
 }

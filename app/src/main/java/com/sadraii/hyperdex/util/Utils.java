@@ -23,7 +23,6 @@ import com.sadraii.hyperdex.data.EntryRepository;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Mostafa on 3/19/2015.
@@ -41,16 +40,19 @@ public class Utils {
      * @return  The ID of the {@link Entry} for today.
      */
     public static int getEntryIdForToday(Context context) {
-        Entry entry = EntryRepository.getFirstEntry(context);
-        if (entry != null) {
-            Date first = entry.getDate();
-            Date today = Calendar.getInstance().getTime();
-            long difference = today.getTime() - first.getTime();
-            return (int) TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS);
+        int id = 0;
+        if (EntryRepository.size(context) != 0) {
+            Calendar cal = Calendar.getInstance();
+
+            id = daysSinceFirstEntry(context,
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DATE));
         }
-        return 0;
+        return id;
     }
 
+    // TODO: test 2 times for same day. test different days, but plus/minus 24 hours on the current day. should not add 1 day if more than 24hrs, go by DATE not TIME
     /**
      * Returns the number of days since the date of the first {@link Entry}.
      *

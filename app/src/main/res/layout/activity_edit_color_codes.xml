@@ -14,18 +14,18 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/fragment_color_code_container"
               android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent" />
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:id="@+id/fragment"
-          android:name="com.sadraii.hyperdex.colorcode.EditColorCodeFragment"
-          tools:layout="@layout/fragment_edit_color_codes"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"/>
+    <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+          <!--xmlns:tools="http://schemas.android.com/tools"-->
+          <!--android:id="@+id/fragment"-->
+          <!--android:name="com.sadraii.hyperdex.colorcode.EditColorCodeFragment"-->
+          <!--tools:layout="@layout/fragment_edit_color_codes"-->
+          <!--android:layout_width="match_parent"-->
+          <!--android:layout_height="match_parent"/>-->
 
     <!--<FrameLayout-->
         <!--android:id="@+id/sample_content_fragment"-->
@@ -34,4 +34,3 @@
         <!--layout_height="0px"-->
         <!--android:layout_height="match_parent"/>-->
 
-</LinearLayout>
