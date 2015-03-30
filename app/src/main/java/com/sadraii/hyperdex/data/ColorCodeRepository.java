@@ -27,7 +27,6 @@ import java.util.ArrayList;
 /**
  * Provides an abstraction layer between the database and controllers for manipulating Color Code
  * objects.
- * Created by Mostafa on 3/15/2015.
  */
 public class ColorCodeRepository {
 
@@ -52,7 +51,8 @@ public class ColorCodeRepository {
     }
 
     /**
-     * Creates and returns a {@link ColorCode} set to the next available ID.
+     * Creates and returns a {@link ColorCode} set to the next available ID. Uses
+     * System.currentTimeMillis() as a unique tag for the ColorCode.
      *
      * @param context
      * @param argb
@@ -74,6 +74,13 @@ public class ColorCodeRepository {
         return (colorCodes == null) ? 0 : colorCodes.size();
     }
 
+    /**
+     * Returns the ARGB values of the ColorCode in the format "#00000000".
+     *
+     * @param context
+     * @param tag
+     * @return
+     */
     public static String getValueForTag(Context context, long tag) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
         for (ColorCode colorCode : colorCodes) {
@@ -94,15 +101,19 @@ public class ColorCodeRepository {
 
     /**
      * Deletes the ColorCode and re-sorts the remaining IDs to keep a sequential order to IDs.
+     *
+     * @param context
+     * @param id
      */
     public static void deleteColorCodeAndSort(Context context, long id) {
-        int colorCount = (int) getColorCodeDao(context).count();
         ColorCodeDao dao = getColorCodeDao(context);
+        int colorCount = (int) dao.count();
         dao.delete(getColorCode(context, id));
 
         if (colorCount > 1) {
             for (int i = (int) id; i < colorCount - 1; i++) {
                 ColorCode copyFrom = getColorCode(context, i + 1);
+
                 insertOrReplace(context, new ColorCode(
                         copyFrom.getId() - 1,
                         copyFrom.getTag(),
@@ -122,6 +133,12 @@ public class ColorCodeRepository {
         return (ArrayList<ColorCode>) getColorCodeDao(context).loadAll();
     }
 
+    /**
+     * Returns the ARGB values of all of the ColorCodes in the format "#00000000".
+     *
+     * @param context
+     * @return
+     */
     public static ArrayList<String> getAllColorValues(Context context) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
         ArrayList<String> colorValues = new ArrayList<String>();
@@ -131,11 +148,18 @@ public class ColorCodeRepository {
         return colorValues;
     }
 
+    /**
+     * Returns the task descriptions of all of the ColorCodes.
+     *
+     * @param context
+     * @return
+     */
     public static ArrayList<String> getAllTasks(Context context) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
         ArrayList<String> tasks = new ArrayList<String>();
         for (ColorCode colorCode : colorCodes) {
             String task = colorCode.getTask();
+
             if (task == null || task.equals("")) {
                 tasks.add(context.getString(R.string.hint_list_item_description));
             } else {
@@ -149,19 +173,19 @@ public class ColorCodeRepository {
         return getColorCodeDao(context).load(id);
     }
 
-    public static void dropTable(Context c) {
-        getColorCodeDao(c).dropTable(
-                ((GreenDaoApplication) c.getApplicationContext()).getDaoSession().getDatabase(),
+    public static void dropTable(Context context) {
+        getColorCodeDao(context).dropTable(
+                ((GreenDaoApplication) context).getDaoSession().getDatabase(),
                 true);
     }
 
-    public static void createTable(Context c) {
-        getColorCodeDao(c).createTable(
-                ((GreenDaoApplication) c.getApplicationContext()).getDaoSession().getDatabase(),
+    public static void createTable(Context context) {
+        getColorCodeDao(context).createTable(
+                ((GreenDaoApplication) context).getDaoSession().getDatabase(),
                 true);
     }
 
-    private static ColorCodeDao getColorCodeDao(Context c) {
-        return ((GreenDaoApplication) c.getApplicationContext()).getDaoSession().getColorCodeDao();
+    private static ColorCodeDao getColorCodeDao(Context context) {
+        return ((GreenDaoApplication) context).getDaoSession().getColorCodeDao();
     }
 }

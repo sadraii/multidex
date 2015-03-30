@@ -25,10 +25,10 @@ import android.view.View;
 import com.sadraii.hyperdex.R;
 
 /**
- * Created by Mostafa on 3/15/2015.
  * Defines the list divider for the RecyclerView.
  */
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
+
     private Drawable mDivider;
 
     public SimpleDividerItemDecoration(Context context) {

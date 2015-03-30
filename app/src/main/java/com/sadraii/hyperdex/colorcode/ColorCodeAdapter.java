@@ -41,7 +41,7 @@ import com.sadraii.hyperdex.util.Utils;
 import java.util.ArrayList;
 
 /**
- * Created by Mostafa on 3/15/2015.
+ * TODO: description
  */
 public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.ViewHolder> {
 
@@ -69,7 +69,12 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         return new ViewHolder(v);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Replace the contents of a view (invoked by the layout manager).
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final ColorCode colorCode = ColorCodeRepository.getColorCode(mAppContext, position);
@@ -77,14 +82,15 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
             return;
         }
 
-        holder.mTextView.setText(
+        holder.textView.setText(
                 ColorPickerUtils.ColorUtils.colorName(mAppContext, colorCode.getArgb()));
 
         // Creates a ColorPickerDialogue and assigns the selected color to the ColorCode
-        holder.mFrameLayout.setOnClickListener(new View.OnClickListener() {
+        holder.frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final int colorInt = Color.parseColor(colorCode.getArgb());
+
                 ColorPickerDialog colorPicker = ColorPickerDialog.newInstance(
                         R.string.color_picker_default_title,
                         ColorPickerUtils.ColorUtils.colorChoices(mAppContext),
@@ -110,27 +116,15 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                                     return;
                                 }
                             }
-
+                            // Save the new color
                             colorCode.setArgb(colorString);
                             ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
                             // Set color name
-                            holder.mTextView.setText(
+                            holder.textView.setText(
                                     ColorPickerUtils.ColorUtils.colorName(
-                                            mAppContext, colorCode.getArgb()));
-                            // Spins ImageView while assigning the new color halfway through the spin
-                            holder.mImageView.animate()
-                                    .rotationYBy(HALF_SPIN_DEGREE)
-                                    .setDuration(SPIN_DURATION)
-                                    .withEndAction(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ((GradientDrawable) holder.mImageView.getBackground())
-                                                    .setColor(color);
-                                            holder.mImageView.animate()
-                                                    .rotationYBy(HALF_SPIN_DEGREE)
-                                                    .setDuration(SPIN_DURATION);
-                                        }
-                                    });
+                                            mAppContext, colorString));
+
+                            animateColorView(holder.imageView, color);
                         }
                     }
                 });
@@ -139,45 +133,28 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
             }
         });
 
+        // If the view is newly added by FAB, make the background transparent so that the new color
+        // can 'spin in' from nothingness.
         final int colorInt = Color.parseColor(colorCode.getArgb());
         if (mNewlyAdded) {
-            // TODO: refactor spin into function
-            Log.d(LOG_TAG, "newlyadded");
-
-            // Spins ImageView while assigning the new color halfway through the spin
-            ((GradientDrawable) holder.mImageView.getBackground())
+            ((GradientDrawable) holder.imageView.getBackground())
                     .setColor(Color.parseColor("#00000000"));
-            holder.mImageView.animate()
-                    .rotationYBy(HALF_SPIN_DEGREE)
-                    .setDuration(SPIN_DURATION)
-                    .withEndAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            // test color change
-                            ((GradientDrawable) holder.mImageView.getBackground())
-                                    .setColor(colorInt);
-                            holder.mImageView.animate()
-                                    .rotationYBy(HALF_SPIN_DEGREE)
-                                    .setDuration(SPIN_DURATION);
-                        }
-                    });
-//            holder.mEditText.setHint("Enter description");
+            animateColorView(holder.imageView, colorInt);
             mNewlyAdded = false;
         } else {
-            ((GradientDrawable) holder.mImageView.getBackground())
+            ((GradientDrawable) holder.imageView.getBackground())
                     .setColor(colorInt);
-//            holder.mEditText.setHint(null);
         }
 
-        holder.mEditText.setText(colorCode.getTask());
-        holder.mEditText.setHorizontallyScrolling(true);
-        holder.mEditText.setFocusable(true);
-        holder.mEditText.setClickable(true);
-        holder.mEditText.setFocusableInTouchMode(false);
-        holder.mEditText.setCursorVisible(false);
-//            holder.mEditText.setEnabled(true);
-//            holder.mEditText.setKeyListener(null);
-        holder.mEditText.setOnClickListener(new View.OnClickListener() {
+        holder.editText.setText(colorCode.getTask());
+        holder.editText.setHorizontallyScrolling(true);
+        holder.editText.setFocusable(true);
+        holder.editText.setClickable(true);
+        holder.editText.setFocusableInTouchMode(false);
+        holder.editText.setCursorVisible(false);
+//            holder.editText.setEnabled(true);
+//            holder.editText.setKeyListener(null);
+        holder.editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("viewholder", "clicked on text");
@@ -192,8 +169,8 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         });
 
         // TODO: focus change does not happen when editing text and pressing back button
-        holder.mEditText.setTag(colorCode.getTask());
-        holder.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        holder.editText.setTag(colorCode.getTask());
+        holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 EditText editText = (EditText) v;
@@ -219,28 +196,51 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         return ColorCodeRepository.size(mAppContext);
     }
 
-//    @Override
-//    public long getItemId(int position) {
-//        return ColorCodeRepository.getColorCode(mAppContext, position).getId();
-//    }
-
+    /**
+     * Called by FAB when a new color is added.
+     *
+     * @param position
+     */
     public void setNewlyInserted(int position) {
         mNewlyAdded = true;
         notifyItemInserted(position);
     }
 
+    /**
+     * Spins the ImageView while assigning the new color halfway through the spin.
+     *
+     * @param imageView
+     * @param color
+     */
+    private void animateColorView(final ImageView imageView, final int color) {
+        imageView.animate()
+                .rotationYBy(HALF_SPIN_DEGREE)
+                .setDuration(SPIN_DURATION)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        // test color change
+                        ((GradientDrawable) imageView.getBackground())
+                                .setColor(color);
+                        imageView.animate()
+                                .rotationYBy(HALF_SPIN_DEGREE)
+                                .setDuration(SPIN_DURATION);
+                    }
+                });
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final FrameLayout mFrameLayout;
-        public final ImageView mImageView;
-        public final EditText mEditText;
-        public final TextView mTextView;
+        public final FrameLayout frameLayout;
+        public final ImageView imageView;
+        public final EditText editText;
+        public final TextView textView;
 
         public ViewHolder(View view) {
             super(view);
-            mFrameLayout = (FrameLayout) view.findViewById(R.id.list_item_color_frame_layout);
-            mImageView = (ImageView) view.findViewById(R.id.list_item_color_image_ivew);
-            mEditText = (EditText) view.findViewById(R.id.list_item_description);
-            mTextView = (TextView) view.findViewById(R.id.list_item_color_name);
+            frameLayout = (FrameLayout) view.findViewById(R.id.list_item_color_frame_layout);
+            imageView = (ImageView) view.findViewById(R.id.list_item_color_image_ivew);
+            editText = (EditText) view.findViewById(R.id.list_item_description);
+            textView = (TextView) view.findViewById(R.id.list_item_color_name);
         }
     }
 }

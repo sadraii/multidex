@@ -22,13 +22,13 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.sadraii.hyperdex.DaoMaster;
 import com.sadraii.hyperdex.DaoSession;
-
+import com.sadraii.hyperdex.R;
 
 /**
  * Initializes and provides a global context for GreenDao.
- * Created by Mostafa on 3/15/2015.
  */
 public class GreenDaoApplication extends Application {
+
     public DaoSession mDaoSession;
     private static Context context;
 
@@ -40,7 +40,8 @@ public class GreenDaoApplication extends Application {
     }
 
     private void setupDatabase() {
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "multidex_db", null);
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(
+                this, getString(R.string.db_name), null);
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
         mDaoSession = daoMaster.newSession();

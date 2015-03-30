@@ -23,9 +23,10 @@ import android.widget.FrameLayout;
 import com.sadraii.hyperdex.Entry;
 
 /**
- * Created by Mostafa on 3/21/2015.
+ * TODO: description
  */
 public class EntryViewLayout extends FrameLayout {
+
     EntryView mEntryView;
 
     public EntryViewLayout(Context context) {

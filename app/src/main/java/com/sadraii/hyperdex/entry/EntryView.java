@@ -37,9 +37,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * Created by Mostafa on 3/21/2015.
+ * TODO: description
  */
 public class EntryView extends View implements View.OnTouchListener {
+
     private static final String LOG_TAG = EntryView.class.getSimpleName();
 
     private static final float RADIUS_MULTIPLIER = 0.4f;
@@ -86,7 +87,6 @@ public class EntryView extends View implements View.OnTouchListener {
     private long mColorCodeTag;
     private String mColorValue;
     private HashMap<Integer, Long> mEntrySegments;
-//    private Set<Integer> mSegmentKeys;
     private Iterator<Integer> mIterator;
 
     public EntryView(Context context) {
@@ -160,7 +160,6 @@ public class EntryView extends View implements View.OnTouchListener {
         int selectedColorId = ((MainActivity) mContext).getSelectedColorCodeId();
         ColorCode colorCode = ColorCodeRepository.getColorCode(mAppContext, selectedColorId);
         long colorTag = colorCode.getTag();
-
 
         for (int i = NUMBER_RINGS; i < NUMBER_RINGS * NUMBER_SLICES + 1; i += NUMBER_RINGS) {
             double angle = clickAngle(mInitialClickX, mInitialClickY);
@@ -250,7 +249,6 @@ public class EntryView extends View implements View.OnTouchListener {
         mIterator = mEntrySegments.keySet().iterator();
         while (mIterator.hasNext()) {
             int segment = mIterator.next();
-
             // Get the segment's color
             mColorCodeTag = mEntrySegments.get(segment);
             mColorValue = ColorCodeRepository.getValueForTag(mAppContext, mColorCodeTag);
@@ -260,19 +258,16 @@ public class EntryView extends View implements View.OnTouchListener {
                 // Loop through the slices, from outer ring to inner ring, and draw any segments
                 for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES + 1; j += NUMBER_RINGS) {
                     if (segment == j) {
-                        // Draw outer ring
                         setBounds(mBounds, Ring.OUTER.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);
                         break;
                     } else if (segment == j - 1) {
-                        // Draw middle ring
                         setBounds(mBounds, Ring.MIDDLE.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);
                         break;
                     } else if (segment == j - 2) {
-                        // Draw inner ring
                         setBounds(mBounds, Ring.INNER.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);

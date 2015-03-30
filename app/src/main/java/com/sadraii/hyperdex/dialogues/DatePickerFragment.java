@@ -30,10 +30,11 @@ import com.sadraii.hyperdex.data.EntryRepository;
 import java.util.Calendar;
 
 /**
- * Created by Mostafa on 3/26/2015.
+ * TODO: description
  */
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
+
     private DatePickerDialog.OnDateSetListener mListener;
 
     // TODO: copy savedintancestate stuff from ColorPicker
@@ -47,6 +48,7 @@ public class DatePickerFragment extends DialogFragment
         Entry entry = EntryRepository.getEntryForId(appContext, currentItem);
         Calendar cal = Calendar.getInstance();
         cal.setTime(entry.getDate());
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getActivity(),
                 this,
@@ -58,13 +60,6 @@ public class DatePickerFragment extends DialogFragment
         datePickerDialog.getDatePicker().setMinDate(minDate);
 
         return datePickerDialog;
-//        return new DatePickerDialog(
-//                getActivity(),
-//                this,
-//                c.get(Calendar.YEAR),
-//                c.get(Calendar.MONTH),
-//                c.get(Calendar.DAY_OF_MONTH)
-//        );
     }
 
     public void setOnDateSetListener(DatePickerDialog.OnDateSetListener listener) {
@@ -76,9 +71,6 @@ public class DatePickerFragment extends DialogFragment
         if (mListener != null) {
             mListener.onDateSet(view, year, month, day);
         }
-
-        // TODO: handle default ondateset behavior
-
         dismiss();
     }
 }

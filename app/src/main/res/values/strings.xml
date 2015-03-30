@@ -16,7 +16,7 @@
 -->
 <resources>
     <string name="app_name">HyperDex</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="db_name">hyperdex_db</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_edit_color_codes">Edit Color Codes</string>

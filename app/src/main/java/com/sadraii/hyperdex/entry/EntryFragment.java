@@ -31,9 +31,10 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * Created by Mostafa on 3/21/2015.
+ * TODO: description
  */
 public class EntryFragment extends Fragment {
+
     private static final String LOG_TAG = EntryFragment.class.getSimpleName();
     private static final String POSITION_TAG = "position";
 

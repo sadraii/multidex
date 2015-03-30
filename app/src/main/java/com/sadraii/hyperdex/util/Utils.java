@@ -25,12 +25,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by Mostafa on 3/19/2015.
+ * TODO: description
  */
 public class Utils {
 
     public static String toHexString(int color) {
-     return "#" + Integer.toHexString(color);
+        return "#" + Integer.toHexString(color);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Utils {
         int firstDay = cal.get(Calendar.DAY_OF_YEAR);
         int firstYear = cal.get(Calendar.YEAR);
 
-        // Date() counts 1900 as 0 for year
+        // Date() counts year 1900 as 0
         cal.setTime(new Date(year - 1900, month, day));
         int currentDay = cal.get(Calendar.DAY_OF_YEAR);
         int currentYear = cal.get(Calendar.YEAR);
@@ -97,12 +97,4 @@ public class Utils {
         }
         return differenceInDays;
     }
-
-//    public static int safeLongToInt(long l) {
-//        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
-//            throw new IllegalArgumentException
-//                    (l + " cannot be cast to int without changing its value.");
-//        }
-//        return (int) l;
-//    }
 }

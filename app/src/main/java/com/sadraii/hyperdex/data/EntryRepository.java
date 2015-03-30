@@ -27,7 +27,6 @@ import java.util.Date;
 /**
  * Provides an abstraction layer between the database and controllers for manipulating Entry
  * objects.
- * Created by Mostafa on 3/15/2015.
  */
 public class EntryRepository {
 
@@ -106,11 +105,6 @@ public class EntryRepository {
     public static ArrayList<Entry> getAllEntries(Context context) {
         return (ArrayList<Entry>) getEntryDao(context).loadAll();
     }
-    
-    public static ArrayList<Entry> getEntryForDate(Context context, Date date) {
-        // TODO: fill out getEntryForDate()
-        return null;
-    }
 
     public static Entry getEntryForId(Context context, long id) {
         return getEntryDao(context).load(id);
@@ -118,17 +112,17 @@ public class EntryRepository {
 
     public static void dropTable(Context context) {
         getEntryDao(context).dropTable(
-                ((GreenDaoApplication) context.getApplicationContext()).getDaoSession().getDatabase(),
+                ((GreenDaoApplication) context).getDaoSession().getDatabase(),
                 true);
     }
 
     public static void createTable(Context context) {
         getEntryDao(context).createTable(
-                ((GreenDaoApplication) context.getApplicationContext()).getDaoSession().getDatabase(),
+                ((GreenDaoApplication) context).getDaoSession().getDatabase(),
                 true);
     }
 
     private static EntryDao getEntryDao(Context context) {
-        return ((GreenDaoApplication) context.getApplicationContext()).getDaoSession().getEntryDao();
+        return ((GreenDaoApplication) context).getDaoSession().getEntryDao();
     }
 }

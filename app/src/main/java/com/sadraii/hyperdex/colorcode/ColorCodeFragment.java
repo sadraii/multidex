@@ -34,9 +34,10 @@ import com.sadraii.hyperdex.util.SimpleDividerItemDecoration;
 import com.sadraii.hyperdex.util.SwipeDismissRecyclerViewTouchListener;
 
 /**
- * A placeholder fragment containing a simple view.
+ * TODO: description
  */
 public class ColorCodeFragment extends Fragment {
+
     private static final String LOG_TAG = ColorCodeFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
@@ -50,7 +51,6 @@ public class ColorCodeFragment extends Fragment {
         return new ColorCodeFragment();
     }
 
-    // TODO: save instance state / write to DB on save
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -112,7 +112,7 @@ public class ColorCodeFragment extends Fragment {
         // we don't look for swipes.
         mRecyclerView.setOnScrollListener(touchListener.makeScrollListener());
 
-        // Adds a new ColorCode with a random color unless all colors are used.
+        // Add a new ColorCode with a random unused color unless all colors are used.
         ImageButton fabImageButton = (ImageButton) rootView.findViewById(R.id.fab_image_button);
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override

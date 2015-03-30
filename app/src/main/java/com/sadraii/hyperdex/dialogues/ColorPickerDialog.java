@@ -34,8 +34,8 @@ import com.sadraii.hyperdex.R;
  * A dialog which takes in as input an array of colors and creates a palette allowing the user to
  * select a specific color swatch, which invokes a listener.
  */
-public class ColorPickerDialog extends DialogFragment implements ColorPickerSwatch.OnColorSelectedListener {
-
+public class ColorPickerDialog extends DialogFragment
+        implements ColorPickerSwatch.OnColorSelectedListener {
     public static final int SIZE_LARGE = 1;
     public static final int SIZE_SMALL = 2;
 

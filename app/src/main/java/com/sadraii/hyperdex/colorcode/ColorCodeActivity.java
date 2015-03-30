@@ -23,7 +23,9 @@ import android.view.MenuItem;
 
 import com.sadraii.hyperdex.R;
 
-
+/**
+ * TODO: description
+ */
 public class ColorCodeActivity extends ActionBarActivity {
 
 //    private static float elevation;

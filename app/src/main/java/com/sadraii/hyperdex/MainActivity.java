@@ -54,11 +54,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * TODO: description
+ */
 public class MainActivity extends ActionBarActivity {
+
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String DATE_DIALOGUE_FRAGMENT_TAG = "date_dialogue_fragment";
     private static final String SELECTED_COLOR_CODE = "selected_color_code";
     private static final String CURRENT_PAGER_ITEM = "current_pager_item";
+    private static final int SPINNER_VIEW_TYPE = 0;
+    private static final int SPINNER_DROP_DOWN_VIEW_TYPE = 1;
+    // Used in PagerAdapter for infinite scrolling and date transitions
+    private static final int MAX_ENTRY_CAPACITY = 3650;
 
     private Context mAppContext;
     private HyperdexAdapter mAdapter;
@@ -95,8 +103,6 @@ public class MainActivity extends ActionBarActivity {
             mPager.setCurrentItem(current_item, false);
         }
 
-//        LinearLayout spinnerLayout = (LinearLayout) findViewById(R.id.color_spinner_linear_layout);
-
         mSpinner = (Spinner) findViewById(R.id.color_spinner);
         updateSpinnerAdapter();
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -125,6 +131,7 @@ public class MainActivity extends ActionBarActivity {
         ArrayList<String> colorDescriptions = ColorCodeRepository.getAllTasks(mAppContext);
         ArrayList<String> colorValues = ColorCodeRepository.getAllColorValues(mAppContext);
         ArrayList<Integer> colorInts = new ArrayList<>();
+
         for (String color : colorValues) {
             colorInts.add(Color.parseColor(color));
         }
@@ -254,6 +261,7 @@ public class MainActivity extends ActionBarActivity {
     private void recreateTables() {
         ColorCodeRepository.dropTable(mAppContext);
         EntryRepository.dropTable(mAppContext);
+
         ColorCodeRepository.createTable(mAppContext);
         EntryRepository.createTable(mAppContext);
     }
@@ -278,7 +286,7 @@ public class MainActivity extends ActionBarActivity {
          */
         @Override
         public int getCount() {
-            return 3650;
+            return MAX_ENTRY_CAPACITY;
         }
 
         @Override
@@ -340,12 +348,12 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return getSpinnerView(position, convertView, parent, 0);
+            return getSpinnerView(position, convertView, parent, SPINNER_VIEW_TYPE);
         }
 
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getSpinnerView(position, convertView, parent, 1);
+            return getSpinnerView(position, convertView, parent, SPINNER_DROP_DOWN_VIEW_TYPE);
         }
 
         public View getSpinnerView(int position, View convertView, ViewGroup parent, int type) {
@@ -354,11 +362,7 @@ public class MainActivity extends ActionBarActivity {
                 spinnerView = getLayoutInflater().inflate(R.layout.spinner_row, parent, false);
             }
 
-//            if (position >= descriptions.size()) {
-//                return spinnerView;
-//
-//            }
-            if (type == 0) { // TODO: const color/style
+            if (type == SPINNER_VIEW_TYPE) { // TODO: const color/style
                 spinnerView.setBackgroundColor(Color.parseColor("#ffdddddd"));
             }
 
@@ -369,14 +373,6 @@ public class MainActivity extends ActionBarActivity {
             description.setText(descriptions.get(position));
 
             return spinnerView;
-        }
-
-        public void setDescriptions(ArrayList<String> descriptions) {
-            this.descriptions = descriptions;
-        }
-
-        public void setColors(ArrayList<Integer> colors) {
-            this.colors = colors;
         }
     }
 
