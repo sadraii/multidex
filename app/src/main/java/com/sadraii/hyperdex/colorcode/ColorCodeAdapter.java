@@ -72,7 +72,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final ColorCode colorCode = ColorCodeRepository.getColorCodeForId(mAppContext, position);
+        final ColorCode colorCode = ColorCodeRepository.getColorCode(mAppContext, position);
         if (colorCode == null) {
             return;
         }
@@ -222,7 +222,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
 //    @Override
 //    public long getItemId(int position) {
-//        return ColorCodeRepository.getColorCodeForId(mAppContext, position).getId();
+//        return ColorCodeRepository.getColorCode(mAppContext, position).getId();
 //    }
 
     public void setNewlyInserted(int position) {

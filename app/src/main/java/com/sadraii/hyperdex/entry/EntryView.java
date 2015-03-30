@@ -26,16 +26,15 @@ import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.sadraii.hyperdex.ColorCode;
 import com.sadraii.hyperdex.Entry;
 import com.sadraii.hyperdex.MainActivity;
 import com.sadraii.hyperdex.data.ColorCodeRepository;
 import com.sadraii.hyperdex.data.EntryRepository;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Created by Mostafa on 3/21/2015.
@@ -76,7 +75,7 @@ public class EntryView extends View implements View.OnTouchListener {
     private float mCenterX;
     private float mCenterY;
     private float mRadius;
-    final RectF mBounds = new RectF();
+    private final RectF mBounds = new RectF();
 
     private int mPosition;
 
@@ -84,10 +83,10 @@ public class EntryView extends View implements View.OnTouchListener {
     private float mInitialClickY;
 
     private Entry mEntry;
-    private int mColorCodeId;
-    private ArrayList<String> mColorCodeValues;
-    private HashMap<Integer, Integer> mEntrySegments;
-    private Set<Integer> mSegmentKeys;
+    private long mColorCodeTag;
+    private String mColorValue;
+    private HashMap<Integer, Long> mEntrySegments;
+//    private Set<Integer> mSegmentKeys;
     private Iterator<Integer> mIterator;
 
     public EntryView(Context context) {
@@ -118,7 +117,7 @@ public class EntryView extends View implements View.OnTouchListener {
         mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
         // Parse the segments from the Entry
         if (mEntry.hasSegments()) {
-            Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
+            Type hashMapType = new TypeToken<HashMap<Integer, Long>>() {}.getType();
             mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
         } else {
             mEntrySegments = new HashMap<>();
@@ -158,7 +157,10 @@ public class EntryView extends View implements View.OnTouchListener {
      * Finds the segment that was touched and toggles it on/off
      */
     private void findSegmentAndToggle() {
-        int colorCodeId = ((MainActivity) mContext).getSelectedColorCode();
+        int selectedColorId = ((MainActivity) mContext).getSelectedColorCodeId();
+        ColorCode colorCode = ColorCodeRepository.getColorCode(mAppContext, selectedColorId);
+        long colorTag = colorCode.getTag();
+
 
         for (int i = NUMBER_RINGS; i < NUMBER_RINGS * NUMBER_SLICES + 1; i += NUMBER_RINGS) {
             double angle = clickAngle(mInitialClickX, mInitialClickY);
@@ -166,15 +168,15 @@ public class EntryView extends View implements View.OnTouchListener {
             if (angle >= (i - NUMBER_RINGS) * SLICE_MULTIPLIER && angle < i * SLICE_MULTIPLIER) {
                 switch (ringClicked(mInitialClickX, mInitialClickY)) {
                     case OUTER: {
-                        toggleSegment(i, colorCodeId);
+                        toggleSegment(i, colorTag);
                         break;
                     }
                     case MIDDLE: {
-                        toggleSegment(i - 1, colorCodeId);
+                        toggleSegment(i - 1, colorTag);
                         break;
                     }
                     case INNER: {
-                        toggleSegment(i - 2, colorCodeId);
+                        toggleSegment(i - 2, colorTag);
                         break;
                     }
                     default:
@@ -184,11 +186,11 @@ public class EntryView extends View implements View.OnTouchListener {
         }
     }
 
-    private void toggleSegment(int key, int colorCodeId) {
+    private void toggleSegment(int key, long colorTag) {
         if (mEntrySegments.containsKey(key)) {
             mEntrySegments.remove(key);
         } else {
-            mEntrySegments.put(key, colorCodeId);
+            mEntrySegments.put(key, colorTag);
         }
         invalidate();
     }
@@ -245,36 +247,41 @@ public class EntryView extends View implements View.OnTouchListener {
         mPaint.setStrokeWidth(RING_STROKE_WIDTH);
 
         // Loop through segments, coloring them in
-        mColorCodeValues = ColorCodeRepository.getAllColorValues(mAppContext);
-        mSegmentKeys = mEntrySegments.keySet();
-        for(mIterator = mSegmentKeys.iterator(); mIterator.hasNext(); ) {
+        mIterator = mEntrySegments.keySet().iterator();
+        while (mIterator.hasNext()) {
             int segment = mIterator.next();
 
             // Get the segment's color
-            mColorCodeId = mEntrySegments.get(segment);
-            mPaint.setColor(Color.parseColor(mColorCodeValues.get(mColorCodeId)));
+            mColorCodeTag = mEntrySegments.get(segment);
+            mColorValue = ColorCodeRepository.getValueForTag(mAppContext, mColorCodeTag);
 
-            // Loop through the slices, from outer ring to inner ring, and draw any segments
-            for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES + 1; j += NUMBER_RINGS) {
-                if (segment == j) {
-                    // Draw outer ring
-                    setBounds(mBounds, Ring.OUTER.offset);
-                    canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
-                            mPaint);
-                    break;
-                } else if (segment == j - 1) {
-                    // Draw middle ring
-                    setBounds(mBounds, Ring.MIDDLE.offset);
-                    canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
-                            mPaint);
-                    break;
-                } else if (segment == j - 2) {
-                    // Draw inner ring
-                    setBounds(mBounds, Ring.INNER.offset);
-                    canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
-                            mPaint);
-                    break;
+            if (mColorValue != null) {
+                mPaint.setColor(Color.parseColor(mColorValue));
+                // Loop through the slices, from outer ring to inner ring, and draw any segments
+                for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES + 1; j += NUMBER_RINGS) {
+                    if (segment == j) {
+                        // Draw outer ring
+                        setBounds(mBounds, Ring.OUTER.offset);
+                        canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
+                                mPaint);
+                        break;
+                    } else if (segment == j - 1) {
+                        // Draw middle ring
+                        setBounds(mBounds, Ring.MIDDLE.offset);
+                        canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
+                                mPaint);
+                        break;
+                    } else if (segment == j - 2) {
+                        // Draw inner ring
+                        setBounds(mBounds, Ring.INNER.offset);
+                        canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
+                                mPaint);
+                        break;
+                    }
                 }
+            } else {
+                // Respective ColorCode has been deleted, remove segment from Entry
+                mIterator.remove();
             }
         }
 
@@ -335,7 +342,7 @@ public class EntryView extends View implements View.OnTouchListener {
      * @return  The {@link Entry} representing this view.
      */
     public Entry getEntry() {
-        Type hashMapType = new TypeToken<HashMap<Integer, Integer>>() {}.getType();
+        Type hashMapType = new TypeToken<HashMap<Integer, Long>>() {}.getType();
         mEntry.setSegments(new Gson().toJson(mEntrySegments, hashMapType));
         return mEntry;
     }

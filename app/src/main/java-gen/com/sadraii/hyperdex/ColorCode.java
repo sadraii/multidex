@@ -10,6 +10,7 @@ package com.sadraii.hyperdex;
 public class ColorCode {
 
     private Long id;
+    private Long tag;
     private String argb;
     private String task;
 
@@ -23,8 +24,9 @@ public class ColorCode {
         this.id = id;
     }
 
-    public ColorCode(Long id, String argb, String task) {
+    public ColorCode(Long id, Long tag, String argb, String task) {
         this.id = id;
+        this.tag = tag;
         this.argb = argb;
         this.task = task;
     }
@@ -35,6 +37,14 @@ public class ColorCode {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTag() {
+        return tag;
+    }
+
+    public void setTag(Long tag) {
+        this.tag = tag;
     }
 
     public String getArgb() {
@@ -54,6 +64,19 @@ public class ColorCode {
     }
 
     // KEEP METHODS - put your custom methods here
+    // TODO: remove this
+//    /**
+//     * Constructor without tag field, as it is auto-incremented.
+//     *
+//     * @param id
+//     * @param argb
+//     * @param task
+//     */
+//    public ColorCode(Long id, String argb, String task) {
+//        this.id = id;
+//        this.argb = argb;
+//        this.task = task;
+//    }
     // KEEP METHODS END
 
 }

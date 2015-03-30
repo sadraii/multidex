@@ -14,7 +14,6 @@ public class Entry {
     private String segments;
 
     // KEEP FIELDS - put your custom fields here
-//    private HashMap<Integer, Integer> entrySegments = new HashMap<>();
     // KEEP FIELDS END
 
     public Entry() {
@@ -58,9 +57,6 @@ public class Entry {
     public boolean hasSegments() {
         return !(segments == null || segments.equals(""));
     }
-//    public HashMap<Integer, Integer> getEntrySegments() {
-//        return entrySegments;
-//    }
     // KEEP METHODS END
 
 }

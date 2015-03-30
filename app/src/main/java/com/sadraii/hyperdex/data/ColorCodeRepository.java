@@ -47,6 +47,10 @@ public class ColorCodeRepository {
         return colorCode;
     }
 
+    public static long getColorCodeTag(Context context, long id) {
+        return getColorCode(context, id).getTag();
+    }
+
     /**
      * Creates and returns a {@link ColorCode} set to the next available ID.
      *
@@ -56,7 +60,7 @@ public class ColorCodeRepository {
      * @return
      */
     public static ColorCode initColorCode(Context context, String argb, String task) {
-        return new ColorCode(getNextId(context), argb, task);
+        return new ColorCode(getNextId(context), System.currentTimeMillis(), argb, task);
     }
 
     /**
@@ -68,6 +72,16 @@ public class ColorCodeRepository {
     public static long getNextId(Context context) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
         return (colorCodes == null) ? 0 : colorCodes.size();
+    }
+
+    public static String getValueForTag(Context context, long tag) {
+        ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
+        for (ColorCode colorCode : colorCodes) {
+            if (colorCode.getTag() == tag) {
+                return colorCode.getArgb();
+            }
+        }
+        return null;
     }
 
     public static void insertOrReplace(Context context, ColorCode colorCode) {
@@ -84,13 +98,14 @@ public class ColorCodeRepository {
     public static void deleteColorCodeAndSort(Context context, long id) {
         int colorCount = (int) getColorCodeDao(context).count();
         ColorCodeDao dao = getColorCodeDao(context);
-        dao.delete(getColorCodeForId(context, id));
+        dao.delete(getColorCode(context, id));
 
         if (colorCount > 1) {
             for (int i = (int) id; i < colorCount - 1; i++) {
-                ColorCode copyFrom = getColorCodeForId(context, i + 1);
+                ColorCode copyFrom = getColorCode(context, i + 1);
                 insertOrReplace(context, new ColorCode(
                         copyFrom.getId() - 1,
+                        copyFrom.getTag(),
                         copyFrom.getArgb(),
                         copyFrom.getTask()
                 ));
@@ -130,7 +145,7 @@ public class ColorCodeRepository {
         return tasks;
     }
 
-    public static ColorCode getColorCodeForId(Context context, long id) {
+    public static ColorCode getColorCode(Context context, long id) {
         return getColorCodeDao(context).load(id);
     }
 

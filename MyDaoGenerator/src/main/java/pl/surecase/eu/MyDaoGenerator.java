@@ -28,6 +28,7 @@ public class MyDaoGenerator {
 
         Entity colorCode = schema.addEntity("ColorCode");
         colorCode.addIdProperty().unique();
+        colorCode.addLongProperty("tag").unique();
         colorCode.addStringProperty("argb");
         colorCode.addStringProperty("task");
 
@@ -35,8 +36,6 @@ public class MyDaoGenerator {
         entry.addIdProperty().unique();
         entry.addDateProperty("date");
         entry.addStringProperty("segments");
-//        Property colorCodeIdProperty = entry.addLongProperty("colorCodeId").getProperty();
-//        entry.addToOne(colorCode, colorCodeIdProperty);
 
         new DaoGenerator().generateAll(schema, args[0]);
     }

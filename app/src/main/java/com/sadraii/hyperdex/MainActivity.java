@@ -20,6 +20,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,9 +38,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.sadraii.hyperdex.colorcode.EditColorCodeActivity;
 import com.sadraii.hyperdex.data.ColorCodeRepository;
 import com.sadraii.hyperdex.data.EntryRepository;
@@ -47,9 +50,9 @@ import com.sadraii.hyperdex.dialogues.DatePickerFragment;
 import com.sadraii.hyperdex.entry.EntryFragment;
 import com.sadraii.hyperdex.util.Utils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -60,10 +63,12 @@ public class MainActivity extends ActionBarActivity {
     private Context mAppContext;
     private HyperdexAdapter mAdapter;
     private ViewPager mPager;
-    private int selectedColorCode;
+    private Spinner mSpinner;
+    private int mSelectedColorCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_pager);
 
@@ -82,36 +87,58 @@ public class MainActivity extends ActionBarActivity {
         int entryId = Utils.getEntryIdForToday(mAppContext);
         if (savedInstanceState != null) {
             mPager.setCurrentItem(savedInstanceState.getInt(CURRENT_PAGER_ITEM, entryId), false);
-            selectedColorCode = savedInstanceState.getInt(SELECTED_COLOR_CODE, 0);
+            mSelectedColorCode = savedInstanceState.getInt(SELECTED_COLOR_CODE, 0);
         } else {
-            selectedColorCode = sharedPref.getInt(getString(R.string.pref_selected_color_code), 0);
+            mSelectedColorCode = sharedPref.getInt(getString(R.string.pref_selected_color_code), 0);
             int current_item = sharedPref.getInt(getString(R.string.pref_current_pager_item),
                     entryId);
             mPager.setCurrentItem(current_item, false);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                ColorCodeRepository.getAllTasks(mAppContext));
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner spinner = (Spinner) findViewById(R.id.color_spinner);
-        spinner.setAdapter(adapter);
-        // If color code that was previously selected has since been deleted, reset to first
-        // color code as fallback
-        if (adapter.getCount() <= selectedColorCode) {
-            selectedColorCode = 0;
-        }
-        spinner.setSelection(selectedColorCode, false);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//        LinearLayout spinnerLayout = (LinearLayout) findViewById(R.id.color_spinner_linear_layout);
+
+        mSpinner = (Spinner) findViewById(R.id.color_spinner);
+        updateSpinnerAdapter();
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedColorCode = position;
+                mSelectedColorCode = position;
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(LOG_TAG, "onResume()");
+        super.onResume();
+        updateSpinnerAdapter();
+    }
+
+    /**
+     * Set color descriptions and ints used by spinner adapter
+     */
+    public void updateSpinnerAdapter() {
+        ArrayList<String> colorDescriptions = ColorCodeRepository.getAllTasks(mAppContext);
+        ArrayList<String> colorValues = ColorCodeRepository.getAllColorValues(mAppContext);
+        ArrayList<Integer> colorInts = new ArrayList<>();
+        for (String color : colorValues) {
+            colorInts.add(Color.parseColor(color));
+        }
+
+        ColorSpinnerAdapter mSpinnerAdapter = new ColorSpinnerAdapter(this,
+                android.R.layout.simple_spinner_item, colorDescriptions, colorInts);
+        // If color code that was previously selected has since been deleted, reset to first
+        // color code as fallback
+        if (colorInts.size() <= mSelectedColorCode) {
+            mSelectedColorCode = 0;
+        }
+
+        mSpinner.setAdapter(mSpinnerAdapter);
+        mSpinner.setSelection(mSelectedColorCode, false);
     }
 
     private void DEBUG_firstInstall(boolean firstInstall) {
@@ -127,20 +154,20 @@ public class MainActivity extends ActionBarActivity {
                     .commit();
         }
     }
-    private void DEBUG_wipeTables(boolean wipe) {
-        if (wipe) {
-//            clearTables();
-            recreateTables();
-            addTestColors();
-            addTestEntries();
-        }
-    }
+//    private void DEBUG_wipeTables(boolean wipe) {
+//        if (wipe) {
+////            clearTables();
+//            recreateTables();
+//            addTestColors();
+//            addTestEntries();
+//        }
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.d(LOG_TAG, "MainActivity onSaveInstanceState()");
         super.onSaveInstanceState(outState);
-        outState.putInt(SELECTED_COLOR_CODE, selectedColorCode);
+        outState.putInt(SELECTED_COLOR_CODE, mSelectedColorCode);
         outState.putInt(CURRENT_PAGER_ITEM, mPager.getCurrentItem());
     }
     @Override
@@ -149,7 +176,7 @@ public class MainActivity extends ActionBarActivity {
         super.onPause();
         getPreferences(Context.MODE_PRIVATE)
                 .edit()
-                .putInt(getString(R.string.pref_selected_color_code), selectedColorCode)
+                .putInt(getString(R.string.pref_selected_color_code), mSelectedColorCode)
                 .putInt(getString(R.string.pref_current_pager_item), mPager.getCurrentItem())
                 .commit();
     }
@@ -159,8 +186,8 @@ public class MainActivity extends ActionBarActivity {
      *
      * @return  The currently selected {@link ColorCode} ID.
      */
-    public int getSelectedColorCode() {
-        return selectedColorCode;
+    public int getSelectedColorCodeId() {
+        return mSelectedColorCode;
     }
 
     @Override
@@ -236,7 +263,7 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.clearEntries(mAppContext);
     }
 
-    public static class HyperdexAdapter extends FragmentStatePagerAdapter {
+    private static class HyperdexAdapter extends FragmentStatePagerAdapter {
         private Context appContext = GreenDaoApplication.getAppContext();
         SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
@@ -300,77 +327,130 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void addTestEntries() {
-        Calendar cal = Calendar.getInstance();
-        Gson gson = new Gson();
+    private class ColorSpinnerAdapter extends ArrayAdapter<String> {
+        ArrayList<String> descriptions;
+        ArrayList<Integer> colors;
 
-        HashMap<Integer, Integer> entrySegments = new HashMap<>();
-        entrySegments.put(72, 4);
-        entrySegments.put(67, 2);
-        entrySegments.put(7, 3);
-        entrySegments.put(10, 1);
-        Log.d("gson= ", gson.toJson(entrySegments));
-        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
-                mAppContext,
-                cal.getTime(),
-                gson.toJson(entrySegments)
-        ));
+        public ColorSpinnerAdapter(Context context, int resource, ArrayList<String> descriptions,
+                                   ArrayList<Integer> colors) {
+            super(context, resource, descriptions);
+            this.descriptions = descriptions;
+            this.colors = colors;
+        }
 
-        entrySegments = new HashMap<>();
-        entrySegments.put(2, 1);
-        entrySegments.put(3, 0);
-        entrySegments.put(30, 4);
-        Log.d("gson= ", gson.toJson(entrySegments));
-        cal.add(Calendar.DATE, 1);
-        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
-                mAppContext,
-                cal.getTime(),
-                gson.toJson(entrySegments)
-        ));
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return getSpinnerView(position, convertView, parent, 0);
+        }
 
-        entrySegments = new HashMap<>();
-        entrySegments.put(27, 2);
-        entrySegments.put(28, 3);
-        entrySegments.put(29, 1);
-        Log.d("gson= ", gson.toJson(entrySegments));
-        cal.add(Calendar.DATE, 1);
-        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
-                mAppContext,
-                cal.getTime(),
-                gson.toJson(entrySegments)
-        ));
-        mAdapter.notifyDataSetChanged();
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            return getSpinnerView(position, convertView, parent, 1);
+        }
+
+        public View getSpinnerView(int position, View convertView, ViewGroup parent, int type) {
+            View spinnerView = convertView;
+            if (spinnerView == null) {
+                spinnerView = getLayoutInflater().inflate(R.layout.spinner_row, parent, false);
+            }
+
+//            if (position >= descriptions.size()) {
+//                return spinnerView;
+//
+//            }
+            if (type == 0) { // TODO: const color/style
+                spinnerView.setBackgroundColor(Color.parseColor("#ffdddddd"));
+            }
+
+            ImageView colorView = (ImageView) spinnerView.findViewById(R.id.spinner_color_image_view);
+            ((GradientDrawable) colorView.getBackground()).setColor(colors.get(position));
+
+            TextView description = (TextView) spinnerView.findViewById(R.id.spinner_description);
+            description.setText(descriptions.get(position));
+
+            return spinnerView;
+        }
+
+        public void setDescriptions(ArrayList<String> descriptions) {
+            this.descriptions = descriptions;
+        }
+
+        public void setColors(ArrayList<Integer> colors) {
+            this.colors = colors;
+        }
     }
 
-    private void addTestColors() {
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
-                mAppContext,
-                "#ff33b5e5",
-                "0 Make breakfast"
-        ));
-
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
-                mAppContext,
-                "#ffaa66cc",
-                "1 Jump rope"
-        ));
-
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
-                mAppContext,
-                "#ff99cc00",
-                "2 Wash dishes"
-        ));
-
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
-                mAppContext,
-                "#ffffbb33",
-                "3 Complain"
-        ));
-
-        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
-                mAppContext,
-                "#ffff4444",
-                "4 How long is this text box and does it really wrap around or not?"
-        ));
-    }
+//    private void addTestEntries() {
+//        Calendar cal = Calendar.getInstance();
+//        Gson gson = new Gson();
+//
+//        HashMap<Integer, Integer> entrySegments = new HashMap<>();
+//        entrySegments.put(72, 4);
+//        entrySegments.put(67, 2);
+//        entrySegments.put(7, 3);
+//        entrySegments.put(10, 1);
+//        Log.d("gson= ", gson.toJson(entrySegments));
+//        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
+//                mAppContext,
+//                cal.getTime(),
+//                gson.toJson(entrySegments)
+//        ));
+//
+//        entrySegments = new HashMap<>();
+//        entrySegments.put(2, 1);
+//        entrySegments.put(3, 0);
+//        entrySegments.put(30, 4);
+//        Log.d("gson= ", gson.toJson(entrySegments));
+//        cal.add(Calendar.DATE, 1);
+//        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
+//                mAppContext,
+//                cal.getTime(),
+//                gson.toJson(entrySegments)
+//        ));
+//
+//        entrySegments = new HashMap<>();
+//        entrySegments.put(27, 2);
+//        entrySegments.put(28, 3);
+//        entrySegments.put(29, 1);
+//        Log.d("gson= ", gson.toJson(entrySegments));
+//        cal.add(Calendar.DATE, 1);
+//        EntryRepository.insertOrReplace(mAppContext, EntryRepository.initEntry(
+//                mAppContext,
+//                cal.getTime(),
+//                gson.toJson(entrySegments)
+//        ));
+//        mAdapter.notifyDataSetChanged();
+//    }
+//
+//    private void addTestColors() {
+//        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
+//                mAppContext,
+//                "#ff33b5e5",
+//                "0 Make breakfast"
+//        ));
+//
+//        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
+//                mAppContext,
+//                "#ffaa66cc",
+//                "1 Jump rope"
+//        ));
+//
+//        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
+//                mAppContext,
+//                "#ff99cc00",
+//                "2 Wash dishes"
+//        ));
+//
+//        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
+//                mAppContext,
+//                "#ffffbb33",
+//                "3 Complain"
+//        ));
+//
+//        ColorCodeRepository.insertOrReplace(mAppContext, ColorCodeRepository.initColorCode(
+//                mAppContext,
+//                "#ffff4444",
+//                "4 How long is this text box and does it really wrap around or not?"
+//        ));
+//    }
 }
