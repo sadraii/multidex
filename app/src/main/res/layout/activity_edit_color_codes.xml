@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- Copyright 2015, Mostafa Sadraii
+ Copyright 2015 Mostafa Sadraii
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,19 +18,3 @@
              android:id="@+id/fragment_color_code_container"
               android:layout_width="match_parent"
     android:layout_height="match_parent" />
-
-    <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
-          <!--xmlns:tools="http://schemas.android.com/tools"-->
-          <!--android:id="@+id/fragment"-->
-          <!--android:name="com.sadraii.hyperdex.colorcode.EditColorCodeFragment"-->
-          <!--tools:layout="@layout/fragment_edit_color_codes"-->
-          <!--android:layout_width="match_parent"-->
-          <!--android:layout_height="match_parent"/>-->
-
-    <!--<FrameLayout-->
-        <!--android:id="@+id/sample_content_fragment"-->
-        <!--layout_weight="2"-->
-        <!--android:layout_width="match_parent"-->
-        <!--layout_height="0px"-->
-        <!--android:layout_height="match_parent"/>-->
-

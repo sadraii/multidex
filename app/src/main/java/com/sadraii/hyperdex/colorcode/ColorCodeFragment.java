@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Mostafa Sadraii
+ * Copyright 2015 Mostafa Sadraii
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,18 +36,18 @@ import com.sadraii.hyperdex.util.SwipeDismissRecyclerViewTouchListener;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EditColorCodeFragment extends Fragment {
-    private static final String LOG_TAG = EditColorCodeFragment.class.getSimpleName();
+public class ColorCodeFragment extends Fragment {
+    private static final String LOG_TAG = ColorCodeFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private Context mAppContext;
 
-    public EditColorCodeFragment() {
+    public ColorCodeFragment() {
     }
 
-    public static EditColorCodeFragment newInstance() {
-        return new EditColorCodeFragment();
+    public static ColorCodeFragment newInstance() {
+        return new ColorCodeFragment();
     }
 
     // TODO: save instance state / write to DB on save
@@ -72,9 +72,9 @@ public class EditColorCodeFragment extends Fragment {
 //                super.onScrolled(recyclerView, dx, dy);
 //                if (mRecyclerView.getChildAt(0) != null && mRecyclerView.getChildAt(0).getTop() == 0) {
 ////                    Log.d(LOG_TAG, "at item 0");
-//                    EditColorCodeActivity.setActionBarShadow(false);
+//                    ColorCodeActivity.setActionBarShadow(false);
 //                } else {
-//                    EditColorCodeActivity.setActionBarShadow(true);
+//                    ColorCodeActivity.setActionBarShadow(true);
 //                }
 //            }
 //        });

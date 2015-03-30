@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Mostafa Sadraii
+ * Copyright 2015 Mostafa Sadraii
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,12 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
     private Context mAppContext;
     private Context mActivityContext;
-    private boolean newlyAdded = false;
+    private boolean mNewlyAdded = false;
 
-    private static final long COLOR_SPIN_DURATION = 100;
-    private static final float COLOR_HALF_SPIN_DEGREE = -90;
-    private static final int COLOR_DIALOGUE_COLUMNS = 5;
-    private static final String COLOR_DIALOGUE_FRAGMENT_TAG = "color_dialogue_fragment";
+    private static final long SPIN_DURATION = 100;
+    private static final float HALF_SPIN_DEGREE = -90;
+    private static final int DIALOGUE_COLUMNS = 5;
+    private static final String DIALOGUE_FRAGMENT_TAG = "dialogue_fragment";
 
     public ColorCodeAdapter(Context appContext, Context activityContext) {
         mAppContext = appContext;
@@ -89,7 +89,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                         R.string.color_picker_default_title,
                         ColorPickerUtils.ColorUtils.colorChoices(mAppContext),
                         colorInt,
-                        COLOR_DIALOGUE_COLUMNS,
+                        DIALOGUE_COLUMNS,
                         ColorPickerDialog.SIZE_SMALL
                 );
                 colorPicker.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
@@ -119,29 +119,28 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                                             mAppContext, colorCode.getArgb()));
                             // Spins ImageView while assigning the new color halfway through the spin
                             holder.mImageView.animate()
-                                    .rotationYBy(COLOR_HALF_SPIN_DEGREE)
-                                    .setDuration(COLOR_SPIN_DURATION)
+                                    .rotationYBy(HALF_SPIN_DEGREE)
+                                    .setDuration(SPIN_DURATION)
                                     .withEndAction(new Runnable() {
                                         @Override
                                         public void run() {
-                                            // test color change
                                             ((GradientDrawable) holder.mImageView.getBackground())
                                                     .setColor(color);
                                             holder.mImageView.animate()
-                                                    .rotationYBy(COLOR_HALF_SPIN_DEGREE)
-                                                    .setDuration(COLOR_SPIN_DURATION);
+                                                    .rotationYBy(HALF_SPIN_DEGREE)
+                                                    .setDuration(SPIN_DURATION);
                                         }
                                     });
                         }
                     }
                 });
-                colorPicker.show(((EditColorCodeActivity) mActivityContext).getFragmentManager(),
-                        COLOR_DIALOGUE_FRAGMENT_TAG);
+                colorPicker.show(((ColorCodeActivity) mActivityContext).getFragmentManager(),
+                        DIALOGUE_FRAGMENT_TAG);
             }
         });
 
         final int colorInt = Color.parseColor(colorCode.getArgb());
-        if (newlyAdded) {
+        if (mNewlyAdded) {
             // TODO: refactor spin into function
             Log.d(LOG_TAG, "newlyadded");
 
@@ -149,8 +148,8 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
             ((GradientDrawable) holder.mImageView.getBackground())
                     .setColor(Color.parseColor("#00000000"));
             holder.mImageView.animate()
-                    .rotationYBy(COLOR_HALF_SPIN_DEGREE)
-                    .setDuration(COLOR_SPIN_DURATION)
+                    .rotationYBy(HALF_SPIN_DEGREE)
+                    .setDuration(SPIN_DURATION)
                     .withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -158,12 +157,12 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                             ((GradientDrawable) holder.mImageView.getBackground())
                                     .setColor(colorInt);
                             holder.mImageView.animate()
-                                    .rotationYBy(COLOR_HALF_SPIN_DEGREE)
-                                    .setDuration(COLOR_SPIN_DURATION);
+                                    .rotationYBy(HALF_SPIN_DEGREE)
+                                    .setDuration(SPIN_DURATION);
                         }
                     });
 //            holder.mEditText.setHint("Enter description");
-            newlyAdded = false;
+            mNewlyAdded = false;
         } else {
             ((GradientDrawable) holder.mImageView.getBackground())
                     .setColor(colorInt);
@@ -187,7 +186,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 //                v.setFocusable(true);
 //                v.setEnabled(true);
                 // TODO: get activity's fragment
-//                ((EditColorCodeActivity) mActivityContext).getLayoutManager().scrollToPosition(position);
+//                ((ColorCodeActivity) mActivityContext).getLayoutManager().scrollToPosition(position);
                 // or scrollToPositionWithOffset()
             }
         });
@@ -226,7 +225,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 //    }
 
     public void setNewlyInserted(int position) {
-        newlyAdded = true;
+        mNewlyAdded = true;
         notifyItemInserted(position);
     }
 

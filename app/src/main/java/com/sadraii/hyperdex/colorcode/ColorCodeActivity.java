@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Mostafa Sadraii
+ * Copyright 2015 Mostafa Sadraii
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import android.view.MenuItem;
 import com.sadraii.hyperdex.R;
 
 
-public class EditColorCodeActivity extends ActionBarActivity {
+public class ColorCodeActivity extends ActionBarActivity {
 
 //    private static float elevation;
 //    private static ActionBar actionBar;
@@ -35,7 +35,7 @@ public class EditColorCodeActivity extends ActionBarActivity {
         setContentView(R.layout.activity_edit_color_codes);
 
         if (savedInstanceState == null) {
-            EditColorCodeFragment fragment = EditColorCodeFragment.newInstance();
+            ColorCodeFragment fragment = ColorCodeFragment.newInstance();
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.fragment_color_code_container, fragment)

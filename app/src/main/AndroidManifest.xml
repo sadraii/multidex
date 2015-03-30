@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- Copyright 2015, Mostafa Sadraii
+ Copyright 2015 Mostafa Sadraii
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.sadraii.hyperdex.colorcode.EditColorCodeActivity"
+            android:name=".colorcode.ColorCodeActivity"
             android:label="@string/title_activity_edit_color_codes"
             android:parentActivityName=".MainActivity" >
             <meta-data

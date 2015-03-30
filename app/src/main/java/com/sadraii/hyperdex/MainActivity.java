@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Mostafa Sadraii
+ * Copyright 2015 Mostafa Sadraii
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.sadraii.hyperdex.colorcode.EditColorCodeActivity;
+import com.sadraii.hyperdex.colorcode.ColorCodeActivity;
 import com.sadraii.hyperdex.data.ColorCodeRepository;
 import com.sadraii.hyperdex.data.EntryRepository;
 import com.sadraii.hyperdex.data.GreenDaoApplication;
@@ -210,7 +210,7 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             }
             case R.id.action_edit_label: {
-                startActivity(new Intent(this, EditColorCodeActivity.class));
+                startActivity(new Intent(this, ColorCodeActivity.class));
                 return true;
             }
         }

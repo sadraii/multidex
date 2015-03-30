@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- Copyright 2015, Mostafa Sadraii
+ Copyright 2015 Mostafa Sadraii
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.sadraii.hyperdex.colorcode.EditColorCodeFragment">
+                tools:context="com.sadraii.hyperdex.colorcode.ColorCodeFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/labels_recycler_view"
