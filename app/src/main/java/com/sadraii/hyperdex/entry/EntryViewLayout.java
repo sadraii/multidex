@@ -27,7 +27,7 @@ import com.sadraii.hyperdex.Entry;
  */
 public class EntryViewLayout extends FrameLayout {
 
-    EntryView mEntryView;
+    private final EntryView mEntryView;
 
     public EntryViewLayout(Context context) {
         this(context, null, 0);

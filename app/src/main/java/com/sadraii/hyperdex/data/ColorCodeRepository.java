@@ -30,7 +30,6 @@ import java.util.ArrayList;
  * objects.
  */
 public class ColorCodeRepository {
-
     private static final String LOG_TAG = ColorCodeRepository.class.getSimpleName();
 
     /**
@@ -92,6 +91,13 @@ public class ColorCodeRepository {
         return null;
     }
 
+    /**
+     * Returns the ColorCode with the given tag.
+     *
+     * @param context
+     * @param tag
+     * @return
+     */
     public static ColorCode getColorCodeForTag(Context context, long tag) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
         for (ColorCode colorCode : colorCodes) {
@@ -102,6 +108,13 @@ public class ColorCodeRepository {
         return null;
     }
 
+    /**
+     * Returns the first ColorCode with the given task.
+     *
+     * @param context
+     * @param task
+     * @return
+     */
     public static ColorCode getColorCodeForTask(Context context, String task) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
         for (ColorCode colorCode : colorCodes) {
@@ -112,6 +125,13 @@ public class ColorCodeRepository {
         return null;
     }
 
+    /**
+     * Updates the task of the ColorCode with the given tag, if the tasks are different.
+     *
+     * @param context
+     * @param tag
+     * @param task
+     */
     public static void updateColorCodeTask(Context context, long tag, String task) {
         ColorCode colorCode = getColorCodeForTag(context, tag);
         if (colorCode != null) {
@@ -180,7 +200,7 @@ public class ColorCodeRepository {
      */
     public static ArrayList<String> getAllColorValues(Context context) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
-        ArrayList<String> colorValues = new ArrayList<String>();
+        ArrayList<String> colorValues = new ArrayList<>();
         for (ColorCode colorCode : colorCodes) {
             colorValues.add(colorCode.getArgb());
         }
@@ -195,7 +215,7 @@ public class ColorCodeRepository {
      */
     public static ArrayList<String> getAllTasks(Context context) {
         ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
-        ArrayList<String> tasks = new ArrayList<String>();
+        ArrayList<String> tasks = new ArrayList<>();
         for (ColorCode colorCode : colorCodes) {
             String task = colorCode.getTask();
 

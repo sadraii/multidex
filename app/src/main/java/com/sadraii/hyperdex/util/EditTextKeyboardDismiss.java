@@ -52,16 +52,6 @@ public class EditTextKeyboardDismiss extends EditText {
             setCursorVisible(false);
             ColorCodeRepository.updateColorCodeTask(getContext().getApplicationContext(),
                     (Long) getTag(), getText().toString());
-//            Context appContext = getContext().getApplicationContext();
-//            ColorCode colorCode = ColorCodeRepository.getColorCodeForTag(
-//                    appContext, (Long) getTag());
-//            String oldText = colorCode.getTask();
-//            String newText = getText().toString();
-//            if (oldText != null && !oldText.equals(newText)) {
-//                colorCode.setTask(newText);
-//                ColorCodeRepository.insertOrReplace(appContext, colorCode);
-//                Log.d("onKBBack", "inserted text= " + newText);
-//            }
         }
         return super.onKeyPreIme(keyCode, event);
     }

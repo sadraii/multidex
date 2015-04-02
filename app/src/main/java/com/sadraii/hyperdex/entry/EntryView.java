@@ -75,7 +75,7 @@ public class EntryView extends View implements View.OnTouchListener {
         }
     }
 
-    private Context mContext;
+    private final Context mContext;
     private Context mAppContext;
 
     private Bitmap mPathBitmap;

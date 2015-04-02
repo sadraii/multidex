@@ -51,12 +51,13 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
     private static final String LOG_TAG = ColorCodeAdapter.class.getSimpleName();
 
-    private Context mAppContext;
-    private Context mActivityContext;
+    private final Context mAppContext;
+    private final Context mActivityContext;
     private boolean mNewlyAdded = false;
 
     private static final long SPIN_DURATION = 100;
     private static final float HALF_SPIN_DEGREE = -90;
+    private static final int RECYCLER_FOCUS_DELAY = 200;
     private static final int DIALOGUE_COLUMNS = 5;
     private static final String DIALOGUE_FRAGMENT_TAG = "dialogue_fragment";
 
@@ -112,19 +113,12 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                             ((EditText) view).setCursorVisible(true);
 
                         }
-                    }, 200);
+                    }, RECYCLER_FOCUS_DELAY);
                 } else {
                     Log.d("editText", "lostFocus");
                     editText.setCursorVisible(false);
                     ColorCodeRepository.updateColorCodeTask(mAppContext, colorCode.getTag(),
                             editText.getText().toString());
-//                    String oldText = colorCode.getTask();
-//                    String newText = editText.getText().toString();
-//                    if (oldText != null && !oldText.equals(newText)) {
-//                        colorCode.setTask(newText);
-//                        ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
-//                        Log.d("nofocus", "inserted text= " + oldText);
-//                    }
                 }
             }
         });
@@ -136,13 +130,6 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                     editText.setCursorVisible(false);
                     ColorCodeRepository.updateColorCodeTask(mAppContext, colorCode.getTag(),
                             editText.getText().toString());
-//                    String oldText = colorCode.getTask();
-//                    String newText = editText.getText().toString();
-//                    if (oldText != null && !oldText.equals(newText)) {
-//                        colorCode.setTask(newText);
-//                        ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
-//                        Log.d("actionDone", "inserted text= " + oldText);
-//                    }
                 }
                 return false;
             }
@@ -171,10 +158,8 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                                     ColorCodeRepository.getAllColorValues(mAppContext);
                             for (String value : colorCodeValues) {
                                 if (colorString.equals(value)) {
-                                    Toast.makeText(mAppContext,
-                                            R.string.toast_cannot_change_color,
-                                            Toast.LENGTH_SHORT)
-                                            .show();
+                                    Toast.makeText(mAppContext, R.string.toast_cannot_change_color,
+                                            Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                             }
@@ -182,10 +167,8 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                             colorCode.setArgb(colorString);
                             ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
                             // Set color name
-                            holder.textView.setText(
-                                    ColorPickerUtils.ColorUtils.colorName(
+                            holder.textView.setText(ColorPickerUtils.ColorUtils.colorName(
                                             mAppContext, colorString));
-
                             animateColorView(holder.imageView, color);
                         }
                     }
@@ -212,51 +195,13 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
             ((GradientDrawable) holder.imageView.getBackground())
                     .setColor(colorInt);
         }
-
-//        if (mNewlyAdded) {
-//            holder.editText.requestFocus();
-//            mNewlyAdded = false;
-//        }
-//        holder.editText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(final View v) {
-//                Log.d("viewholder", "clicked on text");
-//                v.setFocusableInTouchMode(true);
-//                ((EditText) v).setCursorVisible(true);
-//                ColorCodeActivity act = (ColorCodeActivity) v.getContext();
-//                final ColorCodeFragment frag = (ColorCodeFragment) act.getSupportFragmentManager().findFragmentByTag("ccfrag");
-//                v.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        frag.getRecyclerView().scrollToPosition(position);
-//                        v.requestFocus();
-//                        Log.d("onclick", "smoothscroll");
-//                    }
-//                }, 300);
-//            }
-//        });
-//        holder.editText.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(final View v, MotionEvent event) {
-//                Log.d("viewholder", "touched");
-//                v.setFocusableInTouchMode(true);
-//                ((EditText) v).setCursorVisible(true);
-//                ColorCodeActivity act = (ColorCodeActivity) v.getContext();
-//                final ColorCodeFragment frag = (ColorCodeFragment) act.getSupportFragmentManager().findFragmentByTag("ccfrag");
-//                v.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        frag.getRecyclerView().scrollToPosition(position);
-//                        v.requestFocus();
-//                        Log.d("ontouch", "smoothscroll");
-//                    }
-//                }, 300);
-//                return false;
-//            }
-//        });
     }
 
-    // Invoked by the layout manager
+    /**
+     * Invoked by the layout manager.
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return ColorCodeRepository.size(mAppContext);

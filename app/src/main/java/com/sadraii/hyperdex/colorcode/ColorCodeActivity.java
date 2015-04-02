@@ -27,6 +27,7 @@ import com.sadraii.hyperdex.R;
  * TODO: editText
  */
 public class ColorCodeActivity extends ActionBarActivity {
+
     public static final String COLOR_CODE_FRAGMENT_TAG = "color_code_fragment";
 
 //    private static float elevation;
@@ -36,7 +37,6 @@ public class ColorCodeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_color_codes);
-
         if (savedInstanceState == null) {
             ColorCodeFragment fragment = ColorCodeFragment.newInstance();
             getSupportFragmentManager()
@@ -44,7 +44,6 @@ public class ColorCodeActivity extends ActionBarActivity {
                     .add(R.id.fragment_color_code_container, fragment, COLOR_CODE_FRAGMENT_TAG)
                     .commit();
         }
-
 //        actionBar = getSupportActionBar();
 //        elevation = actionBar.getElevation();
     }
@@ -59,11 +58,9 @@ public class ColorCodeActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

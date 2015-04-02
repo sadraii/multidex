@@ -128,7 +128,7 @@ public class MainActivity extends ActionBarActivity {
     /**
      * Set color descriptions and ints used by spinner adapter
      */
-    public void updateSpinnerAdapter() {
+    private void updateSpinnerAdapter() {
         ArrayList<String> colorDescriptions = ColorCodeRepository.getAllTasks(mAppContext);
         ArrayList<String> colorValues = ColorCodeRepository.getAllColorValues(mAppContext);
         ArrayList<Integer> colorInts = new ArrayList<>();
@@ -273,8 +273,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private static class HyperdexAdapter extends FragmentStatePagerAdapter {
-        private Context appContext = GreenDaoApplication.getAppContext();
-        SparseArray<Fragment> registeredFragments = new SparseArray<>();
+        private final Context appContext = GreenDaoApplication.getAppContext();
+        private final SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
         public HyperdexAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -337,8 +337,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private class ColorSpinnerAdapter extends ArrayAdapter<String> {
-        ArrayList<String> descriptions;
-        ArrayList<Integer> colors;
+        final ArrayList<String> descriptions;
+        final ArrayList<Integer> colors;
 
         public ColorSpinnerAdapter(Context context, int resource, ArrayList<String> descriptions,
                                    ArrayList<Integer> colors) {

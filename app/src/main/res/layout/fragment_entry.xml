@@ -30,7 +30,6 @@
     <com.sadraii.hyperdex.entry.EntryViewLayout
         android:id="@+id/entry_view_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

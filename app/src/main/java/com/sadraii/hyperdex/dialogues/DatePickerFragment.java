@@ -48,7 +48,6 @@ public class DatePickerFragment extends DialogFragment
         Entry entry = EntryRepository.getEntryForId(appContext, currentItem);
         Calendar cal = Calendar.getInstance();
         cal.setTime(entry.getDate());
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getActivity(),
                 this,
@@ -58,7 +57,6 @@ public class DatePickerFragment extends DialogFragment
         );
         long minDate = EntryRepository.getFirstEntry(appContext).getDate().getTime();
         datePickerDialog.getDatePicker().setMinDate(minDate);
-
         return datePickerDialog;
     }
 

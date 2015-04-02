@@ -29,7 +29,7 @@ import com.sadraii.hyperdex.R;
  */
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
 
-    private Drawable mDivider;
+    private final Drawable mDivider;
 
     public SimpleDividerItemDecoration(Context context) {
         mDivider = context.getResources().getDrawable(R.drawable.line_divider);
