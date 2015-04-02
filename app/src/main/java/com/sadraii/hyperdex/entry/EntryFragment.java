@@ -47,18 +47,15 @@ public class EntryFragment extends Fragment {
 
     public static EntryFragment newInstance(int position) {
         EntryFragment entryFragment = new EntryFragment();
-
         Bundle args = new Bundle();
         args.putInt(POSITION_TAG, position);
         entryFragment.setArguments(args);
-
         return entryFragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onCreate(Bundle inState) {
+        super.onCreate(inState);
         mPosition = (getArguments() != null)
                 ? getArguments().getInt(POSITION_TAG)
                 : 0;
@@ -70,7 +67,7 @@ public class EntryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle inState) {
         View rootView = inflater.inflate(R.layout.fragment_entry, container, false);
 
         final Calendar cal = Calendar.getInstance();

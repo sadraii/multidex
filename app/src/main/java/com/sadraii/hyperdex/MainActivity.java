@@ -29,7 +29,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -75,27 +74,26 @@ public class MainActivity extends ActionBarActivity {
     private int mSelectedColorCode;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "onCreate()");
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle inState) {
+        super.onCreate(inState);
         setContentView(R.layout.fragment_pager);
-
         mAppContext = this.getApplicationContext();
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        boolean firstRunDefault = getResources().getBoolean(R.bool.pref_first_run_default);
-        boolean firstRun = sharedPref.getBoolean(
-                getString(R.string.pref_first_run_key), firstRunDefault);
-        DEBUG_firstInstall(firstRun);
+        boolean firstTimeDefault = getResources().getBoolean(R.bool.pref_first_time_setup_default);
+        boolean firstTime = sharedPref.getBoolean(
+                getString(R.string.pref_first_time_setup_key), firstTimeDefault);
+        firstTimeSetup(firstTime);
 
         mAdapter = new HyperdexAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.hyperdex_pager);
         mPager.setAdapter(mAdapter);
 
+        // Go to the last date viewed, or to today's date
         int entryId = Utils.getEntryIdForToday(mAppContext);
-        if (savedInstanceState != null) {
-            mPager.setCurrentItem(savedInstanceState.getInt(CURRENT_PAGER_ITEM, entryId), false);
-            mSelectedColorCode = savedInstanceState.getInt(SELECTED_COLOR_CODE, 0);
+        if (inState != null) {
+            mPager.setCurrentItem(inState.getInt(CURRENT_PAGER_ITEM, entryId), false);
+            mSelectedColorCode = inState.getInt(SELECTED_COLOR_CODE, 0);
         } else {
             mSelectedColorCode = sharedPref.getInt(getString(R.string.pref_selected_color_code), 0);
             int current_item = sharedPref.getInt(getString(R.string.pref_current_pager_item),
@@ -119,24 +117,16 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onResume() {
-        Log.d(LOG_TAG, "onResume()");
         super.onResume();
         updateSpinnerAdapter();
     }
 
-    // TODO: use Map
     /**
      * Set color descriptions and ints used by spinner adapter
      */
     private void updateSpinnerAdapter() {
         ArrayList<String> colorDescriptions = ColorCodeRepository.getAllTasks(mAppContext);
-        ArrayList<String> colorValues = ColorCodeRepository.getAllColorValues(mAppContext);
-        ArrayList<Integer> colorInts = new ArrayList<>();
-
-        for (String color : colorValues) {
-            colorInts.add(Color.parseColor(color));
-        }
-
+        ArrayList<Integer> colorInts = ColorCodeRepository.getAllColorInts(mAppContext);
         ColorSpinnerAdapter mSpinnerAdapter = new ColorSpinnerAdapter(this,
                 android.R.layout.simple_spinner_item, colorDescriptions, colorInts);
         // If color code that was previously selected has since been deleted, reset to first
@@ -144,46 +134,31 @@ public class MainActivity extends ActionBarActivity {
         if (colorInts.size() <= mSelectedColorCode) {
             mSelectedColorCode = 0;
         }
-
         mSpinner.setAdapter(mSpinnerAdapter);
         mSpinner.setSelection(mSelectedColorCode, false);
     }
 
-    private void DEBUG_firstInstall(boolean firstInstall) {
-        if (firstInstall) {
-            // TODO: probably don't do this in case of uninstall/reinstall, check if db exists first
+    private void firstTimeSetup(boolean firstTime) {
+        if (firstTime) {
             recreateTables();
             ColorCodeRepository.addNextColorCode(mAppContext, "#ff33b5e5", "0 Make breakfast");
             EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(), "");
-
-            getPreferences(Context.MODE_PRIVATE)
-                    .edit()
-                    .putBoolean(getString(R.string.pref_first_run_key), false)
+            getPreferences(Context.MODE_PRIVATE).edit()
+                    .putBoolean(getString(R.string.pref_first_time_setup_key), false)
                     .commit();
         }
     }
-//    private void DEBUG_wipeTables(boolean wipe) {
-//        if (wipe) {
-////            clearTables();
-//            recreateTables();
-//            addTestColors();
-//            addTestEntries();
-//        }
-//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d(LOG_TAG, "MainActivity onSaveInstanceState()");
         super.onSaveInstanceState(outState);
         outState.putInt(SELECTED_COLOR_CODE, mSelectedColorCode);
         outState.putInt(CURRENT_PAGER_ITEM, mPager.getCurrentItem());
     }
     @Override
     protected void onPause() {
-        Log.d(LOG_TAG, "MainActivity onPause()");
         super.onPause();
-        getPreferences(Context.MODE_PRIVATE)
-                .edit()
+        getPreferences(Context.MODE_PRIVATE).edit()
                 .putInt(getString(R.string.pref_selected_color_code), mSelectedColorCode)
                 .putInt(getString(R.string.pref_current_pager_item), mPager.getCurrentItem())
                 .commit();
@@ -207,14 +182,12 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         switch (id) {
             case R.id.action_calendar: {
                 showDatePicker();
                 return true;
             }
-            case R.id.action_settings: {
-                // TODO: settings activity
+            case R.id.action_settings: { // TODO: remove settings?
                 return true;
             }
             case R.id.action_edit_label: {
@@ -272,7 +245,11 @@ public class MainActivity extends ActionBarActivity {
         EntryRepository.clearEntries(mAppContext);
     }
 
+    /**
+     * Allows for continuous scrolling through Entries by creating fragments on the fly.
+     */
     private static class HyperdexAdapter extends FragmentStatePagerAdapter {
+
         private final Context appContext = GreenDaoApplication.getAppContext();
         private final SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
@@ -310,7 +287,6 @@ public class MainActivity extends ActionBarActivity {
             Date lastEntryDate = EntryRepository.getEntryForId(appContext, size - 1).getDate();
             Calendar cal = Calendar.getInstance();
             cal.setTime(lastEntryDate);
-
             // If user scrolled to the last entry, create a new one for the next day
             // If there is a gap between last entry date and today's date, create entries until
             // tomorrow's date.
@@ -323,7 +299,6 @@ public class MainActivity extends ActionBarActivity {
                     EntryRepository.addNextEntry(appContext, cal.getTime(), "");
                 }
             }
-
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
             registeredFragments.put(position, fragment);
             return fragment;
@@ -336,7 +311,11 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Provides spinner view with color circles and descriptions.
+     */
     private class ColorSpinnerAdapter extends ArrayAdapter<String> {
+
         final ArrayList<String> descriptions;
         final ArrayList<Integer> colors;
 
@@ -362,7 +341,6 @@ public class MainActivity extends ActionBarActivity {
             if (spinnerView == null) {
                 spinnerView = getLayoutInflater().inflate(R.layout.spinner_row, parent, false);
             }
-
             if (type == SPINNER_VIEW_TYPE) { // TODO: const color/style
                 spinnerView.setBackgroundColor(Color.parseColor("#ffdddddd"));
             }

@@ -135,8 +135,8 @@ public class EntryView extends View implements View.OnTouchListener {
         mStartPath = new PointF();
         mEndPath = new PointF();
 
-        mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
         // Parse the segments from the Entry
+        mEntry = EntryRepository.getEntryForId(mAppContext, mPosition);
         if (mEntry.hasSegments()) {
             Type hashMapType = new TypeToken<HashMap<Integer, Long>>() {}.getType();
             mEntrySegments = new Gson().fromJson(mEntry.getSegments(), hashMapType);
@@ -174,16 +174,18 @@ public class EntryView extends View implements View.OnTouchListener {
     }
 
     /**
-     * Finds the segment that was touched and toggles it on/off
+     * Finds the segment that was touched and toggles it on/off. It starts counting up from 1 by
+     * slice first, then by layer. So for the first slice (say between angles 0 and 30), if there
+     * are 3 rings, it would count the inner segment as 1, then the middle as 2, and lastly the
+     * outer as 3. Then for the second slice (say between angles 30 and 60), it would be 4, 5, and
+     * 6.
      */
     private void findSegmentAndToggle() {
         int selectedColorId = ((MainActivity) mContext).getSelectedColorCodeId();
         ColorCode colorCode = ColorCodeRepository.getColorCode(mAppContext, selectedColorId);
         long colorTag = colorCode.getTag();
-
         for (int i = NUMBER_RINGS; i < NUMBER_RINGS * NUMBER_SLICES + 1; i += NUMBER_RINGS) {
             double angle = clickAngle(mInitialClickX, mInitialClickY);
-
             if (angle >= (i - NUMBER_RINGS) * SLICE_MULTIPLIER && angle < i * SLICE_MULTIPLIER) {
                 switch (ringClicked(mInitialClickX, mInitialClickY)) {
                     case OUTER: {
@@ -261,10 +263,8 @@ public class EntryView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(RING_STROKE_WIDTH);
-
         // Loop through segments, coloring them in
         mIterator = mEntrySegments.keySet().iterator();
         while (mIterator.hasNext()) {
@@ -272,10 +272,9 @@ public class EntryView extends View implements View.OnTouchListener {
             // Get the segment's color
             mColorCodeTag = mEntrySegments.get(segment);
             mColorValue = ColorCodeRepository.getValueForTag(mAppContext, mColorCodeTag);
-
+            // Loop through the slices, from outer ring to inner ring, and draw any segments
             if (mColorValue != null) {
                 mPaint.setColor(Color.parseColor(mColorValue));
-                // Loop through the slices, from outer ring to inner ring, and draw any segments
                 for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES + 1; j += NUMBER_RINGS) {
                     if (segment == j) {
                         setBounds(Ring.OUTER.offset);
@@ -309,16 +308,12 @@ public class EntryView extends View implements View.OnTouchListener {
             // Draw 4 guide circles from outermost to innermost
             mPaint.setStrokeWidth(CIRCLE_GUIDELINE_STROKE_WIDTH);
             mPaint.setColor(Color.BLACK);
-
             setBounds(Ring.OUTER.offset - SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
-
             setBounds(Ring.OUTER.offset + SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
-
             setBounds(Ring.MIDDLE.offset + SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
-
             setBounds(Ring.INNER.offset + SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
@@ -327,7 +322,6 @@ public class EntryView extends View implements View.OnTouchListener {
             mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
             drawGuidelines(linesCanvas, mMainGuidelinePath, 0d);
             drawGuidelines(linesCanvas, mMainGuidelinePath, 90d);
-
             mPaint.setStrokeWidth(SUB_GUIDELINE_STROKE_WIDTH);
             drawGuidelines(linesCanvas, mSubGuidelinePath, 15d);
             drawGuidelines(linesCanvas, mSubGuidelinePath, 30d);
@@ -392,7 +386,6 @@ public class EntryView extends View implements View.OnTouchListener {
         } else {
             width = DESIRED_WIDTH;
         }
-
         if (heightMode == MeasureSpec.EXACTLY) {
             height = heightSize;
         } else if (heightMode == MeasureSpec.AT_MOST) {
@@ -406,16 +399,14 @@ public class EntryView extends View implements View.OnTouchListener {
         mRadius = (width > height)
                 ? height * RADIUS_MULTIPLIER
                 : width * RADIUS_MULTIPLIER;
-
         // Calculate the empty space in the middle
         float rightSide = mCenter.x + mRadius - Ring.INNER.offset - SLICE_MAX_DIFF;
         float leftSide = mCenter.x - mRadius + Ring.INNER.offset + SLICE_MAX_DIFF;
         mCenterOffset = (rightSide - leftSide) / 2;
-
         // For creating the guidelines bitmap
         mViewDimensions.x = (int) width;
         mViewDimensions.y = (int) height;
-
+        // Required call for onMeasure()
         setMeasuredDimension((int) width, (int) height);
     }
 

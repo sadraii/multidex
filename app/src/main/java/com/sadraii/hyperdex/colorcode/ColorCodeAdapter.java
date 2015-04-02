@@ -181,8 +181,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         // can 'spin in' from nothingness and bring up keyboard with focus.
         final int colorInt = Color.parseColor(colorCode.getArgb());
         if (mNewlyAdded) {
-            ((GradientDrawable) holder.imageView.getBackground())
-                    .setColor(Color.parseColor("#00000000"));
+            ((GradientDrawable) holder.imageView.getBackground()).setColor(Color.TRANSPARENT);
             animateColorView(holder.imageView, colorInt);
 
             InputMethodManager imm = (InputMethodManager) mActivityContext
@@ -192,8 +191,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
             mNewlyAdded = false;
         } else {
-            ((GradientDrawable) holder.imageView.getBackground())
-                    .setColor(colorInt);
+            ((GradientDrawable) holder.imageView.getBackground()).setColor(colorInt);
         }
     }
 
@@ -231,8 +229,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                     @Override
                     public void run() {
                         // test color change
-                        ((GradientDrawable) imageView.getBackground())
-                                .setColor(color);
+                        ((GradientDrawable) imageView.getBackground()).setColor(color);
                         imageView.animate()
                                 .rotationYBy(HALF_SPIN_DEGREE)
                                 .setDuration(SPIN_DURATION);

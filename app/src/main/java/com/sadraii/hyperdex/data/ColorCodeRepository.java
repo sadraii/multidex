@@ -17,6 +17,7 @@
 package com.sadraii.hyperdex.data;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.sadraii.hyperdex.ColorCode;
@@ -89,6 +90,16 @@ public class ColorCodeRepository {
             }
         }
         return null;
+    }
+
+    public static int getColorIntForTag(Context context, long tag) {
+        ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
+        for (ColorCode colorCode : colorCodes) {
+            if (colorCode.getTag() == tag) {
+                return Color.parseColor(colorCode.getArgb());
+            }
+        }
+        return 0;
     }
 
     /**
@@ -205,6 +216,20 @@ public class ColorCodeRepository {
             colorValues.add(colorCode.getArgb());
         }
         return colorValues;
+    }
+
+    /**
+     * Returns the color-int of all of the ColorCodes according to the {@link Color} class.
+     * @param context
+     * @return
+     */
+    public static ArrayList<Integer> getAllColorInts(Context context) {
+        ArrayList<String> colorValues = getAllColorValues(context);
+        ArrayList<Integer> colorInts = new ArrayList<>();
+        for (String color : colorValues) {
+            colorInts.add(Color.parseColor(color));
+        }
+        return colorInts;
     }
 
     /**
