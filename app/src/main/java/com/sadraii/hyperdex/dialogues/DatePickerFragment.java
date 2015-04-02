@@ -30,7 +30,7 @@ import com.sadraii.hyperdex.data.EntryRepository;
 import java.util.Calendar;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {

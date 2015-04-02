@@ -31,7 +31,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class EntryFragment extends Fragment {
 

@@ -34,7 +34,7 @@ import com.sadraii.hyperdex.util.SimpleDividerItemDecoration;
 import com.sadraii.hyperdex.util.SwipeDismissRecyclerViewTouchListener;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class ColorCodeFragment extends Fragment {
 
@@ -50,21 +50,6 @@ public class ColorCodeFragment extends Fragment {
     public static ColorCodeFragment newInstance() {
         return new ColorCodeFragment();
     }
-
-//    public class MyRe extends RecyclerView {
-//        public MyRe(Context context) {
-//            super(context, null);
-//        }
-//
-//        public MyRe(Context context, AttributeSet attrs) {
-//            super(context, attrs, 0);
-//        }
-//
-//        public MyRe(Context context, AttributeSet attrs, int defStyle) {
-//            super(context, attrs, defStyle);
-//        }
-//
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -153,5 +138,9 @@ public class ColorCodeFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
     }
 }

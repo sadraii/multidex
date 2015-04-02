@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class EntryView extends View implements View.OnTouchListener {
 

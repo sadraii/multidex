@@ -137,7 +137,7 @@ public class ColorPickerPalette extends TableLayout {
     }
 
     /**
-     * Add a content description to the specified swatch view. Because the colors get added in a
+     * Add a content editText to the specified swatch view. Because the colors get added in a
      * snaking form, every other row will need to compensate for the fact that the colors are added
      * in an opposite direction from their left->right/top->bottom order, which is how the system
      * will arrange them for accessibility purposes.

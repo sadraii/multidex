@@ -18,11 +18,9 @@ package com.sadraii.hyperdex.util;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.EditText;
 
-import com.sadraii.hyperdex.ColorCode;
 import com.sadraii.hyperdex.data.ColorCodeRepository;
 
 /**
@@ -41,20 +39,29 @@ public class EditTextKeyboardDismiss extends EditText {
         super(context, attrs, defStyleAttr);
     }
 
+    /**
+     * Updates ColorCode description when soft keyboard "back" button is used.
+     *
+     * @param keyCode
+     * @param event
+     * @return
+     */
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             setCursorVisible(false);
-            String text = getText().toString();
-            if (!text.equals(getTag())) {
-                Context appContext = getContext().getApplicationContext();
-                ColorCode colorCode = ColorCodeRepository.getColorCodeForTask(
-                        appContext, getTag().toString());
-                colorCode.setTask(text);
-                ColorCodeRepository.insertOrReplace(appContext, colorCode);
-                setTag(text);
-                Log.d("onKBBack", "inserted text= " + text);
-            }
+            ColorCodeRepository.updateColorCodeTask(getContext().getApplicationContext(),
+                    (Long) getTag(), getText().toString());
+//            Context appContext = getContext().getApplicationContext();
+//            ColorCode colorCode = ColorCodeRepository.getColorCodeForTag(
+//                    appContext, (Long) getTag());
+//            String oldText = colorCode.getTask();
+//            String newText = getText().toString();
+//            if (oldText != null && !oldText.equals(newText)) {
+//                colorCode.setTask(newText);
+//                ColorCodeRepository.insertOrReplace(appContext, colorCode);
+//                Log.d("onKBBack", "inserted text= " + newText);
+//            }
         }
         return super.onKeyPreIme(keyCode, event);
     }

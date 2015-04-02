@@ -17,6 +17,7 @@
 package com.sadraii.hyperdex.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.sadraii.hyperdex.ColorCode;
 import com.sadraii.hyperdex.ColorCodeDao;
@@ -109,6 +110,24 @@ public class ColorCodeRepository {
             }
         }
         return null;
+    }
+
+    public static void updateColorCodeTask(Context context, long tag, String task) {
+        ColorCode colorCode = getColorCodeForTag(context, tag);
+        if (colorCode != null) {
+            String oldText;
+            try {
+                oldText = colorCode.getTask();
+            } catch (NullPointerException e) {
+                oldText = "";
+                e.printStackTrace();
+            }
+            if (!oldText.equals(task)) {
+                colorCode.setTask(task);
+                insertOrReplace(context, colorCode);
+                Log.d("CCR", "inserted text= " + task);
+            }
+        }
     }
 
     public static void insertOrReplace(Context context, ColorCode colorCode) {

@@ -24,9 +24,10 @@ import android.view.MenuItem;
 import com.sadraii.hyperdex.R;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class ColorCodeActivity extends ActionBarActivity {
+    public static final String COLOR_CODE_FRAGMENT_TAG = "color_code_fragment";
 
 //    private static float elevation;
 //    private static ActionBar actionBar;
@@ -40,7 +41,7 @@ public class ColorCodeActivity extends ActionBarActivity {
             ColorCodeFragment fragment = ColorCodeFragment.newInstance();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_color_code_container, fragment)
+                    .add(R.id.fragment_color_code_container, fragment, COLOR_CODE_FRAGMENT_TAG)
                     .commit();
         }
 

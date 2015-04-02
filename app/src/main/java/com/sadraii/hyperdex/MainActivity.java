@@ -55,7 +55,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class MainActivity extends ActionBarActivity {
 
@@ -124,6 +124,7 @@ public class MainActivity extends ActionBarActivity {
         updateSpinnerAdapter();
     }
 
+    // TODO: use Map
     /**
      * Set color descriptions and ints used by spinner adapter
      */

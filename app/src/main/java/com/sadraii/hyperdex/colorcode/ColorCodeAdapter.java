@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -44,7 +45,7 @@ import com.sadraii.hyperdex.util.Utils;
 import java.util.ArrayList;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.ViewHolder> {
 
@@ -73,22 +74,80 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     }
 
     /**
-     * Replace the contents of a view (invoked by the layout manager).
+     * Replaces the contents of a view (invoked by the layout manager).
      *
      * @param holder
      * @param position
      */
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ColorCode colorCode = ColorCodeRepository.getColorCode(mAppContext, position);
         if (colorCode == null) {
             return;
         }
-
+        // Set the name name of the color
         holder.textView.setText(
                 ColorPickerUtils.ColorUtils.colorName(mAppContext, colorCode.getArgb()));
+        // Set callbacks for the color description EditText
+        holder.editText.setText(colorCode.getTask());
+        holder.editText.setTag(colorCode.getTag());
+        holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(final View view, boolean hasFocus) {
+                EditText editText = (EditText) view;
+                if (hasFocus) {
+                    Log.d("editText", "clicked on text");
+                    // Get the fragment
+                    ColorCodeActivity activity = (ColorCodeActivity) view.getContext();
+                    final ColorCodeFragment fragment = (ColorCodeFragment) activity
+                            .getSupportFragmentManager()
+                            .findFragmentByTag(ColorCodeActivity.COLOR_CODE_FRAGMENT_TAG);
+                    // Scroll up the RecyclerView once the keyboard is up
+                    view.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("editText", "smoothscroll");
+                            fragment.getRecyclerView().scrollToPosition(position);
+                            view.requestFocus();
+                            ((EditText) view).setCursorVisible(true);
 
-        // Creates a ColorPickerDialogue and assigns the selected color to the ColorCode
+                        }
+                    }, 200);
+                } else {
+                    Log.d("editText", "lostFocus");
+                    editText.setCursorVisible(false);
+                    ColorCodeRepository.updateColorCodeTask(mAppContext, colorCode.getTag(),
+                            editText.getText().toString());
+//                    String oldText = colorCode.getTask();
+//                    String newText = editText.getText().toString();
+//                    if (oldText != null && !oldText.equals(newText)) {
+//                        colorCode.setTask(newText);
+//                        ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
+//                        Log.d("nofocus", "inserted text= " + oldText);
+//                    }
+                }
+            }
+        });
+        holder.editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                EditText editText = (EditText) view;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    editText.setCursorVisible(false);
+                    ColorCodeRepository.updateColorCodeTask(mAppContext, colorCode.getTag(),
+                            editText.getText().toString());
+//                    String oldText = colorCode.getTask();
+//                    String newText = editText.getText().toString();
+//                    if (oldText != null && !oldText.equals(newText)) {
+//                        colorCode.setTask(newText);
+//                        ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
+//                        Log.d("actionDone", "inserted text= " + oldText);
+//                    }
+                }
+                return false;
+            }
+        });
+        // Create a ColorPickerDialogue and assigns the selected color to the ColorCode
         holder.frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,82 +194,66 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                         DIALOGUE_FRAGMENT_TAG);
             }
         });
-
         // If the view is newly added by FAB, make the background transparent so that the new color
-        // can 'spin in' from nothingness.
+        // can 'spin in' from nothingness and bring up keyboard with focus.
         final int colorInt = Color.parseColor(colorCode.getArgb());
         if (mNewlyAdded) {
             ((GradientDrawable) holder.imageView.getBackground())
                     .setColor(Color.parseColor("#00000000"));
             animateColorView(holder.imageView, colorInt);
+
+            InputMethodManager imm = (InputMethodManager) mActivityContext
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            holder.editText.requestFocus();
+
             mNewlyAdded = false;
         } else {
             ((GradientDrawable) holder.imageView.getBackground())
                     .setColor(colorInt);
         }
 
-        holder.editText.setText(colorCode.getTask());
-        holder.editText.setHorizontallyScrolling(true);
-//        holder.editText.setFocusable(true);
-        holder.editText.setClickable(true);
-        holder.editText.setFocusableInTouchMode(true);
-        holder.editText.setCursorVisible(false);
-//            holder.editText.setEnabled(true);
-//            holder.editText.setKeyListener(null);
-        holder.editText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("viewholder", "clicked on text");
-                v.setFocusableInTouchMode(true);
-                ((EditText) v).setCursorVisible(true);
-//                v.setFocusable(true);
-//                v.setEnabled(true);
-                // TODO: get activity's fragment
-//                ((ColorCodeActivity) mActivityContext).getLayoutManager().scrollToPosition(position);
-                // or scrollToPositionWithOffset()
-            }
-        });
-        holder.editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean actionHandled = false;
-                EditText editText = (EditText) v;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    editText.setCursorVisible(false);
-                    String text = editText.getText().toString();
-                    if (!text.equals(editText.getTag())) {
-                        colorCode.setTask(text);
-                        ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
-                        editText.setTag(text);
-                        Log.d(LOG_TAG, "inserted text= " + text);
-                    }
-                    actionHandled = true;
-                }
-                return actionHandled;
-            }
-        });
-
-        // TODO: focus change does not happen when editing text and pressing back button
-        holder.editText.setTag(colorCode.getTask());
-        holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                EditText editText = (EditText) v;
-                if (!hasFocus) {
-                    editText.setCursorVisible(false);
-                    String text = editText.getText().toString();
-                    // TODO: check if this only happens when text != tag
-                    if (!text.equals(editText.getTag())) {
-                        colorCode.setTask(text);
-                        ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
-                        editText.setTag(text);
-                        Log.d(LOG_TAG, "inserted text= " + text);
-                    }
-                } else {
-                    editText.setCursorVisible(true);
-                }
-            }
-        });
+//        if (mNewlyAdded) {
+//            holder.editText.requestFocus();
+//            mNewlyAdded = false;
+//        }
+//        holder.editText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(final View v) {
+//                Log.d("viewholder", "clicked on text");
+//                v.setFocusableInTouchMode(true);
+//                ((EditText) v).setCursorVisible(true);
+//                ColorCodeActivity act = (ColorCodeActivity) v.getContext();
+//                final ColorCodeFragment frag = (ColorCodeFragment) act.getSupportFragmentManager().findFragmentByTag("ccfrag");
+//                v.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        frag.getRecyclerView().scrollToPosition(position);
+//                        v.requestFocus();
+//                        Log.d("onclick", "smoothscroll");
+//                    }
+//                }, 300);
+//            }
+//        });
+//        holder.editText.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(final View v, MotionEvent event) {
+//                Log.d("viewholder", "touched");
+//                v.setFocusableInTouchMode(true);
+//                ((EditText) v).setCursorVisible(true);
+//                ColorCodeActivity act = (ColorCodeActivity) v.getContext();
+//                final ColorCodeFragment frag = (ColorCodeFragment) act.getSupportFragmentManager().findFragmentByTag("ccfrag");
+//                v.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        frag.getRecyclerView().scrollToPosition(position);
+//                        v.requestFocus();
+//                        Log.d("ontouch", "smoothscroll");
+//                    }
+//                }, 300);
+//                return false;
+//            }
+//        });
     }
 
     // Invoked by the layout manager

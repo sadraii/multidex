@@ -23,7 +23,7 @@ import android.widget.FrameLayout;
 import com.sadraii.hyperdex.Entry;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class EntryViewLayout extends FrameLayout {
 

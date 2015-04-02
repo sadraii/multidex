@@ -25,7 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * TODO: description
+ * TODO: editText
  */
 public class Utils {
 
