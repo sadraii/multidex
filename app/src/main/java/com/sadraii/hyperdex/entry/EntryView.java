@@ -17,10 +17,12 @@
 package com.sadraii.hyperdex.entry;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
@@ -76,15 +78,18 @@ public class EntryView extends View implements View.OnTouchListener {
     private Context mContext;
     private Context mAppContext;
 
+    private Bitmap mPathBitmap;
     private Paint mPaint;
     private Path mMainGuidelinePath;
     private Path mSubGuidelinePath;
     private PointF mCenter;
+    private Point mViewDimensions;
     private float mRadius;
-    private double mAngle;
+    private double mOppositeAngle;
     private PointF mStartPath;
     private PointF mEndPath;
     private final RectF mBounds = new RectF();
+    private float mCenterOffset;
 
     private int mPosition;
 
@@ -125,6 +130,7 @@ public class EntryView extends View implements View.OnTouchListener {
         mMainGuidelinePath = new Path();
         mSubGuidelinePath = new Path();
 
+        mViewDimensions = new Point();
         mCenter = new PointF();
         mStartPath = new PointF();
         mEndPath = new PointF();
@@ -146,7 +152,6 @@ public class EntryView extends View implements View.OnTouchListener {
      * @param e
      * @return
      */
-    // TODO: ignore swipe clicks
     @Override
     public boolean onTouch(View view, MotionEvent e) {
         switch (e.getAction()) {
@@ -273,17 +278,17 @@ public class EntryView extends View implements View.OnTouchListener {
                 // Loop through the slices, from outer ring to inner ring, and draw any segments
                 for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES + 1; j += NUMBER_RINGS) {
                     if (segment == j) {
-                        setBounds(mBounds, Ring.OUTER.offset);
+                        setBounds(Ring.OUTER.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);
                         break;
                     } else if (segment == j - 1) {
-                        setBounds(mBounds, Ring.MIDDLE.offset);
+                        setBounds(Ring.MIDDLE.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);
                         break;
                     } else if (segment == j - 2) {
-                        setBounds(mBounds, Ring.INNER.offset);
+                        setBounds(Ring.INNER.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);
                         break;
@@ -295,68 +300,75 @@ public class EntryView extends View implements View.OnTouchListener {
             }
         }
 
-        // Draw 4 guide circles from outermost to innermost
-        mPaint.setStrokeWidth(CIRCLE_GUIDELINE_STROKE_WIDTH);
-        mPaint.setColor(Color.BLACK);
+        // Cache the guidelines in a bitmap and overlay them on top
+        if (mPathBitmap == null) {
+            mPathBitmap = Bitmap.createBitmap(mViewDimensions.x, mViewDimensions.y,
+                    Bitmap.Config.ARGB_8888);
+            Canvas linesCanvas = new Canvas(mPathBitmap);
 
-        setBounds(mBounds, Ring.OUTER.offset - SLICE_MAX_DIFF);
-        canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+            // Draw 4 guide circles from outermost to innermost
+            mPaint.setStrokeWidth(CIRCLE_GUIDELINE_STROKE_WIDTH);
+            mPaint.setColor(Color.BLACK);
 
-        setBounds(mBounds, Ring.OUTER.offset + SLICE_MAX_DIFF);
-        canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+            setBounds(Ring.OUTER.offset - SLICE_MAX_DIFF);
+            linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
-        setBounds(mBounds, Ring.MIDDLE.offset + SLICE_MAX_DIFF);
-        canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+            setBounds(Ring.OUTER.offset + SLICE_MAX_DIFF);
+            linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
-        setBounds(mBounds, Ring.INNER.offset + SLICE_MAX_DIFF);
-        canvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+            setBounds(Ring.MIDDLE.offset + SLICE_MAX_DIFF);
+            linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
+            setBounds(Ring.INNER.offset + SLICE_MAX_DIFF);
+            linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
-        // Draw the guidelines
-        mPaint.setColor(Color.BLACK);
-        mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
-        drawGuidelines(canvas, mMainGuidelinePath, 0d);
-        drawGuidelines(canvas, mMainGuidelinePath, 90d);
-        mPaint.setStrokeWidth(SUB_GUIDELINE_STROKE_WIDTH);
-        drawGuidelines(canvas, mSubGuidelinePath, 15d);
-        drawGuidelines(canvas, mSubGuidelinePath, 30d);
-        drawGuidelines(canvas, mSubGuidelinePath, 45d);
-        drawGuidelines(canvas, mSubGuidelinePath, 60d);
-        drawGuidelines(canvas, mSubGuidelinePath, 75d);
-        drawGuidelines(canvas, mSubGuidelinePath, 105d);
-        drawGuidelines(canvas, mSubGuidelinePath, 120d);
-        drawGuidelines(canvas, mSubGuidelinePath, 135d);
-        drawGuidelines(canvas, mSubGuidelinePath, 150d);
-        drawGuidelines(canvas, mSubGuidelinePath, 165d);
+            // Draw the guidelines
+            mPaint.setColor(Color.BLACK);
+            mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
+            drawGuidelines(linesCanvas, mMainGuidelinePath, 0d);
+            drawGuidelines(linesCanvas, mMainGuidelinePath, 90d);
 
-
-        // TODO: profile why drawing slows down / cache sin/cos values in array
-        // TEST guideline while leaving center empty
-        double angle = Math.toRadians(12d);
-        mStartPath.x = mCenter.x + (200f) * (float) Math.cos(angle);
-        mStartPath.y = mCenter.y + (200f) * (float) Math.sin(angle);
-        mEndPath.x = mCenter.x + (mRadius + SLICE_MAX_DIFF) * (float) Math.cos(angle);
-        mEndPath.y = mCenter.y + (mRadius + SLICE_MAX_DIFF) * (float) Math.sin(angle);
-        mMainGuidelinePath.moveTo(mStartPath.x, mStartPath.y);
-        mMainGuidelinePath.lineTo(mEndPath.x, mEndPath.y);
-        canvas.drawPath(mMainGuidelinePath, mPaint);
-
-
-        // Draw white inner circle
-//        mPaint.setColor(Color.WHITE);
-//        mPaint.setStrokeWidth(RING_STROKE_WIDTH);
-//        setBounds(mBounds, Ring.INNER.offset + SLICE_MAX_DIFF);
-//        canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
+            mPaint.setStrokeWidth(SUB_GUIDELINE_STROKE_WIDTH);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 15d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 30d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 45d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 60d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 75d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 105d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 120d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 135d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 150d);
+            drawGuidelines(linesCanvas, mSubGuidelinePath, 165d);
+        }
+        canvas.drawBitmap(mPathBitmap, 0, 0, mPaint);
     }
 
+    /**
+     * Draws guidelines at the given angle and at the straight angle of the given angle.
+     *
+     * @param canvas
+     * @param path
+     * @param angle
+     */
     private void drawGuidelines(Canvas canvas, Path path, double angle) {
-        mAngle = (angle + 180d) % 360;
-
+        mOppositeAngle = (angle + 180d) % 360;
         angle = Math.toRadians(angle);
-        mAngle = Math.toRadians(mAngle);
+        mOppositeAngle = Math.toRadians(mOppositeAngle);
+        drawSingleGuideline(canvas, path, angle);
+        drawSingleGuideline(canvas, path, mOppositeAngle);
+    }
 
-        mStartPath.x = mCenter.x + (mRadius + SLICE_MAX_DIFF) * (float) Math.cos(mAngle);
-        mStartPath.y = mCenter.y + (mRadius + SLICE_MAX_DIFF) * (float) Math.sin(mAngle);
+    /**
+     * Draws a single guideline from the center offset (inner circular guideline) to the outer
+     * edge (outer circular guideline).
+     *
+     * @param canvas
+     * @param path
+     * @param angle
+     */
+    private void drawSingleGuideline(Canvas canvas, Path path, double angle) {
+        mStartPath.x = mCenter.x + mCenterOffset * (float) Math.cos(angle);
+        mStartPath.y = mCenter.y + mCenterOffset * (float) Math.sin(angle);
         mEndPath.x = mCenter.x + (mRadius + SLICE_MAX_DIFF) * (float) Math.cos(angle);
         mEndPath.y = mCenter.y + (mRadius + SLICE_MAX_DIFF) * (float) Math.sin(angle);
         path.moveTo(mStartPath.x, mStartPath.y);
@@ -395,6 +407,15 @@ public class EntryView extends View implements View.OnTouchListener {
                 ? height * RADIUS_MULTIPLIER
                 : width * RADIUS_MULTIPLIER;
 
+        // Calculate the empty space in the middle
+        float rightSide = mCenter.x + mRadius - Ring.INNER.offset - SLICE_MAX_DIFF;
+        float leftSide = mCenter.x - mRadius + Ring.INNER.offset + SLICE_MAX_DIFF;
+        mCenterOffset = (rightSide - leftSide) / 2;
+
+        // For creating the guidelines bitmap
+        mViewDimensions.x = (int) width;
+        mViewDimensions.y = (int) height;
+
         setMeasuredDimension((int) width, (int) height);
     }
 
@@ -409,9 +430,13 @@ public class EntryView extends View implements View.OnTouchListener {
         return mEntry;
     }
 
-    // TODO: don't need to pass rect since it is a class variable, use mBounds.set()
-    private void setBounds(RectF rect, float offset) {
-        rect.set(mCenter.x - mRadius + offset,
+    /**
+     * Used for drawing circular guidelines
+     *
+     * @param offset
+     */
+    private void setBounds(float offset) {
+        mBounds.set(mCenter.x - mRadius + offset,
                 mCenter.y - mRadius + offset,
                 mCenter.x + mRadius - offset,
                 mCenter.y + mRadius - offset);
