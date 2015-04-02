@@ -61,6 +61,8 @@ public class ColorCodeFragment extends Fragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.labels_recycler_view);
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setFocusableInTouchMode(true);
+        mRecyclerView.requestFocus();
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);

@@ -21,9 +21,11 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -148,9 +150,9 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
 
         holder.editText.setText(colorCode.getTask());
         holder.editText.setHorizontallyScrolling(true);
-        holder.editText.setFocusable(true);
+//        holder.editText.setFocusable(true);
         holder.editText.setClickable(true);
-        holder.editText.setFocusableInTouchMode(false);
+        holder.editText.setFocusableInTouchMode(true);
         holder.editText.setCursorVisible(false);
 //            holder.editText.setEnabled(true);
 //            holder.editText.setKeyListener(null);
@@ -167,6 +169,24 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                 // or scrollToPositionWithOffset()
             }
         });
+        holder.editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                EditText editText = (EditText) v;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    editText.setCursorVisible(false);
+                    String text = editText.getText().toString();
+                    if (!text.equals(editText.getTag())) {
+                        colorCode.setTask(text);
+                        ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
+                        editText.setTag(colorCode.getTask());
+                        Log.d(LOG_TAG, "inserted text= " + text);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
 
         // TODO: focus change does not happen when editing text and pressing back button
         holder.editText.setTag(colorCode.getTask());
@@ -181,6 +201,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                     if (!text.equals(editText.getTag())) {
                         colorCode.setTask(text);
                         ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
+                        editText.setTag(colorCode.getTask());
                         Log.d(LOG_TAG, "inserted text= " + text);
                     }
                 } else {

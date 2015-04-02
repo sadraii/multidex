@@ -322,7 +322,7 @@ public class EntryView extends View implements View.OnTouchListener {
             setBounds(Ring.INNER.offset + SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
-            // Draw the guidelines
+            // Draw the guidelines at straight angles
             mPaint.setColor(Color.BLACK);
             mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
             drawGuidelines(linesCanvas, mMainGuidelinePath, 0d);

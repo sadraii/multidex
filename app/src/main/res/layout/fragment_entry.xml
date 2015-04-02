@@ -17,15 +17,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!--<TextView-->
-        <!--android:id="@+id/text"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:gravity="center_vertical|center_horizontal"-->
-        <!--android:text="@string/hello_world"-->
-        <!--android:textAppearance="?android:attr/textAppearanceMedium" />-->
     <TextView
         android:id="@+id/entry_view_date"
         android:layout_width="match_parent"
@@ -33,24 +27,10 @@
         android:gravity="center"
         android:textAppearance="?android:textAppearanceLarge"/>
 
-
-    <RelativeLayout
+    <com.sadraii.hyperdex.entry.EntryViewLayout
+        android:id="@+id/entry_view_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.sadraii.hyperdex.entry.EntryViewLayout
-            android:id="@+id/entry_view_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true" />
-
-        <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/guidelines"-->
-            <!--android:layout_centerInParent="true"/>-->
-
-    </RelativeLayout>
-
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" />
 
 </LinearLayout>
