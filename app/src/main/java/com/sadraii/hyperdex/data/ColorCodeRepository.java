@@ -91,6 +91,26 @@ public class ColorCodeRepository {
         return null;
     }
 
+    public static ColorCode getColorCodeForTag(Context context, long tag) {
+        ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
+        for (ColorCode colorCode : colorCodes) {
+            if (colorCode.getTag() == tag) {
+                return colorCode;
+            }
+        }
+        return null;
+    }
+
+    public static ColorCode getColorCodeForTask(Context context, String task) {
+        ArrayList<ColorCode> colorCodes = getAllColorCodes(context);
+        for (ColorCode colorCode : colorCodes) {
+            if (colorCode.getTask().equals(task)) {
+                return colorCode;
+            }
+        }
+        return null;
+    }
+
     public static void insertOrReplace(Context context, ColorCode colorCode) {
         getColorCodeDao(context).insertOrReplace(colorCode);
     }

@@ -42,14 +42,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <EditText
+        <com.sadraii.hyperdex.util.EditTextKeyboardDismiss
             android:id="@+id/list_item_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             fontFamily="sans-serif-condensed"
             textAppearance="?android:textAppearanceLarge"
             android:hint="@string/hint_list_item_description"
-            android:inputType="textNoSuggestions"
+            android:inputType="textNoSuggestions|textCapSentences"
             style="?android:listSeparatorTextViewStyle"
             android:background="#00000000"
             android:imeOptions="actionDone"/>

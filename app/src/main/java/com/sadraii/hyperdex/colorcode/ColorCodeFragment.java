@@ -51,6 +51,21 @@ public class ColorCodeFragment extends Fragment {
         return new ColorCodeFragment();
     }
 
+//    public class MyRe extends RecyclerView {
+//        public MyRe(Context context) {
+//            super(context, null);
+//        }
+//
+//        public MyRe(Context context, AttributeSet attrs) {
+//            super(context, attrs, 0);
+//        }
+//
+//        public MyRe(Context context, AttributeSet attrs, int defStyle) {
+//            super(context, attrs, defStyle);
+//        }
+//
+//    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

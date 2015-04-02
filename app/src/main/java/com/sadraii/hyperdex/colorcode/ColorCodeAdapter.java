@@ -38,6 +38,7 @@ import com.sadraii.hyperdex.data.ColorCodeRepository;
 import com.sadraii.hyperdex.dialogues.ColorPickerDialog;
 import com.sadraii.hyperdex.dialogues.ColorPickerSwatch;
 import com.sadraii.hyperdex.dialogues.ColorPickerUtils;
+import com.sadraii.hyperdex.util.EditTextKeyboardDismiss;
 import com.sadraii.hyperdex.util.Utils;
 
 import java.util.ArrayList;
@@ -172,6 +173,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
         holder.editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean actionHandled = false;
                 EditText editText = (EditText) v;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     editText.setCursorVisible(false);
@@ -179,12 +181,12 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                     if (!text.equals(editText.getTag())) {
                         colorCode.setTask(text);
                         ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
-                        editText.setTag(colorCode.getTask());
+                        editText.setTag(text);
                         Log.d(LOG_TAG, "inserted text= " + text);
                     }
-                    return true;
+                    actionHandled = true;
                 }
-                return false;
+                return actionHandled;
             }
         });
 
@@ -201,7 +203,7 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
                     if (!text.equals(editText.getTag())) {
                         colorCode.setTask(text);
                         ColorCodeRepository.insertOrReplace(mAppContext, colorCode);
-                        editText.setTag(colorCode.getTask());
+                        editText.setTag(text);
                         Log.d(LOG_TAG, "inserted text= " + text);
                     }
                 } else {
@@ -253,14 +255,14 @@ public class ColorCodeAdapter extends RecyclerView.Adapter<ColorCodeAdapter.View
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final FrameLayout frameLayout;
         public final ImageView imageView;
-        public final EditText editText;
+        public final EditTextKeyboardDismiss editText;
         public final TextView textView;
 
         public ViewHolder(View view) {
             super(view);
             frameLayout = (FrameLayout) view.findViewById(R.id.list_item_color_frame_layout);
             imageView = (ImageView) view.findViewById(R.id.list_item_color_image_ivew);
-            editText = (EditText) view.findViewById(R.id.list_item_description);
+            editText = (EditTextKeyboardDismiss) view.findViewById(R.id.list_item_description);
             textView = (TextView) view.findViewById(R.id.list_item_color_name);
         }
     }
