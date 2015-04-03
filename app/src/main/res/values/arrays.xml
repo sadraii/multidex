@@ -23,39 +23,39 @@
     </string-array>
 
     <string-array name="default_color_values" translatable="false">
-        <item>#ff33b5e5</item>
-        <item>#ffaa66cc</item>
-        <item>#ff99cc00</item>
-        <item>#ffffbb33</item>
-        <item>#ffff4444</item>
-        <item>#ff0099cc</item>
-        <item>#ff9933cc</item>
-        <item>#ff669900</item>
-        <item>#ffff8800</item>
-        <item>#ffcc0000</item>
-        <item>#ff292884</item>
-        <item>#ffdd3a94</item>
-        <item>#ffcccccc</item>
-        <item>#ff888888</item>
-        <item>#ff894367</item>
+        <item>#ffe81d62</item>
+        <item>#fff34235</item>
+        <item>#fffe5621</item>
+        <item>#fffe9700</item>
+        <item>#fffeea3a</item>
+        <item>#ffccdb38</item>
+        <item>#ff8ac249</item>
+        <item>#ff4bae4f</item>
+        <item>#ff009587</item>
+        <item>#ff00bbd3</item>
+        <item>#ff2095f2</item>
+        <item>#ff3e50b4</item>
+        <item>#ff9b26af</item>
+        <item>#ff5f7c8a</item>
+        <item>#ff785447</item>
     </string-array>
 
     <string-array name="default_color_names" translatable="false">
-        <item>Picton Blue</item>
-        <item>Amethyst</item>
-        <item>Pistachio</item>
-        <item>Yellow</item>
-        <item>Coral Red</item>
-        <item>Pacific Blue</item>
-        <item>Purple</item>
-        <item>Limeade</item>
+        <item>Pink</item>
+        <item>Red</item>
+        <item>Deep Orange</item>
         <item>Orange</item>
-        <item>Guardsman Red</item>
-        <item>Dark Blue</item>
-        <item>Cerise</item>
-        <item>Silver</item>
-        <item>Gray</item>
-        <item>Cannon Pink</item>
+        <item>Yellow</item>
+        <item>Lime</item>
+        <item>Light Green</item>
+        <item>Green</item>
+        <item>Teal</item>
+        <item>Cyan</item>
+        <item>Blue</item>
+        <item>Indigo</item>
+        <item>Purple</item>
+        <item>Blue Grey</item>
+        <item>Brown</item>
     </string-array>
 
     <string-array name="homescreen_color_choice_values" translatable="false">

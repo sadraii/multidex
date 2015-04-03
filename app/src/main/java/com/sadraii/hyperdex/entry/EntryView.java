@@ -417,6 +417,7 @@ public class EntryView extends View implements View.OnTouchListener {
      */
     public Entry getEntry() {
         Type hashMapType = new TypeToken<HashMap<Integer, Long>>() {}.getType();
+//        Log.d("seg:::", new Gson().toJson(mEntrySegments, hashMapType));
         mEntry.setSegments(new Gson().toJson(mEntrySegments, hashMapType));
         return mEntry;
     }

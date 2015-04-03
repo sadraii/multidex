@@ -74,9 +74,11 @@ public class EntryFragment extends Fragment {
         cal.setTime(mEntry.getDate());
         String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
         String day = String.valueOf(cal.get(Calendar.DATE));
+        String year = String.valueOf(cal.get(Calendar.YEAR));
+        cal.get(Calendar.MONTH);
 
         TextView textView = (TextView) rootView.findViewById(R.id.entry_view_date);
-        textView.setText(month + day);
+        textView.setText(month + " "+ day + ", " + year);
 
         mEntryViewLayout = (EntryViewLayout) rootView.findViewById(R.id.entry_view_layout);
         mEntryViewLayout.setPosition(getActivity().getApplicationContext(), mPosition);

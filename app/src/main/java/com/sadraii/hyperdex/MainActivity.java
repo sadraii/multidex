@@ -141,8 +141,14 @@ public class MainActivity extends ActionBarActivity {
     private void firstTimeSetup(boolean firstTime) {
         if (firstTime) {
             recreateTables();
-            ColorCodeRepository.addNextColorCode(mAppContext, "#ff33b5e5", "0 Make breakfast");
-            EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(), "");
+//            ColorCodeRepository.addNextColorCode(mAppContext, "#fffe9700", "Work");
+//            ColorCodeRepository.addNextColorCode(mAppContext, "#ffccdb38", "Errands");
+//            ColorCodeRepository.addNextColorCode(mAppContext, "#ff2095f2", "Relaxing");
+            ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(0l, 1428021648563l, "#fffe9700", "Work"));
+            ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(1l, 1428021648568l, "#ffccdb38", "Errands"));
+            ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(2l, 1428021648574l, "#ff2095f2", "Relaxing"));
+            EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(),
+                    "{\"58\":1428021648568,\"55\":1428021648563,\"57\":1428021648563,\"56\":1428021648563,\"61\":1428021648574,\"59\":1428021648568}");
             getPreferences(Context.MODE_PRIVATE).edit()
                     .putBoolean(getString(R.string.pref_first_time_setup_key), false)
                     .commit();
@@ -342,9 +348,8 @@ public class MainActivity extends ActionBarActivity {
                 spinnerView = getLayoutInflater().inflate(R.layout.spinner_row, parent, false);
             }
             if (type == SPINNER_VIEW_TYPE) { // TODO: const color/style
-                spinnerView.setBackgroundColor(Color.parseColor("#ffdddddd"));
+//                spinnerView.setBackgroundColor(Color.parseColor("#ffdddddd"));
             }
-
             ImageView colorView = (ImageView) spinnerView.findViewById(R.id.spinner_color_image_view);
             ((GradientDrawable) colorView.getBackground()).setColor(colors.get(position));
 
