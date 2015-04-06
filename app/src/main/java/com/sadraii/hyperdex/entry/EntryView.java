@@ -59,7 +59,7 @@ public class EntryView extends View implements View.OnTouchListener {
     private static final float CIRCLE_GUIDELINE_STROKE_WIDTH = 2f;
 
     private static final float HOUR_RADIUS = 25f;
-    private static final int TEXT_SIZE = 32;
+    private static final int TEXT_SIZE = 32; // TODO: make these dynamic in onMeasure for smaller screens
 
     private static final int NUMBER_RINGS = 3;
     private static final int NUMBER_SLICES = 24;
@@ -94,11 +94,10 @@ public class EntryView extends View implements View.OnTouchListener {
     private final RectF mBounds = new RectF();
     private float mCenterOffset;
 
-    private int mPosition;
-
     private float mInitialClickX;
     private float mInitialClickY;
 
+    private int mPosition;
     private Entry mEntry;
     private long mColorCodeTag;
     private String mColorValue;
@@ -212,9 +211,14 @@ public class EntryView extends View implements View.OnTouchListener {
         }
     }
 
+    // TODO: redo the logic
     private void toggleSegment(int key, long colorTag) {
         if (mEntrySegments.containsKey(key)) {
-            mEntrySegments.remove(key);
+            if (mEntrySegments.get(key) == colorTag) {
+                mEntrySegments.remove(key);
+            } else {
+                mEntrySegments.put(key, colorTag);
+            }
         } else {
             mEntrySegments.put(key, colorTag);
         }
@@ -308,57 +312,71 @@ public class EntryView extends View implements View.OnTouchListener {
         if (mPathBitmap == null) {
             mPathBitmap = Bitmap.createBitmap(mViewDimensions.x, mViewDimensions.y,
                     Bitmap.Config.ARGB_8888);
-            Canvas linesCanvas = new Canvas(mPathBitmap);
+            Canvas guidelineCanvas = new Canvas(mPathBitmap);
 
             // Draw 4 guide circles from outermost to innermost
             mPaint.setStrokeWidth(CIRCLE_GUIDELINE_STROKE_WIDTH);
             mPaint.setColor(Color.BLACK);
             setBoundsFromCenter(Ring.OUTER.offset - SLICE_MAX_DIFF);
-            linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+            guidelineCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
             setBoundsFromCenter(Ring.OUTER.offset + SLICE_MAX_DIFF);
-            linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+            guidelineCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
             setBoundsFromCenter(Ring.MIDDLE.offset + SLICE_MAX_DIFF);
-            linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+            guidelineCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
             setBoundsFromCenter(Ring.INNER.offset + SLICE_MAX_DIFF);
-            linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
+            guidelineCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
-            // Draw the guidelines at straight angles
+            // Draw the radial guidelines at straight angles
             mPaint.setColor(Color.BLACK);
             mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
-            drawGuidelines(linesCanvas, mMainGuidelinePath, 0d);
-            drawGuidelines(linesCanvas, mMainGuidelinePath, 90d);
+            drawGuidelines(guidelineCanvas, mMainGuidelinePath, 0d);
+            drawGuidelines(guidelineCanvas, mMainGuidelinePath, 90d);
             mPaint.setStrokeWidth(SUB_GUIDELINE_STROKE_WIDTH);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 15d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 30d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 45d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 60d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 75d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 105d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 120d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 135d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 150d);
-            drawGuidelines(linesCanvas, mSubGuidelinePath, 165d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 15d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 30d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 45d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 60d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 75d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 105d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 120d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 135d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 150d);
+            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 165d);
 
             // Draw the hour marks
             mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
-            drawHourMarks(linesCanvas, "6", 0d);
-            drawHourMarks(linesCanvas, "7", 15d);
-            drawHourMarks(linesCanvas, "8", 30d);
-            drawHourMarks(linesCanvas, "9", 45d);
-            drawHourMarks(linesCanvas, "10", 60d);
-            drawHourMarks(linesCanvas, "11", 75d);
-            drawHourMarks(linesCanvas, "12", 90d);
-            drawHourMarks(linesCanvas, "1", 105d);
-            drawHourMarks(linesCanvas, "2", 120d);
-            drawHourMarks(linesCanvas, "3", 135d);
-            drawHourMarks(linesCanvas, "4", 150d);
-            drawHourMarks(linesCanvas, "5", 165d);
+            drawHourMarks(guidelineCanvas, "6", 0d);
+            drawHourMarks(guidelineCanvas, "7", 15d);
+            drawHourMarks(guidelineCanvas, "8", 30d);
+            drawHourMarks(guidelineCanvas, "9", 45d);
+            drawHourMarks(guidelineCanvas, "10", 60d);
+            drawHourMarks(guidelineCanvas, "11", 75d);
+            drawHourMarks(guidelineCanvas, "12", 90d);
+            drawHourMarks(guidelineCanvas, "1", 105d);
+            drawHourMarks(guidelineCanvas, "2", 120d);
+            drawHourMarks(guidelineCanvas, "3", 135d);
+            drawHourMarks(guidelineCanvas, "4", 150d);
+            drawHourMarks(guidelineCanvas, "5", 165d);
+
+//            mPaint.setColor(Color.BLACK);
+//            drawHoursAndGuidelines(guidelineCanvas, mMainGuidelinePath, "6", 0d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "7", 15d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "8", 30d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "9", 45d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "10", 60d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "11", 75d);
+//            drawHoursAndGuidelines(guidelineCanvas, mMainGuidelinePath, "12", 90d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "1", 105d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "2", 120d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "3", 135d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "4", 150d);
+//            drawHoursAndGuidelines(guidelineCanvas, mSubGuidelinePath, "5", 165d);
         }
         canvas.drawBitmap(mPathBitmap, 0, 0, mPaint);
     }
 
     /**
-     * Draws guidelines at the given angle and at the straight angle of the given angle.
+     * Draws radial guidelines at the given angle and at the straight angle of the given angle.
      *
      * @param canvas
      * @param path
@@ -373,8 +391,8 @@ public class EntryView extends View implements View.OnTouchListener {
     }
 
     /**
-     * Draws a single guideline from the center offset (inner circular guideline) to the outer
-     * edge (outer circular guideline).
+     * Draws a single radial guideline from the center offset (inner circular guideline) to the
+     * outer edge (outer circular guideline).
      *
      * @param canvas
      * @param path
@@ -390,6 +408,14 @@ public class EntryView extends View implements View.OnTouchListener {
         canvas.drawPath(path, mPaint);
     }
 
+    // TODO: refactor into drawGuidelines()
+    /**
+     * Draws the hour marks at the given angle and at the straight angle of the given angle.
+     *
+     * @param canvas
+     * @param hour
+     * @param angle
+     */
     private void drawHourMarks(Canvas canvas, String hour, double angle) {
         mOppositeAngle = (angle + 180d) % 360;
         angle = Math.toRadians(angle);
@@ -398,17 +424,23 @@ public class EntryView extends View implements View.OnTouchListener {
         drawSingleHourMark(canvas, hour, mOppositeAngle);
     }
 
-    // TODO: refactor this into drawGuidelines so you don't repeat sin/cos calculation
+    /**
+     * Draws a single hour mark at the outer edge (outer circular guideline).
+     *
+     * @param canvas
+     * @param hour
+     * @param angle
+     */
     private void drawSingleHourMark(Canvas canvas, String hour, double angle) {
-//        angle = Math.toRadians(angle);
+        // draw the stroke circle
         mEndPath.x = mCenter.x + (mRadius + SLICE_MAX_DIFF) * (float) Math.cos(angle);
         mEndPath.y = mCenter.y + (mRadius + SLICE_MAX_DIFF) * (float) Math.sin(angle);
         setHourBounds(mEndPath);
-
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(Color.BLACK);
         canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
 
+        // draw the fill circle and the text in opposite colors
         mPaint.setStyle(Paint.Style.FILL);
         angle = Math.toDegrees(angle);
         if (angle > 260 || angle < 85) {
@@ -422,8 +454,75 @@ public class EntryView extends View implements View.OnTouchListener {
             mPaint.setColor(Color.WHITE);
             canvas.drawText(hour, mEndPath.x, mEndPath.y + mPaint.getTextSize() / 3, mPaint);
         }
-
     }
+
+//    /**
+//     * Draws hour marks and guidelines at the given angle and at the straight angle of the given
+//     * angle.
+//     *
+//     * @param canvas
+//     * @param path
+//     * @param hour
+//     * @param angle
+//     */
+//    private void drawHoursAndGuidelines(Canvas canvas, Path path, String hour, double angle) {
+//        mOppositeAngle = (angle + 180d) % 360;
+//        mPaint.setStyle(Paint.Style.STROKE);
+//        mPaint.setColor(Color.BLACK);
+//        if (angle == 0d || angle == 90d) {
+//            mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
+//        } else {
+//            mPaint.setStrokeWidth(SUB_GUIDELINE_STROKE_WIDTH);
+//        }
+//        angle = Math.toRadians(angle);
+//        mOppositeAngle = Math.toRadians(mOppositeAngle);
+//        drawSingleHourAndGuideline(canvas, path, hour, angle);
+//        drawSingleHourAndGuideline(canvas, path, hour, mOppositeAngle);
+//    }
+//
+//    /**
+//     * Draws a single hour mark and guideline from the center offset (inner circular guideline) to
+//     * the outer edge (outer circular guideline).
+//     *
+//     * @param canvas
+//     * @param path
+//     * @param hour
+//     * @param angle
+//     */
+//    private void drawSingleHourAndGuideline(Canvas canvas, Path path, String hour, double angle) {
+//        mStartPath.x = mCenter.x + mCenterOffset * (float) Math.cos(angle);
+//        mStartPath.y = mCenter.y + mCenterOffset * (float) Math.sin(angle);
+//        mEndPath.x = mCenter.x + (mRadius + SLICE_MAX_DIFF) * (float) Math.cos(angle);
+//        mEndPath.y = mCenter.y + (mRadius + SLICE_MAX_DIFF) * (float) Math.sin(angle);
+//        path.moveTo(mStartPath.x, mStartPath.y);
+//        path.lineTo(mEndPath.x, mEndPath.y);
+//        canvas.drawPath(path, mPaint);
+//
+////        angle = Math.toRadians(angle);
+////        mEndPath.x = mCenter.x + (mRadius + SLICE_MAX_DIFF) * (float) Math.cos(angle);
+////        mEndPath.y = mCenter.y + (mRadius + SLICE_MAX_DIFF) * (float) Math.sin(angle);
+//        setHourBounds(mEndPath);
+//
+//        mPaint.setStyle(Paint.Style.STROKE);
+//        mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
+//        mPaint.setColor(Color.BLACK);
+//        canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
+//
+//        mPaint.setStyle(Paint.Style.FILL);
+//        angle = Math.toDegrees(angle);
+//        if (angle > 260 || angle < 85) {
+//            mPaint.setColor(Color.WHITE);
+//            canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
+//            mPaint.setColor(Color.BLACK);
+//            canvas.drawText(hour, mEndPath.x, mEndPath.y + mPaint.getTextSize() / 3, mPaint);
+//        } else {
+//            mPaint.setColor(Color.BLACK);
+//            canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
+//            mPaint.setColor(Color.WHITE);
+//            canvas.drawText(hour, mEndPath.x, mEndPath.y + mPaint.getTextSize() / 3, mPaint);
+//        }
+//
+//    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
