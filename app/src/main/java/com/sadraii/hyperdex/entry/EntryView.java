@@ -51,12 +51,15 @@ public class EntryView extends View implements View.OnTouchListener {
     private static final int DESIRED_WIDTH = 400;
     private static final int DESIRED_HEIGHT = 400;
 
+    private static final float SWIPE_MAX_DIFF = 100f;
+
     private static final float RING_STROKE_WIDTH = 150f;
     private static final float MAIN_GUIDELINE_STROKE_WIDTH = 6f;
     private static final float SUB_GUIDELINE_STROKE_WIDTH = 2f;
     private static final float CIRCLE_GUIDELINE_STROKE_WIDTH = 2f;
 
-    private static final float SWIPE_MAX_DIFF = 100f;
+    private static final float HOUR_RADIUS = 25f;
+    private static final int TEXT_SIZE = 32;
 
     private static final int NUMBER_RINGS = 3;
     private static final int NUMBER_SLICES = 24;
@@ -126,6 +129,8 @@ public class EntryView extends View implements View.OnTouchListener {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setTextSize(TEXT_SIZE);
+        mPaint.setTextAlign(Paint.Align.CENTER);
 
         mMainGuidelinePath = new Path();
         mSubGuidelinePath = new Path();
@@ -277,17 +282,17 @@ public class EntryView extends View implements View.OnTouchListener {
                 mPaint.setColor(Color.parseColor(mColorValue));
                 for (int j = NUMBER_RINGS; j < NUMBER_RINGS * NUMBER_SLICES + 1; j += NUMBER_RINGS) {
                     if (segment == j) {
-                        setBounds(Ring.OUTER.offset);
+                        setBoundsFromCenter(Ring.OUTER.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);
                         break;
                     } else if (segment == j - 1) {
-                        setBounds(Ring.MIDDLE.offset);
+                        setBoundsFromCenter(Ring.MIDDLE.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);
                         break;
                     } else if (segment == j - 2) {
-                        setBounds(Ring.INNER.offset);
+                        setBoundsFromCenter(Ring.INNER.offset);
                         canvas.drawArc(mBounds, (j - NUMBER_RINGS) * SLICE_MULTIPLIER, SLICE, false,
                                 mPaint);
                         break;
@@ -308,13 +313,13 @@ public class EntryView extends View implements View.OnTouchListener {
             // Draw 4 guide circles from outermost to innermost
             mPaint.setStrokeWidth(CIRCLE_GUIDELINE_STROKE_WIDTH);
             mPaint.setColor(Color.BLACK);
-            setBounds(Ring.OUTER.offset - SLICE_MAX_DIFF);
+            setBoundsFromCenter(Ring.OUTER.offset - SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
-            setBounds(Ring.OUTER.offset + SLICE_MAX_DIFF);
+            setBoundsFromCenter(Ring.OUTER.offset + SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
-            setBounds(Ring.MIDDLE.offset + SLICE_MAX_DIFF);
+            setBoundsFromCenter(Ring.MIDDLE.offset + SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
-            setBounds(Ring.INNER.offset + SLICE_MAX_DIFF);
+            setBoundsFromCenter(Ring.INNER.offset + SLICE_MAX_DIFF);
             linesCanvas.drawArc(mBounds, 0f, 360f, false, mPaint);
 
             // Draw the guidelines at straight angles
@@ -333,6 +338,21 @@ public class EntryView extends View implements View.OnTouchListener {
             drawGuidelines(linesCanvas, mSubGuidelinePath, 135d);
             drawGuidelines(linesCanvas, mSubGuidelinePath, 150d);
             drawGuidelines(linesCanvas, mSubGuidelinePath, 165d);
+
+            // Draw the hour marks
+            mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
+            drawHourMarks(linesCanvas, "6", 0d);
+            drawHourMarks(linesCanvas, "7", 15d);
+            drawHourMarks(linesCanvas, "8", 30d);
+            drawHourMarks(linesCanvas, "9", 45d);
+            drawHourMarks(linesCanvas, "10", 60d);
+            drawHourMarks(linesCanvas, "11", 75d);
+            drawHourMarks(linesCanvas, "12", 90d);
+            drawHourMarks(linesCanvas, "1", 105d);
+            drawHourMarks(linesCanvas, "2", 120d);
+            drawHourMarks(linesCanvas, "3", 135d);
+            drawHourMarks(linesCanvas, "4", 150d);
+            drawHourMarks(linesCanvas, "5", 165d);
         }
         canvas.drawBitmap(mPathBitmap, 0, 0, mPaint);
     }
@@ -368,6 +388,41 @@ public class EntryView extends View implements View.OnTouchListener {
         path.moveTo(mStartPath.x, mStartPath.y);
         path.lineTo(mEndPath.x, mEndPath.y);
         canvas.drawPath(path, mPaint);
+    }
+
+    private void drawHourMarks(Canvas canvas, String hour, double angle) {
+        mOppositeAngle = (angle + 180d) % 360;
+        angle = Math.toRadians(angle);
+        mOppositeAngle = Math.toRadians(mOppositeAngle);
+        drawSingleHourMark(canvas, hour, angle);
+        drawSingleHourMark(canvas, hour, mOppositeAngle);
+    }
+
+    // TODO: refactor this into drawGuidelines so you don't repeat sin/cos calculation
+    private void drawSingleHourMark(Canvas canvas, String hour, double angle) {
+//        angle = Math.toRadians(angle);
+        mEndPath.x = mCenter.x + (mRadius + SLICE_MAX_DIFF) * (float) Math.cos(angle);
+        mEndPath.y = mCenter.y + (mRadius + SLICE_MAX_DIFF) * (float) Math.sin(angle);
+        setHourBounds(mEndPath);
+
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setColor(Color.BLACK);
+        canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
+
+        mPaint.setStyle(Paint.Style.FILL);
+        angle = Math.toDegrees(angle);
+        if (angle > 260 || angle < 85) {
+            mPaint.setColor(Color.WHITE);
+            canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
+            mPaint.setColor(Color.BLACK);
+            canvas.drawText(hour, mEndPath.x, mEndPath.y + mPaint.getTextSize() / 3, mPaint);
+        } else {
+            mPaint.setColor(Color.BLACK);
+            canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
+            mPaint.setColor(Color.WHITE);
+            canvas.drawText(hour, mEndPath.x, mEndPath.y + mPaint.getTextSize() / 3, mPaint);
+        }
+
     }
 
     @Override
@@ -427,10 +482,17 @@ public class EntryView extends View implements View.OnTouchListener {
      *
      * @param offset
      */
-    private void setBounds(float offset) {
+    private void setBoundsFromCenter(float offset) {
         mBounds.set(mCenter.x - mRadius + offset,
                 mCenter.y - mRadius + offset,
                 mCenter.x + mRadius - offset,
                 mCenter.y + mRadius - offset);
+    }
+
+    private void setHourBounds(PointF center) {
+        mBounds.set(center.x - HOUR_RADIUS,
+                center.y - HOUR_RADIUS,
+                center.x + HOUR_RADIUS,
+                center.y + HOUR_RADIUS);
     }
 }
