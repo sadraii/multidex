@@ -23,8 +23,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
-import com.sadraii.hyperdex.MainActivity;
 import com.sadraii.hyperdex.Entry;
+import com.sadraii.hyperdex.MainActivity;
 import com.sadraii.hyperdex.data.EntryRepository;
 
 import java.util.Calendar;
