@@ -20,7 +20,6 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -80,10 +79,12 @@ public class MainActivity extends ActionBarActivity {
         mAppContext = this.getApplicationContext();
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        boolean firstTimeDefault = getResources().getBoolean(R.bool.pref_first_time_setup_default);
-        boolean firstTime = sharedPref.getBoolean(
-                getString(R.string.pref_first_time_setup_key), firstTimeDefault);
-        firstTimeSetup(firstTime);
+        boolean firstRunDefault = getResources().getBoolean(R.bool.pref_first_run_setup_default);
+        boolean isFirstRun = sharedPref.getBoolean(
+                getString(R.string.pref_first_run_setup_key), firstRunDefault);
+        if (isFirstRun) {
+            onFirstRun();
+        }
 
         mAdapter = new HyperdexAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.hyperdex_pager);
@@ -138,21 +139,16 @@ public class MainActivity extends ActionBarActivity {
         mSpinner.setSelection(mSelectedColorCode, false);
     }
 
-    private void firstTimeSetup(boolean firstTime) {
-        if (firstTime) {
-            recreateTables();
-//            ColorCodeRepository.addNextColorCode(mAppContext, "#fffe9700", "Work");
-//            ColorCodeRepository.addNextColorCode(mAppContext, "#ffccdb38", "Errands");
-//            ColorCodeRepository.addNextColorCode(mAppContext, "#ff2095f2", "Relaxing");
-            ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(0l, 1428021648563l, "#fffe9700", "Work"));
-            ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(1l, 1428021648568l, "#ffccdb38", "Errands"));
-            ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(2l, 1428021648574l, "#ff2095f2", "Relaxing"));
-            EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(),
-                    "{\"58\":1428021648568,\"55\":1428021648563,\"57\":1428021648563,\"56\":1428021648563,\"61\":1428021648574,\"59\":1428021648568}");
-            getPreferences(Context.MODE_PRIVATE).edit()
-                    .putBoolean(getString(R.string.pref_first_time_setup_key), false)
-                    .commit();
-        }
+    private void onFirstRun() {
+        createTables();
+        ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(0L, 1428021648563L, "#fffe9700", "Work"));
+        ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(1L, 1428021648568L, "#ffccdb38", "Errands"));
+        ColorCodeRepository.insertOrReplace(mAppContext, new ColorCode(2L, 1428021648574L, "#ff2095f2", "Relaxing"));
+        EntryRepository.addNextEntry(mAppContext, Calendar.getInstance().getTime(),
+                "{\"58\":1428021648568,\"55\":1428021648563,\"57\":1428021648563,\"56\":1428021648563,\"61\":1428021648574,\"59\":1428021648568}");
+        getPreferences(Context.MODE_PRIVATE).edit()
+                .putBoolean(getString(R.string.pref_first_run_setup_key), false)
+                .commit();
     }
 
     @Override
@@ -238,7 +234,7 @@ public class MainActivity extends ActionBarActivity {
         return mPager;
     }
 
-    private void recreateTables() {
+    private void createTables() {
         ColorCodeRepository.dropTable(mAppContext);
         EntryRepository.dropTable(mAppContext);
 

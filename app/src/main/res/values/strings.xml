@@ -27,11 +27,11 @@
     <string name="hint_list_item_description">Enter description</string>
 
     <string name="toast_cannot_delete_color">Need at least one color code.</string>
-    <string name="toast_cannot_add_color">All color slots are assigned.</string>
+    <string name="toast_cannot_add_color">All colors are used.</string>
     <string name="toast_cannot_change_color">That color already exists.</string>
 
-    <string name="pref_first_time_setup_key">first_time_setup</string>
-    <bool name="pref_first_time_setup_default">true</bool>
+    <string name="pref_first_run_setup_key">first_run_setup</string>
+    <bool name="pref_first_run_setup_default">true</bool>
     <string name="pref_selected_color_code">selected_color_code</string>
     <string name="pref_current_pager_item">current_pager_item</string>
 

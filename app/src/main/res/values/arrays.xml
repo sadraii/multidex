@@ -16,12 +16,6 @@
 -->
 <resources>
 
-    <string-array name="test_spinner">
-        <item>Color 1</item>
-        <item>Color 2</item>
-        <item>Color 3</item>
-    </string-array>
-
     <string-array name="default_color_values" translatable="false">
         <item>#ffe81d62</item>
         <item>#fff34235</item>
@@ -40,7 +34,7 @@
         <item>#ff785447</item>
     </string-array>
 
-    <string-array name="default_color_names" translatable="false">
+    <string-array name="default_color_names">
         <item>Pink</item>
         <item>Red</item>
         <item>Deep Orange</item>

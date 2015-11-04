@@ -93,6 +93,8 @@ public class EntryView extends View implements View.OnTouchListener {
     private PointF mEndPath;
     private final RectF mBounds = new RectF();
     private float mCenterOffset;
+    private int mHourMarkFillColor;
+    private int mHourMarkTextColor;
 
     private float mInitialClickX;
     private float mInitialClickY;
@@ -308,7 +310,7 @@ public class EntryView extends View implements View.OnTouchListener {
             }
         }
 
-        // Cache the guidelines in a bitmap and overlay them on top
+        // Cache the guidelines in a bitmap and overlay it on top
         if (mPathBitmap == null) {
             mPathBitmap = Bitmap.createBitmap(mViewDimensions.x, mViewDimensions.y,
                     Bitmap.Config.ARGB_8888);
@@ -332,31 +334,18 @@ public class EntryView extends View implements View.OnTouchListener {
             drawGuidelines(guidelineCanvas, mMainGuidelinePath, 0d);
             drawGuidelines(guidelineCanvas, mMainGuidelinePath, 90d);
             mPaint.setStrokeWidth(SUB_GUIDELINE_STROKE_WIDTH);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 15d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 30d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 45d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 60d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 75d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 105d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 120d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 135d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 150d);
-            drawGuidelines(guidelineCanvas, mSubGuidelinePath, 165d);
+            double[] guideAngles = {15d, 30d, 45d, 60d, 75d, 105d, 120d, 135d, 150d, 165d};
+            for (double angle : guideAngles) {
+                drawGuidelines(guidelineCanvas, mSubGuidelinePath, angle);
+            }
 
             // Draw the hour marks
             mPaint.setStrokeWidth(MAIN_GUIDELINE_STROKE_WIDTH);
-            drawHourMarks(guidelineCanvas, "6", 0d);
-            drawHourMarks(guidelineCanvas, "7", 15d);
-            drawHourMarks(guidelineCanvas, "8", 30d);
-            drawHourMarks(guidelineCanvas, "9", 45d);
-            drawHourMarks(guidelineCanvas, "10", 60d);
-            drawHourMarks(guidelineCanvas, "11", 75d);
-            drawHourMarks(guidelineCanvas, "12", 90d);
-            drawHourMarks(guidelineCanvas, "1", 105d);
-            drawHourMarks(guidelineCanvas, "2", 120d);
-            drawHourMarks(guidelineCanvas, "3", 135d);
-            drawHourMarks(guidelineCanvas, "4", 150d);
-            drawHourMarks(guidelineCanvas, "5", 165d);
+            String[] hours = {"6", "7", "8", "9", "10", "11", "12", "1", "2", "3", "4", "5"};
+            double[] hourAngles = {0d, 15d, 30d, 45d, 60d, 75d, 90d, 105d, 120d, 135d, 150d, 165d};
+            for (int i = 0; i < hours.length; i++) {
+                drawHourMarks(guidelineCanvas, hours[i], hourAngles[i]);
+            }
 
 //            mPaint.setColor(Color.BLACK);
 //            drawHoursAndGuidelines(guidelineCanvas, mMainGuidelinePath, "6", 0d);
@@ -443,17 +432,17 @@ public class EntryView extends View implements View.OnTouchListener {
         // draw the fill circle and the text in opposite colors
         mPaint.setStyle(Paint.Style.FILL);
         angle = Math.toDegrees(angle);
-        if (angle > 260 || angle < 85) {
-            mPaint.setColor(Color.WHITE);
-            canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
-            mPaint.setColor(Color.BLACK);
-            canvas.drawText(hour, mEndPath.x, mEndPath.y + mPaint.getTextSize() / 3, mPaint);
+        if (angle < 85 || angle > 260) {
+            mHourMarkFillColor = Color.WHITE;
+            mHourMarkTextColor = Color.BLACK;
         } else {
-            mPaint.setColor(Color.BLACK);
-            canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
-            mPaint.setColor(Color.WHITE);
-            canvas.drawText(hour, mEndPath.x, mEndPath.y + mPaint.getTextSize() / 3, mPaint);
+            mHourMarkFillColor = Color.BLACK;
+            mHourMarkTextColor = Color.WHITE;
         }
+        mPaint.setColor(mHourMarkFillColor);
+        canvas.drawArc(mBounds, 0f, 360f, true, mPaint);
+        mPaint.setColor(mHourMarkTextColor);
+        canvas.drawText(hour, mEndPath.x, mEndPath.y + mPaint.getTextSize() / 3, mPaint);
     }
 
 //    /**
